@@ -427,7 +427,7 @@ export class AnalystDashboardComponent implements OnInit {
       },
 
       dataLabels: {
-        enabled: true,
+        enabled: false,
         formatter: (val: number, opts) => {
           const pillar = data[opts.dataPointIndex];
 

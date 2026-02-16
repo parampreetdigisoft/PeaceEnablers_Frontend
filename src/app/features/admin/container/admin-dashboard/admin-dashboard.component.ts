@@ -314,7 +314,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
       },
 
       dataLabels: {
-        enabled: true,
+        enabled: false,
         formatter: (val: number, opts) => {
           const pillar = data[opts.dataPointIndex];
 
