@@ -54,7 +54,8 @@
       <tr>
         <th>S.No.</th>
         <th>Name</th>
-        <th>Email & Phone No.</th>
+        <th>Email </th>
+         <th>Phone No</th>
         <ng-container *ngIf="roleId">
           <th>Role</th>
           <th>Analyst</th>
@@ -70,6 +71,7 @@
         <td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
         <td>{{ analyst.fullName }}</td>
         <td>{{ analyst.email }}</td>
+        <td>{{ analyst.phone }}</td>
         <ng-container *ngIf="roleId">
           <td>{{ analyst.role }}</td>
           <td>{{ analyst.createdByName }}</td>

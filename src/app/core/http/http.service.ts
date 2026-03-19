@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class HttpService {
   private urlBase = environment.apiUrl + '/api';
-  private headers = new HttpHeaders({ 'Content-Type': 'application/json' } || { 'Content-Type': 'text' });
+  private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   private options = { headers: this.headers };
 
   constructor(private http: HttpClient) { }

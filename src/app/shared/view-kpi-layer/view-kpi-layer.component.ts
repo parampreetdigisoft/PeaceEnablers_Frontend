@@ -36,7 +36,6 @@ export class ViewKpiLayerComponent implements OnInit, OnChanges {
 
 
   ngOnInit(): void {
-
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.ApexGetPieOptions();

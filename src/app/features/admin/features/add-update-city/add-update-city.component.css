@@ -21,3 +21,18 @@
   border-radius: 12px;
   object-fit: cover;
 }
+::ng-deep .analyst_multi_select  .ng-select-container {
+    border: 0;
+    min-height: 30px;
+    outline: none !important;
+    box-shadow: none !important;
+}
+::ng-deep .analyst_multi_select  .ng-select-container .ng-value-container {
+    padding: 0 !important;
+}
+ 
+::ng-deep .analyst_multi_select .ng-option-selected {
+    background-color: #e8f0ff !important;
+    color: #304a43 !important;
+    font-weight: 600;
+}

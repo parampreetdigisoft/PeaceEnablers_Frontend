@@ -24,7 +24,23 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 .input_field {
   margin-bottom: 0;
 }
+.low {
+    background-color: #ffcccc;
+    color: #b30000;
+    border: 1px solid #ff4d4d !important;
+}
 
+.medium {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c !important;
+}
+
+.high {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #75d69c !important;
+}
 .input_field .form-control {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M0.765098 1.70703L4.97795 5.91988C5.47548 6.41741 6.28962 6.41741 6.78715 5.91988L11 1.70703' stroke='%23888888' stroke-width='1.5' stroke-miterlimit='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
   background-repeat: no-repeat;

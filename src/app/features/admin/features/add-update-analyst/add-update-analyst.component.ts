@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CityVM } from "../../../../core/models/CityVM";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import {
   InviteUserDto,
   UpdateInviteUserDto,
@@ -19,6 +19,9 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { UserRoleValue } from "src/app/core/enums/UserRole";
 import { UserService } from "src/app/core/services/user.service";
+import { catchError, debounceTime, map, Observable, of, switchMap } from "rxjs";
+import { AdminService } from "../../admin.service";
+
 
 @Component({
   selector: "app-add-update-analyst",
@@ -33,20 +36,22 @@ export class AddUpdateAnalystComponent implements OnInit {
   @Output() bulkImportChange = new EventEmitter<UpdateInviteUserDto[] | null>();
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
   @Input() loading: boolean = false;
+ 
   alertMsg = "";
   excelData: any;
   isSubmitted: boolean = false;
   requiredHeaders = ["FullName", "Email", "Phone", "CityName"];
   analystForm: FormGroup<any> = this.fb.group({});
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+  constructor(private fb: FormBuilder, private userService: UserService,private adminService: AdminService,) { 
+  }
   ngOnInit(): void {
-    this.initializeForm();
+    this.initializeForm();    
   }
   initializeForm() {
     this.analystForm = this.fb.group({
       fullName: [this.analyst?.fullName, [Validators.required]],
-      email: [this.analyst?.email, [Validators.required, Validators.email]],
+      email: [this.analyst?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
       phone: [this.analyst?.phone, [Validators.required]],
       city: [
         this.analyst?.cities?.map((x) => x?.cityID) ?? [],
@@ -54,12 +59,41 @@ export class AddUpdateAnalystComponent implements OnInit {
       ],
     });
   }
+emailExistsValidator(): AsyncValidatorFn {
+  return (control: AbstractControl): Observable<ValidationErrors | null> => {
+
+    if (!control.value) {
+      return of(null);
+    }
+
+    return of(control.value).pipe(
+      debounceTime(500),
+      switchMap(email =>
+        this.adminService.checkEmailExist({
+          email: email,
+          userId: this.analyst?.userID ?? 0
+        })
+      ),
+      map((exists: boolean) => {      
+        return exists ? { emailExists: true } : null;
+      }),
+      catchError(() => of(null))
+    );
+  };
+}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.alertMsg = "";
     this.isSubmitted = false;
+    if (this.analyst && this.analyst.cities) {
+    const selectedCityIds = this.analyst.cities.map(c => c.cityID);
+    this.analystForm.patchValue({
+      city: selectedCityIds
+    });
+  }
     //this.initializeForm();
   } 
+
 
   onSubmit() {
     this.isSubmitted = true;
@@ -189,6 +223,10 @@ export class AddUpdateAnalystComponent implements OnInit {
         excelData.push(dto);
       }
       this.excelData = excelData;
+      if (this.excelData.length == 0)
+      {
+        this.alertMsg = "The uploaded file does not contain any valid records.";
+      }
     };
     reader.readAsBinaryString(target.files[0]);
   }
@@ -215,4 +253,11 @@ export class AddUpdateAnalystComponent implements OnInit {
     this.alertMsg = "";
     this.closeAnalystModel.emit(true);
   }
+
+  numberOnly(event: KeyboardEvent): void {
+  const key = event.key;
+  if (!/^[0-9+]$/.test(key)) {
+    event.preventDefault();
+  }
+}
 }

@@ -93,6 +93,23 @@
     transition: background .2s ease-in-out;
     margin-right: 10px;
 }
+.low {
+    background-color: #ffcccc !important;
+    color: #b30000 !important;
+    border: 1px solid #ff4d4d !important;
+}
+
+.medium {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border: 1px solid #ffe69c !important;
+}
+
+.high {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border: 1px solid #75d69c !important;
+}
 
 /* .accordion_icon .cdk-column-pillarName {
     display: flex;

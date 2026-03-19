@@ -35,7 +35,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
   getAllCitiesByUserId() {
     this.analystService.getAllCitiesByUserId(this.userService?.userInfo?.userID).subscribe({
       next: (res) => {
-        this.cities = res.result;
+        this.cities = res.result;     
       }
     });
   }
@@ -122,13 +122,12 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
       this.analystService.editEvaluator(payload).subscribe({
         next: (res) => {
           this.closeModal();
-          if (res.succeeded) {
-            this.getEvaluator(this.currentPage);
+          if (res.succeeded) {           
             this.toaster.showSuccess(res?.messages.join(', '));
-
           } else {
             this.toaster.showError(res?.errors.join(', '));
           }
+           this.getEvaluator(this.currentPage);
         },
         error: () => {
           this.closeModal();
@@ -140,12 +139,12 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
       this.analystService.addEvaluator(payload).subscribe({
         next: (res) => {
           this.closeModal();
-          if (res.succeeded) {
-            this.getEvaluator();
+          if (res.succeeded) {           
             this.toaster.showSuccess(res?.messages.join(', '));
           } else {
             this.toaster.showError(res?.errors.join(', '));
           }
+           this.getEvaluator();
         },
         error: () => {
           this.closeModal();

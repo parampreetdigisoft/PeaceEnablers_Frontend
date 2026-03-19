@@ -109,7 +109,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
 
   GetAllPillars() {
     this.analystService.getAllPillars().subscribe((pillars) => {
-      this.pillars = pillars;
+      this.pillars = pillars;      
     });
   }
   pillarChanged(pillar?: PillarsVM) {

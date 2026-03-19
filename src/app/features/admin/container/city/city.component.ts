@@ -121,7 +121,7 @@ export class CityComponent implements OnInit, OnDestroy {
       modalInstance.hide();
     this.isOpendialog = false;
   }
-  openCityModal(city: CityVM | null) {
+  openCityModal(city: CityVM | null) {   
     this.selectedCity = city ?? null;
     this.opendialog();
   }

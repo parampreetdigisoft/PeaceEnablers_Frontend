@@ -56,12 +56,8 @@
                     <th>S.No.</th>
                     <th>City</th>
                     <th>Kpi Layer</th>
-                    <th>Condition</th>
-                    <th>Category1</th>
-                    <th>Category2</th>
-                    <th>Category3</th>
-                    <th>Category4 </th>
-                    <th>Category5 </th>
+                    <th>Condition</th>                    
+                    <th>KPI Achievement (%)</th>
                     <th class="action_th">Actions</th>
                 </tr>
             </thead>
@@ -83,31 +79,7 @@
                         <div class="kpi_layaer kpi_td_data">
                             <p>{{ getConditionByid(kpi) }} </p>
                         </div>
-                    </td>
-                    <td>
-                        <div class="kpi_cat01 kpi_td_data">
-                            <p>{{ kpi.calText1 || '-'}} </p>
-                            <div class="bold_num">{{ (kpi.aiCalValue1 ?? 0).toFixed(2) }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="kpi_cat02 kpi_td_data">
-                            <p>{{ kpi.calText2 || '-'}} </p>
-                            <div class="bold_num">{{ (kpi.aiCalValue2 ??0).toFixed(2) }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="kpi_cat03 kpi_td_data">
-                            <p>{{ kpi.calText3 || '-'}}</p>
-                            <div class="bold_num">{{ (kpi.aiCalValue3 ?? 0).toFixed(2) }}</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="kpi_cat04 kpi_td_data">
-                            <p>{{ kpi.calText4 || '-'}} </p>
-                            <div class="bold_num">{{ (kpi.aiCalValue4 ?? 0).toFixed(2) }}</div>
-                        </div>
-                    </td>
+                    </td>                   
                     <td>
                         <div class="kpi_cat05 kpi_td_data">
                             <p>{{ kpi.calText5 || '-'}}</p>

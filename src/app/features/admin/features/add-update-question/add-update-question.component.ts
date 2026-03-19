@@ -235,6 +235,10 @@ export class AddUpdateQuestionComponent implements OnChanges, OnInit {
         questions.push(question);
       }
       this.excelData = questions;
+      if (this.excelData.length == 0)
+      {
+        this.alertMsg = "The uploaded file does not contain any valid records.";
+      }
     };
 
     reader.readAsBinaryString(target.files[0]);

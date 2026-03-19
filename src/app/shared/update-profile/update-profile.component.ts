@@ -7,8 +7,10 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { catchError, debounceTime, map, Observable, of, switchMap } from "rxjs";
 import { UserInfo } from "src/app/core/models/UserInfo";
+import { AdminService } from "src/app/features/admin/admin.service";
 import { environment } from "src/environments/environment";
 
 @Component({
@@ -25,7 +27,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   @Output() closeModelEvent: any = new EventEmitter();
   userForm: FormGroup<any> = this.fb.group({});
   urlBase = environment.apiUrl;
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private adminService:AdminService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     //this.initializeForm();
@@ -42,16 +44,39 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.userForm = this.fb.group({
         fullName: [this.userinfo.fullName, [Validators.required]],
         phone: [this.userinfo.phone, [Validators.required]],
-        email: [this.userinfo.email, [Validators.required]],
+        email: [this.userinfo.email, [Validators.required,Validators.email], this.emailExistsValidator()],
         profileImage: [],
         is2FAEnabled:[this.userinfo.is2FAEnabled]
       });
     }
   }
-  updateUser(fullName: string, email: string,is2FAEnabled:boolean, profileImage?: File) {
+  emailExistsValidator(): AsyncValidatorFn {
+      return (control: AbstractControl): Observable<ValidationErrors | null> => {
+    
+        if (!control.value) {
+          return of(null);
+        }
+    
+        return of(control.value).pipe(
+          debounceTime(500),
+          switchMap(email =>
+            this.adminService.checkEmailExist({
+              email: email,
+              userId: this.userinfo?.userID ?? 0
+            })
+          ),
+          map((exists: boolean) => {      
+            return exists ? { emailExists: true } : null;
+          }),
+          catchError(() => of(null))
+        );
+      };
+    }
+  updateUser(fullName: string, email: string, phone:string,is2FAEnabled:boolean, profileImage?: File) {  
     const formData = new FormData();
     formData.append("FullName", fullName);
-    formData.append("Phone", email);
+    formData.append("Email", email);
+    formData.append("Phone", phone);
     formData.append("UserID", `${this.userinfo?.userID ?? 0}`);
     formData.append("Is2FAEnabled", `${is2FAEnabled ?? 0}`);
     if (profileImage) {
@@ -64,7 +89,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.isSubmitted = true;
     if (this.userForm.valid) {
       var form = this.userForm.value;
-      this.updateUser(form.fullName, form.phone,form.is2FAEnabled, form.profileImage);
+      this.updateUser(form.fullName, form.email, form.phone,form.is2FAEnabled, form.profileImage);
     }
   }
 
@@ -75,4 +100,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   closeModel() {
     this.closeModelEvent.emit();
   }
+    numberOnly(event: KeyboardEvent): void {
+  const key = event.key;
+  if (!/^[0-9+]$/.test(key)) {
+    event.preventDefault();
+  }
+}
 }

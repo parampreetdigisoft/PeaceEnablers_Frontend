@@ -4,21 +4,47 @@ export interface AiCitySummeryDto {
   cityName: string;
   country: string;
   image: string | null;
-  scoringYear: number;
+
+  year: number;
+
   aiScore: number | null;
   aiProgress: number | null;
-  evaluatorProgress: number | null;
+  evaluatorScore: number | null;
   discrepancy: number | null;
+
   confidenceLevel: string;
   evidenceSummary: string;
-  crossPillarPatterns: string;
-  institutionalCapacity: string;
-  equityAssessment: string;
-  sustainabilityOutlook: string;
-  strategicRecommendations: string;
-  dataTransparencyNote: string;
-  updatedAt:Date;
-  isVerified:boolean;
-  comment?:string;
-  aiCompletionRate?:number;
+
+  structuralEvidence: string | null;
+  operationalEvidence: string | null;
+  outcomeEvidence: string | null;
+  perceptionEvidence: string | null;
+
+  temporalScope: string | null;
+  distortionScreening: string | null;
+
+  politicalShock: string | null;
+  economicShock: string | null;
+  narrativeShock: string | null;
+
+  overallStressResilience: string | null;
+  stressScoreAdjustment: string | null;
+  inequalityAdjustment: string | null;
+  opacityRisk: string | null;
+  nonCompensationNote: string | null;
+
+  crossPillarPatterns: string | null;
+  relationalIntegrity: string | null;
+  institutionalCapacity: string | null;
+  equityAssessment: string | null;
+  conflictRiskOutlook: string | null;
+
+  strategicRecommendation: string | null;
+  dataTransparencyNote: string | null;
+  primarySource: string | null;
+
+  updatedAt: Date;
+  isVerified: boolean;
+
+  aiCompletionRate?: number;
 }

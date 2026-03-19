@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import { CommonService } from 'src/app/core/services/common.service';
 import { debounceTime } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CityUserService } from 'src/app/features/city-user/city-user.service';
 
 @Component({
   selector: 'app-add-update-city',
@@ -20,16 +21,21 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
   @Output() bulkImport = new EventEmitter<CityVM[]>();
   @Output() closeModal = new EventEmitter<boolean>();
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('imageInput') imageInput!: ElementRef;
   @Input() loading: boolean = false;
   isSubmitted = false;
   cityForm!: FormGroup;
+  selectedImage: string | ArrayBuffer | null = null;
   bulkImportData: CityVM[] | null = null;
   alertMsg = '';
-
-  constructor(private fb: FormBuilder, private commonService: CommonService) { }
+  imageError: string = '';
+  imageFile: File | null = null;
+  cityList: CityVM[] = [];
+  constructor(private fb: FormBuilder, private commonService: CommonService,private cityuserService: CityUserService,) { }
 
   ngOnInit(): void {
     this.initializeForm();
+    this.getAllCities();
   }
 
   initializeForm() {
@@ -42,6 +48,10 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
       postalCode: [this.city?.postalCode, Validators.required],
       latitude: [this.city?.latitude, Validators.required],
       longitude: [this.city?.longitude, Validators.required],
+      population: [this.city?.population, Validators.required],
+      income: [this.city?.income, Validators.required],
+      cityAliasName: [this.city?.cityAliasName],
+      cities: [this.city?.peerCitiesIDs || []],
       imageFile: [''],
     });
     this.onFormChange();
@@ -80,134 +90,239 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.alertMsg = '';
+    if(this.fileInput)
+    {
+       this.fileInput.nativeElement.value = '';
+    }
+    this.selectedImage = null;
     //this.initializeForm();
+  }
+   getAllCities() {
+    this.cityuserService.getAllCities().subscribe({
+      next: (res) => {
+        if (res.succeeded) {
+          this.cityList = res.result ?? [];
+        }
+      }
+    });
   }
 
   onFileChange(event: any) {
-    const file = event.target.files[0];
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith('image/')) {
+      this.imageError = 'Please select a valid image file.';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5 MB limit
+      this.imageError = 'Image size should be less than 5MB.';
+      return;
+    }
+
+    this.imageError = '';
+    this.imageFile = file;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedImage = reader.result;
+    };
+    reader.readAsDataURL(file);    
     this.selectedFile = event.target.files[0];
   }
   onSubmit() {
-    this.isSubmitted = true;
-    if (this.cityForm.invalid) return;
+  this.isSubmitted = true;
+  if (this.cityForm.invalid) return;
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    // Append all form values (capitalized keys)
-    formData.append('State', this.cityForm.get('state')?.value);
-    formData.append('CityName', this.cityForm.get('cityName')?.value);
-    formData.append('Region', this.cityForm.get('region')?.value);
-    formData.append('Country', this.cityForm.get('country')?.value);
-    formData.append('PostalCode', this.cityForm.get('postalCode')?.value);
-    formData.append('Longitude', this.cityForm.get('longitude')?.value);
-    formData.append('Latitude', this.cityForm.get('latitude')?.value);
-    formData.append('CityID', (this.city?.cityID ?? 0).toString());
-    if (this.selectedFile) {
-      formData.append('ImageFile', this.selectedFile as Blob, this.selectedFile?.name);
-    }
+  formData.append('State', this.cityForm.get('state')?.value);
+  formData.append('CityName', this.cityForm.get('cityName')?.value);
+  formData.append('Region', this.cityForm.get('region')?.value);
+  formData.append('Country', this.cityForm.get('country')?.value);
+  formData.append('PostalCode', this.cityForm.get('postalCode')?.value);
+  formData.append('Longitude', this.cityForm.get('longitude')?.value);
+  formData.append('Latitude', this.cityForm.get('latitude')?.value);
 
-    // Include CityID if editing
-    this.cityChange.emit(formData);
+  // 👇 New fields
+  formData.append('Population', this.cityForm.get('population')?.value);
+  formData.append('Income', this.cityForm.get('income')?.value);
+  formData.append('CityAliasName', this.cityForm.get('cityAliasName')?.value);
+
+  formData.append('CityID', (this.city?.cityID ?? 0).toString());
+
+  // 👇 Peer Cities (array)
+  const peerCities = this.cityForm.get('cities')?.value;
+  if (peerCities && peerCities.length > 0) {
+    peerCities.forEach((cityId: number) => {
+      formData.append('PeerCities', cityId.toString());
+    });
   }
 
+  // 👇 Image
+  if (this.selectedFile) {
+    formData.append('ImageFile', this.selectedFile as Blob, this.selectedFile?.name);
+  }
+
+  this.cityChange.emit(formData);
+}
 
   downloadTemplate() {
-    const headers = ["Country", "CityName", "State", "PostalCode", "Region"];
-    // One sample row
-    const sampleRow = {
-      Country: "Enter Country Name",
-      CityName: "Enter City Name",
-      State: "Enter State Name",
-      Region: "Enter Region Name",
-      PostalCode: "Enter Postal Code",
-      Latitude: "Enter Latitude",
-      Longitude: "Enter Longitude"
-    };
+  const headers = [
+    "Country",
+    "CityName",
+    "State",
+    "Region",
+    "PostalCode",
+    "Latitude",
+    "Longitude",
+    "CityAliasName",
+    "Population",
+    "Income"
+  ];
 
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], { header: headers });
-    ws['!cols'] = headers.map(() => ({ wch: 20 }));
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'CitiesTemplate');
+  const sampleRow = {
+    Country: "Enter Country Name",
+    CityName: "Enter City Name",
+    State: "Enter State Name",
+    Region: "Enter Region Name",
+    PostalCode: "Enter Postal Code",
+    Latitude: "Enter Latitude",
+    Longitude: "Enter Longitude",
+    CityAliasName: "Enter City Alias Name",
+    Population: "Enter Population",
+    Income: "Enter Income",
+  };
 
-    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'CityTemplate.xlsx');
-  }
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], { header: headers });
+
+  ws['!cols'] = headers.map(() => ({ wch: 20 }));
+
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'CitiesTemplate');
+
+  const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const data: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+
+  saveAs(data, 'CityTemplate.xlsx');
+}
 
   // 👉 Handle file import
   handleFileImport(evt: any) {
     this.alertMsg = '';
-    const target: DataTransfer = <DataTransfer>(evt.target);
-    if (target.files.length !== 1) return;
 
-    const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      const bstr: string = e.target.result;
-      const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-      const wsname: string = wb.SheetNames[0];
-      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+  const target: DataTransfer = <DataTransfer>(evt.target);
+  if (target.files.length !== 1) return;
 
-      const jsonData = <any[]>XLSX.utils.sheet_to_json(ws, { defval: "" });
+  const reader: FileReader = new FileReader();
 
-      // ✅ Header validation
-      const requiredHeaders = ["CityName", "State", "Region", "Country", "PostalCode", "Latitude", "Longitude"];
-      const headers = Object.keys(jsonData[0] || {});
-      const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
-      if (missingHeaders.length > 0) {
-        this.alertMsg = `Invalid file format. Missing headers: ${missingHeaders.join(", ")}`;
+  reader.onload = (e: any) => {
+    const bstr: string = e.target.result;
+    const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
+    const wsname: string = wb.SheetNames[0];
+    const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+    // ✅ Read headers from first row
+    const sheetHeaders: string[] = (XLSX.utils.sheet_to_json(ws, {
+      header: 1,
+      range: 0
+    })[0] as string[] || []).map(h => String(h).trim());
+
+    const requiredHeaders = [
+      "Country",
+      "CityName",
+      "State",
+      "Region",
+      "PostalCode",
+      "Latitude",
+      "Longitude",
+      "Population",
+      "Income"
+    ];
+
+    // Optional column
+    const optionalHeaders = ["CityAliasName"];
+
+    // ✅ Check missing required headers
+    const missingHeaders = requiredHeaders.filter(h => !sheetHeaders.includes(h));
+    if (missingHeaders.length > 0) {
+      this.alertMsg = `Invalid file format. Missing headers: ${missingHeaders.join(", ")}`;
+      this.fileInput.nativeElement.value = "";
+      return;
+    }
+
+    // ✅ Validate order ONLY for required headers
+    const requiredInSheet = sheetHeaders.filter(h => requiredHeaders.includes(h));
+    const isOrderCorrect =
+      JSON.stringify(requiredInSheet.map(h => h.toLowerCase())) ===
+      JSON.stringify(requiredHeaders.map(h => h.toLowerCase()));
+
+    if (!isOrderCorrect) {
+      this.alertMsg = `Invalid column order. Please download the latest template and upload again.`;
+      this.fileInput.nativeElement.value = "";
+      return;
+    }
+
+    // ✅ Convert to JSON after validation
+    const jsonData = <any[]>XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+    const excelData: CityVM[] = [];
+
+    for (let i = 0; i < jsonData.length; i++) {
+      const row = jsonData[i];
+
+      const cityName = String(row["CityName"] || "").trim();
+      const state = String(row["State"] || "").trim();
+      const region = String(row["Region"] || "").trim();
+      const country = String(row["Country"] || "").trim();
+      const postalCode = String(row["PostalCode"] || "").trim();
+      const latitude = Number(row["Latitude"] || "");
+      const longitude = Number(row["Longitude"] || "");
+      const population = Number(row["Population"] || "");
+      const income = Number(row["Income"] || "");
+      const cityAliasName = String(row["CityAliasName"] || "").trim(); // optional
+
+      const isCompletelyBlank = !cityName && !state && !region;
+
+      if (isCompletelyBlank) continue;
+
+      // ✅ Required field check
+      if (!cityName || !state) {
+        this.alertMsg = `Row ${i + 2}: CityName and State are required.`;
         this.fileInput.nativeElement.value = "";
         return;
       }
 
-      const excelData: CityVM[] = [];
+      // Skip template row
+      if (cityName.toLowerCase() === "enter city name".toLowerCase()) {
+        continue;
+      }
 
-      for (let i = 0; i < jsonData.length; i++) {
-        const row = jsonData[i];
-
-        const cityName = String(row["CityName"] || "").trim();
-        const state = String(row["State"] || "").trim();
-        const region = String(row["Region"] || "").trim();
-        const country = String(row["Country"] || "").trim();
-        const postalCode = String(row["PostalCode"] || "").trim();
-        const latitude = Number(row["Latitude"] || "");
-        const longitude = Number(row["Longitude"] || "");
-
-
-        const isCompletelyBlank = !cityName && !state && !region;
-
-        if (isCompletelyBlank) {
-          continue;
-        }
-
-        // ✅ Required field check
-        if (!cityName || !state) {
-          this.alertMsg = `Row ${i + 2}: All fields (CityName, State) are required.`;
-          this.fileInput.nativeElement.value = "";
-          return;
-        }
-        if (cityName.toLowerCase() == "Enter City Name".toLowerCase()) {
-          continue;
-        }
-
-        // ✅ Prevent duplicate cityName in same file
-        if (excelData.some(c => c.cityName.toLowerCase() === cityName.toLowerCase())) {
-          this.alertMsg = `Row ${i + 2}: Duplicate city name (${cityName}).`;
-          this.fileInput.nativeElement.value = "";
-          return;
-        }
-
+      // ✅ Prevent duplicate cityName in same file
+      if (excelData.some(c => c.cityName.toLowerCase() === cityName.toLowerCase())) {
+        this.alertMsg = `Row ${i + 2}: Duplicate city name (${cityName}).`;
+        this.fileInput.nativeElement.value = "";
+        return;
+      }
         // ✅ Construct DTO
-        const dto = { cityName, state, region, country, postalCode, latitude, longitude } as CityVM;
+        const dto = { cityName, state, region, country, postalCode, latitude, longitude,population,income, cityAliasName } as CityVM;
         excelData.push(dto);
       }
 
       this.bulkImportData = excelData;
-      if (excelData.length == 0) {
-        this.fileInput.nativeElement.value = "";
-        this.alertMsg = "No record found"
-      }
-    };
-    reader.readAsBinaryString(target.files[0]);
+
+    if (excelData.length === 0) {
+      this.fileInput.nativeElement.value = "";
+      this.alertMsg = "No record found";
+    }
+  };
+
+  reader.readAsBinaryString(target.files[0]);
   }
 
 

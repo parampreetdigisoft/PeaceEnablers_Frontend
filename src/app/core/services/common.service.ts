@@ -67,7 +67,7 @@ export class CommonService {
 
   public updateUser(formData: FormData) {
     return this.http
-      .UploadFile(`User/updateUser`, formData)
+      .UploadFile(`Auth/updateUser`, formData)
       .pipe(map((x) => x as ResultResponseDto<UpdateUserResponseDto>));
   }
   public refreshToken() {
@@ -164,53 +164,91 @@ export class CommonService {
       .pipe(map((x) => x as any[]));
   }
   getGeneratedTime(utcDate: string | Date | null | undefined): string {
-    if (!utcDate) return 'NA';
+  if (!utcDate) return 'NA';
 
-    // 🔑 Ensure UTC parsing
-    const utc =
-      typeof utcDate === 'string' && !utcDate.endsWith('Z') ? utcDate + 'Z' : utcDate;
+  // Ensure UTC parsing for string dates
+  let parsedInput = utcDate;
 
-    const generatedDate = new Date(utc);
-    const now = new Date();
-
-    const diffMs = now.getTime() - generatedDate.getTime();
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    // Less than 1 minute
-    if (diffMinutes < 10) {
-      return 'Just now';
-    }
-
-    // Less than 1 hour
-    if (diffMinutes < 60) {
-      return `${diffMinutes} min`;
-    }
-
-    // Less than 24 hours
-    if (diffHours < 24) {
-      const remainingMinutes = diffMinutes % 60;
-      return remainingMinutes > 0
-        ? `${diffHours} hr ${remainingMinutes} min`
-        : `${diffHours} hr`;
-    }
-
-    // 24 hours or more → show days + hours
-    const remainingHours = diffHours % 24;
-    return remainingHours > 0
-      ? `${diffDays} day ${remainingHours} hr`
-      : `${diffDays} day`;
+  if (typeof utcDate === 'string') {
+    parsedInput = utcDate.endsWith('Z') ? utcDate : utcDate + 'Z';
   }
-  researchStatusClass(date: Date): string {
-    const diffHours =
-      (Date.now() - new Date(date).getTime()) / (1000 * 60 * 60);
 
-    if (diffHours < 24) return 'just-now';
-    if (diffHours <= 24 * 3) return 'fresh';
-    if (diffHours <= 24 * 10) return 'recent';
-    return 'old';
+  const generatedDate = new Date(parsedInput);
+
+  // Invalid JS date check
+  if (isNaN(generatedDate.getTime())) return 'NA';
+
+  // Ignore .NET MinValue (0001-01-01)
+  if (generatedDate.getFullYear() <= 1) return 'NA';
+
+  const now = new Date();
+
+  const diffMs = now.getTime() - generatedDate.getTime();
+
+  // If future date, treat as NA
+  if (diffMs < 0) return 'NA';
+
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // Less than 10 minutes
+  if (diffMinutes < 10) {
+    return 'Just now';
   }
+
+  // Less than 1 hour
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min`;
+  }
+
+  // Less than 24 hours
+  if (diffHours < 24) {
+    const remainingMinutes = diffMinutes % 60;
+    return remainingMinutes > 0
+      ? `${diffHours} hr ${remainingMinutes} min`
+      : `${diffHours} hr`;
+  }
+
+  // 1 day or more
+  const remainingHours = diffHours % 24;
+
+  return remainingHours > 0
+    ? `${diffDays} day${diffDays > 1 ? 's' : ''} ${remainingHours} hr`
+    : `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+}
+  researchStatusClass(date: Date | string | null | undefined): string {
+  if (!date) return 'old';
+
+  const parsedDate = new Date(date);
+
+  // Invalid JS date
+  if (isNaN(parsedDate.getTime())) return 'old';
+
+  // Ignore .NET MinValue (0001-01-01)
+  if (parsedDate.getFullYear() <= 1) return 'old';
+
+  const diffHours =
+    (Date.now() - parsedDate.getTime()) / (1000 * 60 * 60);
+
+  if (diffHours < 24) return 'just-now';
+  if (diffHours <= 72) return 'fresh';
+  if (diffHours <= 240) return 'recent';
+
+  return 'old';
+}
+isValidDate(date: any): boolean {
+  if (!date) return false;
+
+  const parsed = new Date(date);
+
+  if (isNaN(parsed.getTime())) return false;
+
+  // Block .NET MinValue
+  if (parsed.getFullYear() <= 1) return false;
+
+  return true;
+}
   get PillarColors() {
     return [
       "#a2c3ba",

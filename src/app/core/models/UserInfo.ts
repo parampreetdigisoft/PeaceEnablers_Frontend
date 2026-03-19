@@ -54,6 +54,7 @@ export interface GetAssignUserDto {
 export interface UpdateUserResponseDto {
   userID: number;
   fullName: string;
+  email:string;
   phone: string;
   profileImagePath: string;
   tier:TieredAccessPlanValue

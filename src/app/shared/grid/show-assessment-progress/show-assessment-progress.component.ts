@@ -129,7 +129,7 @@ export class ShowAssessmentProgressComponent implements OnInit, OnChanges, OnDes
       stroke: {
         lineCap: "round"
       },
-      labels: ["Compeleted"]
+      labels: ["Completed"]
     };
   }
 }

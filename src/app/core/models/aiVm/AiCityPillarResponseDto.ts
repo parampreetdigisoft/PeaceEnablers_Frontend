@@ -6,28 +6,55 @@ export interface AiCityPillarResponseDto {
 }
 export interface AiCityPillarVM {
   pillarScoreID: number;
+
   cityID: number;
   pillarID: number;
+
   pillarName: string;
-  description: string;
+  description?: string | null;
   displayOrder: number;
-  imagePath: string;
+  imagePath?: string | null;
 
   isAccess: boolean;
+
   aiDataYear: number;
+
   aiScore?: number | null;
   aiProgress?: number | null;
-  evaluatorProgress?: number | null;
+  evaluatorScore?: number | null;
   discrepancy?: number | null;
+
   confidenceLevel?: string | null;
-  evidenceSummary: string | null;
-  redFlags?: string | null;
+
+  evidenceSummary?: string | null;
+  structuralEvidence?: string | null;
+  operationalEvidence?: string | null;
+  outcomeEvidence?: string | null;
+  perceptionEvidence?: string | null;
+  temporalScope?: string | null;
+  distortionScreening?: string | null;
+  relationalIntegrity?: string | null;
+
+  stressPoliticalShock?: string | null;
+  stressEconomicShock?: string | null;
+  stressNarrativeShock?: string | null;
+  stressOverallResilience?: string | null;
+  stressScoreAdjustment?: string | null;
+
+  inequalityAdjustment?: string | null;
+  opacityRisk?: string | null;
+  nonCompensationNote?: string | null;
   geographicEquityNote?: string | null;
   institutionalAssessment?: string | null;
   dataGapAnalysis?: string | null;
+
+  redFlag?: string | null;
+
+  aiCompletionRate?: number | null;
+
+  updatedAt?: Date | null;
+
   dataSourceCitations?: AIDataSourceCitation[] | null;
-  updatedAt:Date
-  aiCompletionRate?:number
 }
 
 export interface AIDataSourceCitation {

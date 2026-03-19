@@ -120,7 +120,7 @@ export class EvaluatorDashboardComponent {
 
     // Generate short names with duplicate handling
     const shortNames = this.generateUniqueShortNames(data.map(d => d.pillarName));
-
+     const chartHeight = data.length * 38;
     // Prepare data for ApexCharts
     const categories = shortNames;
     const seriesData = data.map((d, index) => ({
@@ -143,7 +143,7 @@ export class EvaluatorDashboardComponent {
       }],
       chart: {
         type: 'bar',
-        height: 500,
+        height: chartHeight,
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
         background: 'transparent',
         toolbar: {

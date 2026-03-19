@@ -35,7 +35,8 @@
       <tr>
         <th>S.No.</th>
         <th>Name</th>
-        <th>Email & Phone No.</th>
+        <th>Email</th>
+        <th>Phone No</th>
         <th>City</th>
         <th>Mail Status</th>
         <th class="action_th">Actions</th>
@@ -46,6 +47,7 @@
         <td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
         <td>{{ evaluator.fullName }}</td>
         <td>{{ evaluator.email }}</td>
+        <td>{{ evaluator.phone }}</td>
         <td>
           <span *ngFor="let city of evaluator?.cities; let last = last">
             {{ city?.cityName }}{{ last ? "" : ", " }}

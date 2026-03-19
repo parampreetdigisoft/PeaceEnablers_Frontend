@@ -222,7 +222,6 @@ export class AiCityComparisonComponent implements OnInit {
         },
         animations: {
           enabled: true,
-          easing: 'easeinout',
           speed: 1000,
           animateGradually: {
             enabled: true,
@@ -315,10 +314,9 @@ export class AiCityComparisonComponent implements OnInit {
         fontFamily: 'Inter, system-ui, sans-serif',
         offsetY: 10,
         markers: {
-          width: 14,
-          height: 14,
+         
           strokeWidth: 0,
-          radius: 3,
+      
           offsetX: -5,
           offsetY: 0
         },

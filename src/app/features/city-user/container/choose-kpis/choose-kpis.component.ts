@@ -75,8 +75,8 @@ export class ChooseKpisComponent {
     let message = '';
 
     // Determine limit dynamically based on control type and tier
-    if (this.tier === 1) limit = 3;
-    else if (this.tier === 2) limit = 7;
+    if (this.tier === 1) limit = 8;
+    else if (this.tier === 2) limit = 13;
     else if (this.tier ===0) limit = 0;
     // Trim values if they exceed limit
     if (selected.length > limit) {

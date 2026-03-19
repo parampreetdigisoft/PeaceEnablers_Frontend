@@ -41,7 +41,7 @@ export class QuestionComponent implements OnInit, OnDestroy {
     this.questions= [];
     this.isLoader = true;
     let payload: GetQuestionRequest = {
-      sortDirection: SortDirection.DESC,
+      sortDirection: SortDirection.ASC,
       sortBy: 'questionID',
       pageNumber: currentPage,
       pageSize: this.pageSize

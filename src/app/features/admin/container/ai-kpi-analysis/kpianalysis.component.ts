@@ -107,6 +107,7 @@ export class KPIAnalysisComponent implements OnInit {
 
   getAITrustLevels() {
     this.aiComputationService.getAITrustLevels().subscribe((p) => {
+      console.log(p)
       this.aiTrustLevels = p.result || [];
     });
   }
@@ -177,7 +178,7 @@ export class KPIAnalysisComponent implements OnInit {
     );
 
     const evaluatorSeries = data.map(x =>
-      x.isAccess ? (x.evaluatorProgress ?? 0) : getLockedScore(x.pillarID)
+      x.isAccess ? (x.evaluatorScore ?? 0) : getLockedScore(x.pillarID)
     );
 
     const discrepancySeries = data.map(x =>
@@ -227,7 +228,7 @@ export class KPIAnalysisComponent implements OnInit {
       },
 
       dataLabels: {
-        enabled: true,
+        enabled: false,
         formatter: (val: number, opts) => {
           const pillar = data[opts.dataPointIndex];
 
@@ -359,7 +360,7 @@ export class KPIAnalysisComponent implements OnInit {
                 <div style="display:flex; justify-content:space-between;">
                   <span style="color:#6b7280;">Evaluator</span>
                   <span style="font-weight:600; color:#39539E;">
-                    ${pillar.evaluatorProgress?.toFixed(2) ?? '0.00'}%
+                    ${pillar.evaluatorScore?.toFixed(2) ?? '0.00'}%
                   </span>
                 </div>
 

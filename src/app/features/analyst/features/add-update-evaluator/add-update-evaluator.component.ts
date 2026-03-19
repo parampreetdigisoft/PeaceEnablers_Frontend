@@ -1,12 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CityVM } from '../../../../core/models/CityVM';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { GetUserByRoleResponse } from '../../../../core/models/GetUserByRoleResponse';
 import { InviteUserDto, UpdateInviteUserDto } from 'src/app/core/models/AnalystVM';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { UserRoleValue } from 'src/app/core/enums/UserRole';
 import { UserService } from 'src/app/core/services/user.service';
+import { catchError, debounceTime, map, Observable, of, switchMap } from 'rxjs';
+import { AdminService } from 'src/app/features/admin/admin.service';
 
 @Component({
   selector: 'app-add-update-evaluator',
@@ -30,9 +32,10 @@ export class AddUpdateEvaluatorComponent {
     "Phone",
     "CityName"
   ];
-  evaluatorForm: FormGroup<any> = this.fb.group({});
+  evaluatorForm: FormGroup<any> = this.fb.group({});  
+  analyst: any;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private adminService:AdminService) {
     // Initialization logic can go here
   }
   ngOnInit(): void {
@@ -49,11 +52,34 @@ export class AddUpdateEvaluatorComponent {
   initializeForm(evaluator: GetUserByRoleResponse | null) {
     this.evaluatorForm = this.fb.group({
       fullName: [evaluator?.fullName, [Validators.required]],
-      email: [evaluator?.email, [Validators.required, Validators.email]],
+      email: [evaluator?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
       phone: [evaluator?.phone, [Validators.required]],
       city: [evaluator?.cities?.map(x => x?.cityID) ?? [], [Validators.required]]
     });
     this.evaluatorForm.updateValueAndValidity();
+  }
+
+  emailExistsValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+  
+      if (!control.value) {
+        return of(null);
+      }
+  
+      return of(control.value).pipe(
+        debounceTime(500),
+        switchMap(email =>
+          this.adminService.checkEmailExist({
+            email: email,
+            userId: this.evaluator?.userID ?? 0
+          })
+        ),
+        map((exists: boolean) => {      
+          return exists ? { emailExists: true } : null;
+        }),
+        catchError(() => of(null))
+      );
+    };
   }
 
   onSubmit() {
@@ -199,4 +225,10 @@ export class AddUpdateEvaluatorComponent {
     this.alertMsg =''
     this.closeModal.emit(true);
   }
+ numberOnly(event: KeyboardEvent): void {
+  const key = event.key;
+  if (!/^[0-9+]$/.test(key)) {
+    event.preventDefault();
+  }
+}
 }

@@ -55,7 +55,7 @@ export class KpiLayersComponent {
     this.isLoader = true;
     let payload: GetAnalyticalLayerRequestDto = {
       sortDirection: SortDirection.DESC,
-      sortBy: 'CalValue4',
+      sortBy: 'CalValue5',
       pageNumber: currentPage,
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID
@@ -83,8 +83,9 @@ export class KpiLayersComponent {
 
   }
 
-  viewDetails(city: GetAnalyticalLayerResultDto) {
+  viewDetails(city: GetAnalyticalLayerResultDto) {   
     this.selectedKpi = city;
+    console.log(this.selectedKpi);
     const sidebarEl = document.getElementById('kpiLayerSidebar');
     const offcanvas = new bootstrap.Offcanvas(sidebarEl);
     offcanvas.show();

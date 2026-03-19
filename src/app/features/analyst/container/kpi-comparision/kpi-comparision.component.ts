@@ -18,6 +18,7 @@ import { AiButtonComponent } from "src/app/shared/standAlone/ai-button/ai-button
 import { GetMutiplekpiLayerResultsDto } from "src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto";
 import { GetMutiplekpiLayerRequestDto } from "src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto";
 import { CompareCityKpiDetailComponent } from "src/app/shared/standAlone/compare-city-kpi-detail/compare-city-kpi-detail.component";
+import { AdminService } from "src/app/features/admin/admin.service";
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -64,7 +65,8 @@ export class KpiComparisionComponent implements OnInit {
     private analystService: AnalystService,
     private toaster: ToasterService,
     private userService: UserService,
-    public commonService: CommonService
+    public commonService: CommonService,
+    private adminService:AdminService
   ) {
 
   }
@@ -486,4 +488,26 @@ export class KpiComparisionComponent implements OnInit {
       item.layerName?.toLowerCase().includes(term)
     );
   }
+  exportData() { 
+  if (!this.selectedCities.length) {
+    this.toaster.showWarning("Please select cities");
+    return;
+  }
+
+  const params = {
+  cities: this.selectedCities.join(','),
+  kpis: this.selectedKpis?.length ? this.selectedKpis.join(',') : null,
+  updatedAt: new Date().toISOString()
+};
+
+  this.adminService.exportCompareCities(params)
+    .subscribe((res: Blob) => {
+
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "City_Comparison.xlsx";
+      a.click();
+    });
+}
 }

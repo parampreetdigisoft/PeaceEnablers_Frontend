@@ -125,7 +125,7 @@ export class KpiComparisionComponent implements OnInit {
       next: (res) => {
         this.viewDetailIndex = -1;
         if (res.succeeded) {
-          this.mutipleCitykpiLayerResults = res.result || null;
+          this.mutipleCitykpiLayerResults = res.result || null;          
           const sidebarEl = document.getElementById('kpiLayerSidebar');
           const offcanvas = new bootstrap.Offcanvas(sidebarEl);
           offcanvas.show();
@@ -485,4 +485,27 @@ export class KpiComparisionComponent implements OnInit {
       item.layerName?.toLowerCase().includes(term)
     );
   }
+
+exportData() { 
+  if (!this.selectedCities.length) {
+    this.toaster.showWarning("Please select cities");
+    return;
+  }
+
+  const params = {
+  cities: this.selectedCities.join(','),
+  kpis: this.selectedKpis?.length ? this.selectedKpis.join(',') : null,
+  updatedAt: new Date().toISOString()
+};
+
+  this.adminService.exportCompareCities(params)
+    .subscribe((res: Blob) => {
+
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "City_Comparison.xlsx";
+      a.click();
+    });
+}
 }

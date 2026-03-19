@@ -16,6 +16,7 @@
 				</select>
 				<ng-select [items]="cities"
 					[searchable]="true"
+          [searchFn]="customSearchFn"
 					[placeholder]="filterCity > 0? '' : 'Search City..'"
 					[(ngModel)]="filterCity"
 					(change)="getAiCities()"

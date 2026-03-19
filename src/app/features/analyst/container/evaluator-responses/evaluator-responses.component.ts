@@ -78,7 +78,7 @@ export class EvaluatorResponsesComponent implements OnInit {
 
   ngOnDestroy(): void {}
 
-  assessmentPhaseAction(assessment: GetAssessmentResponse) {
+  assessmentPhaseAction(assessment: GetAssessmentResponse) {   
     switch (assessment.assessmentPhase) {
       case AssessmentPhase.InProgress: {
         if (this.assessmentUserID) {

@@ -58,7 +58,7 @@
                         </td>
                         <td style="text-align: center;">
                             <span class="confidence-badge" [ngClass]="(city?.confidenceLevel ?? 'low').toLowerCase()">
-                                {{ city?.confidenceLevel ?? 'NA' }}
+                                {{ city?.confidenceLevel || 'NA' }}
                             </span>
                         </td>
                     </tr>
@@ -75,7 +75,7 @@
                             <div class="kpi_cat_name">Evaluator Progress</div>
                         </td>
                         <td>
-                            <app-circular-score [value]="city?.evaluatorProgress ?? 0"></app-circular-score>
+                            <app-circular-score [value]="city?.evaluatorScore ?? 0"></app-circular-score>
                         </td>
                     </tr>
                     <tr>
@@ -93,7 +93,7 @@
                         </td>
                         <td>
                             <app-circular-score
-                                [value]="(((city?.aiProgress ?? 0) + (city?.evaluatorProgress ?? 0))/2)"></app-circular-score>
+                                [value]="(((city?.aiProgress ?? 0) + (city?.evaluatorScore ?? 0))/2)"></app-circular-score>
                         </td>
                     </tr>
                 </table>
@@ -132,44 +132,171 @@
                     </tr>
                 </thead>
                 <tbody>
+                    
                     <tr>
-                        <td><span class="score_label_tab">Cross Pillar Patterns</span></td>
-                        <td *ngIf="city?.crossPillarPatterns"> <app-typing-text [text]="city!.crossPillarPatterns"
+                        <td><span class="score_label_tab">Evidence Summary</span></td>
+                        <td *ngIf="city?.evidenceSummary"> <app-typing-text [text]="city!.evidenceSummary!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Structural Evidence</span></td>
+                        <td *ngIf="city?.structuralEvidence"> <app-typing-text [text]="city!.structuralEvidence!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Operational Evidence</span></td>
+                        <td *ngIf="city?.operationalEvidence"> <app-typing-text [text]="city!.operationalEvidence!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td><span class="score_label_tab">Outcome Evidence</span></td>
+                        <td *ngIf="city?.outcomeEvidence"> <app-typing-text [text]="city!.outcomeEvidence!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Perception Evidence</span></td>
+                        <td *ngIf="city?.perceptionEvidence"> <app-typing-text [text]="city!.perceptionEvidence!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Temporal Scope</span></td>
+                        <td *ngIf="city?.temporalScope"> <app-typing-text [text]="city!.temporalScope!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Distortion Screening</span></td>
+                        <td *ngIf="city?.distortionScreening"> <app-typing-text [text]="city!.distortionScreening!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Political Shock</span></td>
+                        <td *ngIf="city?.politicalShock"> <app-typing-text [text]="city!.politicalShock!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td><span class="score_label_tab">Economic Shock</span></td>
+                        <td *ngIf="city?.economicShock"> <app-typing-text [text]="city!.economicShock!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td><span class="score_label_tab">Narrative Shock</span></td>
+                        <td *ngIf="city?.narrativeShock"> <app-typing-text [text]="city!.narrativeShock!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td><span class="score_label_tab">Overall Stress Resilience</span></td>
+                        <td *ngIf="city?.overallStressResilience"> <app-typing-text [text]="city!.overallStressResilience!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Stress Score Adjustment</span></td>
+                        <td *ngIf="city?.stressScoreAdjustment"> <app-typing-text [text]="city!.stressScoreAdjustment!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Inequality Adjustment</span></td>
+                        <td *ngIf="city?.inequalityAdjustment"> <app-typing-text [text]="city!.inequalityAdjustment!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Opacity Risk</span></td>
+                        <td *ngIf="city?.opacityRisk"> <app-typing-text [text]="city!.opacityRisk!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Non Compensation Note</span></td>
+                        <td *ngIf="city?.nonCompensationNote"> <app-typing-text [text]="city!.nonCompensationNote!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Relational Integrity</span></td>
+                        <td *ngIf="city?.relationalIntegrity"> <app-typing-text [text]="city!.relationalIntegrity!"
                                 [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
                     </tr>
                     <tr>
                         <td><span class="score_label_tab">Institutional Capacity</span></td>
-                        <td *ngIf="city?.institutionalCapacity"> <app-typing-text [text]="city!.institutionalCapacity"
+                        <td *ngIf="city?.institutionalCapacity"> <app-typing-text [text]="city!.institutionalCapacity!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Primary Source</span></td>
+                        <td *ngIf="city?.primarySource"> <app-typing-text [text]="city!.primarySource!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Cross Pillar Patterns</span></td>
+                        <td *ngIf="city?.crossPillarPatterns"> <app-typing-text [text]="city!.crossPillarPatterns!"
+                                [speed]="5" [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="score_label_tab">Institutional Capacity</span></td>
+                        <td *ngIf="city?.institutionalCapacity"> <app-typing-text [text]="city!.institutionalCapacity!"
                                 [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
                     </tr>
                     <tr>
                         <td><span class="score_label_tab">Equity Assessment</span></td>
-                        <td *ngIf="city?.equityAssessment"> <app-typing-text [text]="city!.equityAssessment" [speed]="5"
+                        <td *ngIf="city?.equityAssessment"> <app-typing-text [text]="city!.equityAssessment!" [speed]="5"
                                 [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
                     </tr>
                     <tr>
-                        <td><span class="score_label_tab">Sustainability Outlook</span></td>
-                        <td *ngIf="city?.sustainabilityOutlook"> <app-typing-text [text]="city!.sustainabilityOutlook"
+                        <td><span class="score_label_tab">Conflict Risk Outlook</span></td>
+                        <td *ngIf="city?.conflictRiskOutlook"> <app-typing-text [text]="city!.conflictRiskOutlook!"
                                 [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
                     </tr>
                     <tr>
-                        <td><span class="score_label_tab">Strategic Recommendations</span></td>
-                        <td *ngIf="city?.strategicRecommendations"> <app-typing-text
-                                [text]="city!.strategicRecommendations" [speed]="5" [numberOfWordAfterHideText]="7">
+                        <td><span class="score_label_tab">Strategic Recommendation </span></td>
+                        <td *ngIf="city?.strategicRecommendation"> <app-typing-text
+                                [text]="city!.strategicRecommendation!" [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
                     </tr>
                     <tr>
                         <td><span class="score_label_tab">Data Transparency Note</span></td>
-                        <td *ngIf="city?.dataTransparencyNote"> <app-typing-text [text]="city!.dataTransparencyNote"
+                        <td *ngIf="city?.dataTransparencyNote"> <app-typing-text [text]="city!.dataTransparencyNote!"
                                 [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>

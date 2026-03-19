@@ -146,7 +146,23 @@ app-kpianalysis app-ag-bar:nth-child(3) {
   background-color: #304a43 !important;
   color: #ffffff !important;
 }
+.low {
+    background-color: #ffcccc;
+    color: #b30000;
+    border: 1px solid #ff4d4d !important;
+}
 
+.medium {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c !important;
+}
+
+.high {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #75d69c !important;
+}
 
 .faq_sidebar_item.active .faq_sidebar_item_inner:after {
     background-color: #304a43;

@@ -202,3 +202,20 @@ button.btn-close:focus-visible {
 ::ng-deep .kpi_custom_table app-sparkline-score .sparkline-track .score-dot, ::ng-deep .kpi_custom_table app-sparkline-score .sparkline-track .segment {
     border: 1px solid #ffffff !important;
 }
+.low {
+    background-color: #ffcccc !important;
+    color: #b30000 !important;
+    border: 1px solid #ff4d4d !important;
+}
+
+.medium {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border: 1px solid #ffe69c !important;
+}
+
+.high {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border: 1px solid #75d69c !important;
+}

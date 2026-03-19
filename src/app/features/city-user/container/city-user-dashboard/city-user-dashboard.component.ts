@@ -235,7 +235,7 @@ export class CityUserDashboardComponent implements OnInit, OnDestroy {
           this.toaster.showSuccess("Access granted successfully");
           this.ngOnInit();
         } else {
-          this.toaster.showWarning("Access may not granted. Please try again");
+          this.toaster.showWarning(res.errors[0]);
         }
       },
       error: (err) => {

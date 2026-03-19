@@ -178,12 +178,12 @@ export class AccountComponent implements OnInit {
       this.loading = true;
       this.authService.confirmMail(event)
         .subscribe({
-          next: (res) => {
+          next: (res:any) => {           
             this.loading = false;
             if (res.succeeded) {
               this.isSuccess = true;
-              this.toasterService.showSuccess(res.messages.join(", "));
-              this.refreshToken();
+              this.toasterService.showSuccess(res.messages.join(", "));             
+             this.refreshToken();             
             }
             else {
               this.toasterService.showError(res.errors.join(","));

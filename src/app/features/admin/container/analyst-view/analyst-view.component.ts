@@ -61,7 +61,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       .getAllCitiesByUserId(this.userService?.userInfo?.userID)
       .subscribe({
         next: (res) => {
-          this.cities = res.result;
+          this.cities = res.result;          
         },
       });
   }
@@ -88,7 +88,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
   }
 
   editAnalyst(analyst: GetUserByRoleResponse | null, isOpen: boolean = true) {
-    this.selectedAnalyst = analyst;
+    this.selectedAnalyst = analyst;  
     if (isOpen) {
       this.opendialog();
     }
@@ -148,12 +148,12 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       this.adminService.editAnalyst(payload).subscribe({
         next: (res) => {
           this.closeModal();
-          if (res.succeeded) {
-            this.getAnalyst(this.currentPage);
+          if (res.succeeded) {           
             this.toaster.showSuccess(res?.messages.join(", "));
           } else {
             this.toaster.showError(res?.errors.join(", "));
           }
+           this.getAnalyst(this.currentPage);
         },
         error: () => {
           this.closeModal();
@@ -164,12 +164,12 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       this.adminService.addAnalyst(payload).subscribe({
         next: (res) => {
           this.closeModal();
-          if (res.succeeded) {
-            this.getAnalyst();
+          if (res.succeeded) {           
             this.toaster.showSuccess(res?.messages.join(", "));
-          } else {
+          } else {            
             this.toaster.showError(res?.errors.join(", "));
           }
+          this.getAnalyst();
         },
         error: () => {
           this.closeModal();

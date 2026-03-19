@@ -11,6 +11,7 @@
         <thead>
             <tr>
                 <th>S.No.</th>
+                <th>Image</th>
                 <th>Pillars</th>
                 <th>Descriptions</th>
                 <th class="action_th">Actions</th>
@@ -19,6 +20,12 @@
         <tbody>
             <tr *ngFor="let pillar of pillars; let i = index">
                 <td>{{i+1}}</td>
+                <td>  <img class="city_img" 
+          style="width: 50px; border-radius:5px; height: 35px; object-fit: cover;"
+                [src]="urlBase+ '/' +pillar?.imagePath"
+                [alt]="'Profile Image'"
+                (error)="onImgError($event)"
+              /></td>
                 <td>{{pillar.pillarName}}</td>
                 <td>
                     <div class="desc" [class.collapsed]="!pillar.expand" [innerHTML]="decodeHtml(pillar.description)">

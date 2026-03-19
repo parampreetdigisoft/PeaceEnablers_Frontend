@@ -171,4 +171,15 @@ export class AiQuestionAnalysisComponent implements OnInit, OnChanges {
 
     offcanvas.show();
   }
+   customSearchFn(term: string, item: any) {    
+    term = term.toLowerCase();
+    return (
+      item.cityName?.toLowerCase().includes(term) ||
+      item.cityAliasName?.toLowerCase().includes(term)
+    );
+}
+refresh()
+{
+  this.ngOnInit(); 
+}
 }

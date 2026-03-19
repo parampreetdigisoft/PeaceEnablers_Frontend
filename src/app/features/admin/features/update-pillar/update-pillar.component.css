@@ -9,3 +9,10 @@ textarea.form-control {
   resize: vertical;   /* allow user to drag resize if needed */
   border-radius: 5px;
 }
+.pp_pic
+{
+  height: 48px;
+  width: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+}

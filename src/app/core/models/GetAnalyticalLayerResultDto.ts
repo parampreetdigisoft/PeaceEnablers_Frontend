@@ -50,7 +50,6 @@ export interface FiveLevelInterpretation {
   minRange: number;
   maxRange: number;
   condition: string;
-  descriptor: string;
-  urbanSignal: string;
+  descriptor: string;  
   strategicAction: string;
 }

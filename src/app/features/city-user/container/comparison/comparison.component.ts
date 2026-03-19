@@ -17,6 +17,7 @@ import { CityUserService } from '../../city-user.service';
 import { CityVM } from 'src/app/core/models/CityVM';
 import { CommonModule } from '@angular/common';
 import { debounceTime, Subject } from 'rxjs';
+import { AdminService } from 'src/app/features/admin/admin.service';
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -62,7 +63,8 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     private cityUserService: CityUserService,
     private toaster: ToasterService,
     public commonService: CommonService,
-    private userDataShareService: UserDataShareService
+    private userDataShareService: UserDataShareService,
+    private adminService:AdminService
   ) {
 
   }
@@ -439,4 +441,26 @@ export class ComparisonComponent implements OnInit, OnDestroy {
       item.layerName?.toLowerCase().includes(term)
     );
   }
+  exportData() { 
+  if (!this.selectedCities.length) {
+    this.toaster.showWarning("Please select cities");
+    return;
+  }
+
+  const params = {
+  cities: this.selectedCities.join(','),
+  kpis: this.selectedKpis?.length ? this.selectedKpis.join(',') : null,
+  updatedAt: new Date().toISOString()
+};
+
+  this.adminService.exportCompareCities(params)
+    .subscribe((res: Blob) => {
+
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "City_Comparison.xlsx";
+      a.click();
+    });
+}
 }

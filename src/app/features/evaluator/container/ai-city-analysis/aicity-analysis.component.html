@@ -5,7 +5,7 @@
     </div>
     <div class="col-md-3">
       <div class="compare_select input_field input_flex">
-        <ng-select [items]="cities" bindValue="cityID" bindLabel="cityName" [searchable]="true"
+        <ng-select [items]="cities" bindValue="cityID" bindLabel="cityName" [searchable]="true" [searchFn]="customSearchFn"
           class="form-control analyst_multi_select" [placeholder]="filterCity > 0? '' : 'Search City..'"
           [(ngModel)]="filterCity" (change)="getAiCities()">
           <ng-template ng-label-tmp let-item="item" class="select_item">
@@ -17,6 +17,41 @@
           </ng-template>
         </ng-select>
       </div>
+       <a
+          style="cursor: pointer"
+          [matTooltip]="
+            'Refresh'
+          "
+          (click)="refresh()"
+        >
+          <span style="display: inline-block">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="-0.45 0 60.369 60.369"
+            >
+              <g
+                id="Group_63"
+                data-name="Group 63"
+                transform="translate(-446.571 -211.615)"
+              >
+                <path
+                  id="Path_54"
+                  data-name="Path 54"
+                  d="M504.547,265.443h-9.019a30.964,30.964,0,0,0-29.042-52.733,1.5,1.5,0,1,0,.792,2.894,27.955,27.955,0,0,1,25.512,48.253l0-10.169h-.011a1.493,1.493,0,0,0-2.985,0h0v13.255a1.5,1.5,0,0,0,1.5,1.5h13.256a1.5,1.5,0,1,0,0-3Z"
+                  fill="#0c2c67"
+                />
+                <path
+                  id="Path_55"
+                  data-name="Path 55"
+                  d="M485.389,267.995a27.956,27.956,0,0,1-25.561-48.213l0,10.2h.015a1.491,1.491,0,0,0,2.978,0h.007V216.791a1.484,1.484,0,0,0-1.189-1.532l-.018-.005a1.533,1.533,0,0,0-.223-.022c-.024,0-.046-.007-.07-.007H448.071a1.5,1.5,0,0,0,0,3h8.995a30.963,30.963,0,0,0,29.115,52.664,1.5,1.5,0,0,0-.792-2.894Z"
+                  fill="#0c2c67"
+                />
+              </g>
+            </svg>
+          </span>
+        </a>
     </div>
   </div>
 </div>
@@ -41,12 +76,12 @@
           <td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
           <td class="city-col">
             <!-- {{ city.cityName }} {{ city.state }},{{ city.country }} -->
-            <app-typing-text [text]="city.cityName +' '+ city.state +', '+city.country" [speed]="40">
+            <app-typing-text [text]="city.cityName + ', ' + city.state + ', ' + city.country" [speed]="40">
             </app-typing-text>
           </td>
 
           <td>
-            <app-circular-score [value]="city?.evaluatorProgress ?? 0"></app-circular-score>
+            <app-circular-score [value]="city?.evaluatorScore ?? 0"></app-circular-score>
           </td>
 
           <td>
@@ -57,7 +92,7 @@
           </td>
           <td>
             <span class="confidence-badge" [ngClass]="(city?.confidenceLevel || 'low').toLowerCase()">
-              {{ city?.confidenceLevel ? city.confidenceLevel :'NA' }}
+              {{ city?.confidenceLevel || 'NA' }}
             </span>
           </td>
           					<td>
@@ -89,20 +124,7 @@
                             </defs>
                           </svg>
                         </span>
-                      </a>
-                      <a style="cursor: pointer" matTooltip="Download Reports"
-                        (click)="aiCityDetailsReport(city, i); $event.preventDefault()">
-                        <span style="display: inline-block" *ngIf="i != selectedIndex">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                              d="M16.875 11.25V3.75C16.875 3.41848 16.7433 3.10053 16.5089 2.86611C16.2745 2.63169 15.9565 2.5 15.625 2.5H4.375C4.04348 2.5 3.72554 2.63169 3.49112 2.86611C3.2567 3.10053 3.125 3.41848 3.125 3.75V11.25C3.125 11.5815 3.2567 11.8995 3.49112 12.1339C3.72554 12.3683 4.04348 12.5 4.375 12.5H6.25C6.41576 12.5 6.57473 12.4341 6.69194 12.3169C6.80915 12.1997 6.875 12.0408 6.875 11.875C6.875 11.7092 6.80915 11.5503 6.69194 11.4331C6.57473 11.3158 6.41576 11.25 6.25 11.25H4.375V3.75H15.625V11.25H13.75C13.5842 11.25 13.4253 11.3158 13.3081 11.4331C13.1908 11.5503 13.125 11.7092 13.125 11.875C13.125 12.0408 13.1908 12.1997 13.3081 12.3169C13.4253 12.4341 13.5842 12.5 13.75 12.5H15.625C15.9565 12.5 16.2745 12.3683 16.5089 12.1339C16.7433 11.8995 16.875 11.5815 16.875 11.25ZM7.31719 14.5578L9.375 16.6164V9.375C9.375 9.20924 9.44085 9.05026 9.55806 8.93305C9.67527 8.81584 9.83424 8.75 10 8.75C10.1658 8.75 10.3247 8.81584 10.4419 8.93305C10.5592 9.05026 10.625 9.20924 10.625 9.375V16.6164L12.6828 14.5578C12.8001 14.4405 12.9591 14.3746 13.125 14.3746C13.2909 14.3746 13.4499 14.4405 13.5672 14.5578C13.6845 14.6751 13.7503 14.8341 13.7503 15C13.7503 15.1658 13.6845 15.3249 13.5672 15.4422L10.4422 18.5672C10.3841 18.6253 10.3152 18.6714 10.2393 18.7028C10.1635 18.7343 10.0821 18.7505 10 18.7505C9.91787 18.7505 9.83654 18.7343 9.76066 18.7028C9.68479 18.6714 9.61586 18.6253 9.55781 18.5672L6.43281 15.4422C6.31554 15.3249 6.24965 15.1658 6.24965 15C6.24965 14.8341 6.31554 14.6751 6.43281 14.5578C6.55009 14.4405 6.70915 14.3746 6.875 14.3746C7.04085 14.3746 7.19991 14.4405 7.31719 14.5578Z"
-                              fill="white" />
-                          </svg>
-                        </span>
-                        <p *ngIf="i == selectedIndex" class="btn_spinner"><span
-                            class="spinner-border spinner-border-sm ms-2"></span></p>
-                      </a>
+                      </a>                      
                       <a style="cursor: pointer" matTooltip="Add comment for analyst"
                         (click)="opendialog(city); $event.preventDefault()">
                         <span style="display: inline-block">

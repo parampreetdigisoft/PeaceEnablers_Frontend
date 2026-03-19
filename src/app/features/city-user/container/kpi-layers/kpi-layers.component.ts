@@ -58,7 +58,7 @@ export class KpiLayersComponent {
     this.isLoader = true;
     let payload: GetAnalyticalLayerRequestDto = {
       sortDirection: SortDirection.DESC,
-      sortBy: 'CalValue4',
+      sortBy: 'CalValue5',
       pageNumber: currentPage,
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID

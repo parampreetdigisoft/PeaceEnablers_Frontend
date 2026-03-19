@@ -13,7 +13,6 @@ import { CityVM } from 'src/app/core/models/CityVM';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { AiComputationService } from 'src/app/core/services/ai-computation.service';
 import { ToasterService } from 'src/app/core/services/toaster.service';
-import { CityUserService } from 'src/app/features/city-user/city-user.service';
 import { PaginationComponent } from 'src/app/shared/pagination/pagination.component';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
 import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-score/sparkline-score.component';
@@ -178,4 +177,15 @@ export class AiQuestionAnalysisComponent implements OnInit, OnChanges {
 
     offcanvas.show();
   }
+   customSearchFn(term: string, item: any) {    
+    term = term.toLowerCase();
+    return (
+      item.cityName?.toLowerCase().includes(term) ||
+      item.cityAliasName?.toLowerCase().includes(term)
+    );
+}
+refresh()
+{
+  this.getAIPillarQuestions(this.currentPage);
+}
 }

@@ -45,6 +45,10 @@ export class AiComputationService {
     return this.http
       .ImportFile(`AiComputation/aiCityDetailsReport`,request);
   }
+  public aiAllCitiesDetailReport( ) {
+    return this.http
+      .ImportFile(`AiComputation/aiAllCityDetailsReport`,null);
+  }
   public aiPillarDetailsReport(request:AiCitySummeryRequestPdfDto) {
     return this.http
       .ImportFile(`AiComputation/aiPillarDetailsReport`,request);

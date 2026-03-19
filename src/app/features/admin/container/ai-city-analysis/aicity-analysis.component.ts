@@ -82,7 +82,7 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res.succeeded) {
-            this.cities = res.result;
+            this.cities = res.result;            
           } else {
             this.toaster.showError(res.errors.join(", "));
           }
@@ -108,7 +108,7 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
     }
     this.aiCities = [];
     this.aiComputationService.getAICities(payload).subscribe({
-      next: (res) => {
+      next: (res) => {        
         this.aiCities = res.data;
         this.totalRecords = res.totalRecords;
         this.currentPage = currentPage;
@@ -281,4 +281,46 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
       this.closeModal();
     }
   }
+  exportAllCities()
+  {
+     this.aiComputationService.aiAllCitiesDetailReport().subscribe({
+      next: (blob:any) => {
+        this.selectedIndex = -1;
+        if (blob) {
+          // Create download link
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `All_Cites_Detail_${
+            new Date().toISOString().split("T")[0]
+          }.pdf`;
+
+          // Trigger download
+          document.body.appendChild(link);
+          link.click();
+
+          // Cleanup
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          this.toaster.showSuccess("Report generated successfully");
+        }
+      },
+      error: () => {
+        this.toaster.showError("There is an error occure please try again");
+        this.selectedIndex = -1;
+      },
+    });
+  }
+
+  customSearchFn(term: string, item: any) {    
+    term = term.toLowerCase();
+    return (
+      item.cityName?.toLowerCase().includes(term) ||
+      item.cityAliasName?.toLowerCase().includes(term)
+    );
+}
+refresh()
+{
+    this.getAiCities(this.currentPage);
+}
 }

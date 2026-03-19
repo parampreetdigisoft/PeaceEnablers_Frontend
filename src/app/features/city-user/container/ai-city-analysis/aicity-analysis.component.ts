@@ -150,4 +150,11 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
       }
     });
   }
+   customSearchFn(term: string, item: any) {    
+    term = term.toLowerCase();
+    return (
+      item.cityName?.toLowerCase().includes(term) ||
+      item.cityAliasName?.toLowerCase().includes(term)
+    );
+}
 }

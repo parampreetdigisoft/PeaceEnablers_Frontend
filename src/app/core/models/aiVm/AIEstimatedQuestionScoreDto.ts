@@ -2,27 +2,37 @@ export interface AIEstimatedQuestionScoreDto {
   cityId: number;
   pillarId: number;
   questionId: number;
-
   questionText: string;
-  dataYear: number;
-
+  year: number; // ✅ renamed from dataYear
   aiScore: number | null;
   aiProgress: number | null;
-  evaluatorProgress: number | null;
+  evaluatorScore: number | null; // ✅ renamed
   discrepancy: number | null;
-
   confidenceLevel: string | null;
-  dataSourcesUsed: number | null;
-
+  sourcesConsulted: number | null; // ✅ renamed
   evidenceSummary: string | null;
-  redFlags: string | null;
-  geographicEquityNote: string | null;
-
+  // Evidence Dimensions
+  structuralEvidence: string | null;
+  operationalEvidence: string | null;
+  outcomeEvidence: string | null;
+  perceptionEvidence: string | null;
+  temporalScope: string | null;
+  distortionScreening: string | null;
+  relationalDependencies: string | null;
+  // Stress Tests
+  stressPoliticalShock: string | null;
+  stressEconomicShock: string | null;
+  stressNarrativeShock: string | null;
+  stressOverallResilienceShock: string | null;
+  inequalityAdjustment: string | null; // ✅ renamed
+  opacityRisk: string | null;
+  redFlag: string | null; // ✅ renamed
+  // Source Metadata
   sourceType: string | null;
   sourceName: string | null;
   sourceURL: string | null;
   sourceDataYear: number | null;
   sourceDataExtract: string | null;
-  sourceTrustLevel: number | null;
-  updatedAt: Date;
+  sourceHierarchyLevel: number | null; // ✅ renamed
+  updatedAt: Date | null;
 }

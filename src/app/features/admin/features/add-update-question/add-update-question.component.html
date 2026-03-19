@@ -36,7 +36,7 @@
                             <div class="input_field">
                                 <label>Pillar *</label>
                                 <select formControlName="pillarID" class="form-control">
-                                    <option value="">Select Pillar</option>
+                                    <option value="null">Select Pillar</option>
                                     <option *ngFor="let pillar of pillers" [value]="pillar.pillarID">
                                         {{ pillar.pillarName }}
                                     </option>
@@ -81,7 +81,7 @@
                                         </div>
 
                                         <!-- Remove Button -->
-                                        <div class="col-auto align-self-start mt-2">
+                                        <div class="col-auto align-self-start mt-2" *ngIf="questionOptions.length > 1">
                                             <button type="button" class=" minus_btn" (click)="removeOption(i)"
                                                 [disabled]="questionOptions.length == 1">
                                                 <svg _ngcontent-ng-c94318325="" xmlns="http://www.w3.org/2000/svg"

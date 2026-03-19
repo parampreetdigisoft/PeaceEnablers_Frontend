@@ -23,8 +23,8 @@
             <div class="cross-pillar">
                 <h5>Red Flags</h5>
                 &nbsp;
-                <div *ngIf="pillar?.redFlags">
-                    <app-typing-text [text]="pillar!.redFlags ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
+                <div *ngIf="pillar?.redFlag">
+                    <app-typing-text [text]="pillar!.redFlag ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
                     </app-typing-text>
                 </div>
             </div>
@@ -85,7 +85,9 @@
                         </td>
                         <td [matTooltip]="getLabelDesById(s?.trustLevel ?? 0)"> {{getLabelById(s?.trustLevel ?? 0)}}
                         </td>
-                        <td> {{s?.dataYear ?? ''}}</td>
+                        <td> 
+                            {{ (s?.dataYear ?? 0) > 0 ? s?.dataYear : 'NA' }}
+                        </td>
                         <td *ngIf="s?.dataExtract"> <app-typing-text [text]="s!.dataExtract  ?? ''" [speed]="5"
                                 [numberOfWordAfterHideText]="7">
                             </app-typing-text>

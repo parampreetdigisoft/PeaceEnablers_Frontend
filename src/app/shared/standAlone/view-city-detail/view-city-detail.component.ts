@@ -57,14 +57,14 @@ export class ViewCityDetailComponent implements OnChanges {
     this.router.navigate([`/${this.userService.userInfo?.role?.toLowerCase()}/ai/kpi-analysis`], {
       queryParams: {
         cityID: this.city?.cityID,
-        year:this.city?.scoringYear
+        year:this.city?.year
       }
     });
   }
 
   ApexGetPieOptions() {
     const aiProgress = this.city?.aiProgress ?? 0;
-    const evaluatorProgress = this.city?.evaluatorProgress ?? 0;
+    const evaluatorProgress = this.city?.evaluatorScore ?? 0;
     const discrepancy = this.city?.discrepancy ?? 0;
     const avgProgress = (aiProgress + evaluatorProgress) / 2;
 

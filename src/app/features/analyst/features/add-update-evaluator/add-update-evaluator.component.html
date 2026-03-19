@@ -43,13 +43,15 @@
                                         required.</span>
                                     <span *ngIf="evaluatorForm.get('email')?.errors?.['email']">Invalid email
                                         format.</span>
+                                        <span *ngIf="evaluatorForm.get('email')?.errors?.['emailExists']">Email is
+                                        already taken.</span>
                                 </div>
                             </div>
 
                             <div class="input_field">
                                 <label>Phone No.*</label>
-                                <input type="text" formControlName="phone" appNumberOnly
-                                    placeholder="Enter phone number" class="form-control">
+                                <input type="text" formControlName="phone"
+                                    placeholder="Enter phone number" class="form-control"  minlength="10" maxlength="15" (keypress)="numberOnly($event)">
                                 <div class="error-msg"
                                     *ngIf="evaluatorForm.get('phone')?.invalid && (evaluatorForm.get('phone')?.touched || isSubmitted)">
                                     Phone number is required.

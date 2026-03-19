@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  updateUserEvent(event: any) {
+  updateUserEvent(event: any) {    
     this.loading = true;
     this.commonService.updateUser(event).subscribe({
       next: (res) => {
@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
       },
       error: () => {
         this.closeModal();
-        this.toaster.showError("Failed to delete analyst");
+        this.toaster.showError("Failed to Update User");
       },
     });
   }

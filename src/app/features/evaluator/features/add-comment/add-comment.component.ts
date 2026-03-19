@@ -29,8 +29,8 @@ export class AddCommentComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['city'] && this.commentForm) {
       this.commentForm.patchValue({
-        cityID: this.city?.cityID,
-        comment:[this.city?.comment]
+        cityID: this.city?.cityID
+        
       });
     }
   }

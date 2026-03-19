@@ -8,7 +8,7 @@ export interface CityVM extends AddUpdateCityDto {
   userCityMappingID?:number;
   score?: number;
   progress?: number;
-  aiScore?: number;
+  aiScore?: number; 
 }
 export interface AddUpdateCityDto {
   cityID: number;
@@ -21,6 +21,10 @@ export interface AddUpdateCityDto {
   imageUrl: string;
   longitude: number;
   latitude: number;
+  population:number;
+  income:number;
+  cityAliasName :string; 
+  peerCitiesIDs?: number[]; 
 }
 
 export interface BulkAddCityDto {

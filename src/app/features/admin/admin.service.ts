@@ -23,6 +23,7 @@ import { AnalyticalLayerResponseDto, GetAnalyticalLayerRequestDto, GetAnalytical
 import { ChangeAssessmentStatusRequestDto, GetAssessmentQuestoinRequestDto, GetAssessmentRequestDto, GetCityPillarHistoryRequestDto, GetCityPillarHistoryRequestNewDto, TransferAssessmentRequestDto } from 'src/app/core/models/AssessmentRequest';
 import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto';
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
+import { EmailExistDto } from 'src/app/core/models/EmailExistDto';
 
 @Injectable({
   providedIn: "root",
@@ -103,6 +104,13 @@ export class AdminService {
       .post(`Auth/UpdateInviteUser`, data)
       .pipe(map((x) => x as ResultResponseDto<unknown>));
   }
+  public checkEmailExist(data: EmailExistDto) {    
+  return this.http
+    .post<EmailExistDto, ResultResponseDto<any>>( 'Auth/CheckEmailExist', data)
+    .pipe(
+      map(res => res.isExist ?? false)
+    );
+}
   public deleteUser(id: number) {
     return this.http
       .delete(`Auth/deleteUser/` + id)
@@ -111,9 +119,15 @@ export class AdminService {
   public getAllPillars() {
     return this.http.get(`Pillar/Pillars`).pipe(map((x) => x as PillarsVM[]));
   }
-  public editAllPillars(id: number, data: PillarsVM) {
-    return this.http.put(`Pillar/` + id, data).pipe(map((x) => x as PillarsVM));
+
+  public editAllPillars(id: number, data: FormData) {
+     const formData = new FormData();  
+    return this.http
+      .UploadFile(`Pillar/edit/${id}`, data)
+      .pipe(map((x) => x as ResultResponseDto<boolean>));
   }
+
+
   public getResponsesByUserId(request: GetCityPillarHistoryRequestNewDto) {
     return this.http.post(`Pillar/GetResponsesByUserId`, request).pipe(map(x => x as PaginationResponse<PillarsHistoryResponse>));
   }
@@ -215,4 +229,7 @@ export class AdminService {
   public getMutiplekpiLayerResults(payload: GetMutiplekpiLayerRequestDto) {
     return this.http.post(`kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
   }
+ public exportCompareCities(params: any) {
+  return this.http.ImportFile(`kpi/ExportCompareCities`, params);
+}
 }

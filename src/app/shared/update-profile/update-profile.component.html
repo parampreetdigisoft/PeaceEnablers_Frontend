@@ -30,12 +30,20 @@
           </div>
           <div class="input_field">
             <label>Email.*</label>
-            <input type="text" readonly formControlName="email" [disabled]="true" class="form-control" />
+            <input type="email"  formControlName="email" class="form-control" />
+            <div class="error-msg" *ngIf="userForm.get('email')?.touched || isSubmitted">
+                <span *ngIf="userForm.get('email')?.errors?.['required']">Email is
+                                        required.</span>
+                <span *ngIf="userForm.get('email')?.errors?.['email']">Invalid email
+                                        format.</span>
+                <span *ngIf="userForm.get('email')?.errors?.['emailExists']">Email is
+                                        already taken.</span>
+            </div>
           </div>
           <div class="input_field">
             <label>Phone No.*</label>
-            <input type="text" appNumberOnly formControlName="phone" placeholder="Enter phone number"
-              class="form-control" />
+            <input type="text" formControlName="phone" placeholder="Enter phone number"
+              class="form-control"  minlength="10" maxlength="15" (keypress)="numberOnly($event)" />
             <div class="error-msg" *ngIf="
                 userForm.get('phone')?.invalid &&
                 (userForm.get('phone')?.touched || isSubmitted)
@@ -62,7 +70,7 @@
             </small>
           </div>
           <!-- Submit -->
-          <button type="submit" class="common_button w-100 mt-4">
+          <button type="submit" class="common_button w-100 mt-4" [disabled]="userForm.invalid">
             {{ "Update" }}
             <span *ngIf="loading" class="spinner-border spinner-border-sm ms-2"></span>
           </button>
