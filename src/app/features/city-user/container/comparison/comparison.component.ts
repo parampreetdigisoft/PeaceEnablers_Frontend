@@ -446,21 +446,33 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     this.toaster.showWarning("Please select cities");
     return;
   }
-
+  this.isLoader = true;
   const params = {
-  cities: this.selectedCities.join(','),
-  kpis: this.selectedKpis?.length ? this.selectedKpis.join(',') : null,
-  updatedAt: new Date().toISOString()
-};
+    cities: this.selectedCities.join(','),
+    kpis: null,
+    updatedAt: new Date().toISOString()
+  };
 
-  this.adminService.exportCompareCities(params)
-    .subscribe((res: Blob) => {
+  this.adminService.exportCompareCitiesCityUsers(params)
+    .subscribe({
+      next: (res: Blob) => {
+        this.isLoader = false;
+        const url = window.URL.createObjectURL(res);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "City_Comparison.xlsx";
+        a.click();
+        window.URL.revokeObjectURL(url); // good practice
+      },
 
-      const url = window.URL.createObjectURL(res);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "City_Comparison.xlsx";
-      a.click();
+      error: (err) => {
+        console.error("Export failed:", err);
+        this.isLoader = false;
+        // Show user-friendly message
+        this.toaster.showError(
+          err?.error?.message || "Failed to export data. Please try again."
+        );
+      }
     });
 }
 }
