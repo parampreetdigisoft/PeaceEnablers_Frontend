@@ -12,6 +12,7 @@ import { AiCrossCityResponseDto } from '../models/aiVm/AiCrossCityResponseDto';
 import { ChangedAiCityEvaluationStatusDto } from '../models/aiVm/ChangedAiCityEvaluationStatusDto';
 import { RegenerateAiSearchDto } from '../models/aiVm/RegenerateAiSearchDto';
 import { AiCitySummeryRequestPdfDto } from '../models/aiVm/AiCitySummeryRequestPdfDto';
+import { AITransferAssessmentRequestDto } from '../models/aiVm/AITransferAssessmentRequestDto';
 
 @Injectable({
   providedIn: 'root'
@@ -68,5 +69,9 @@ export class AiComputationService {
   }
   public regenerateSinglePillarAiSearch(payload: RegenerateAiSearchDto) {
     return this.http.post(`AiComputation/regeneratePillarAiSearch`, payload).pipe(map(x => x as ResultResponseDto<boolean>));;
+  }
+
+   public aiResultTransfer(payload:AITransferAssessmentRequestDto) {
+    return this.http.post(`AiComputation/aiResultTransfer`, payload).pipe(map(x => x as ResultResponseDto<string>));;
   }
 }

@@ -15,10 +15,15 @@ import { FormBuilder, FormGroup, FormArray, Validators } from "@angular/forms";
 import {
   AddAssessmentDto,
   AddAssessmentResponseDto,
+  GetCityPillarHistoryRequestDto,
 } from "src/app/core/models/AssessmentRequest";
 import { AnalystService } from "../../analyst.service";
 import { environment } from "src/environments/environment";
 import { CommonService } from "src/app/core/services/common.service";
+import { finalize } from "rxjs";
+import { AiComputationService } from "src/app/core/services/ai-computation.service";
+import { AITransferAssessmentRequestDto } from "src/app/core/models/aiVm/AITransferAssessmentRequestDto";
+import { AdminService } from "src/app/features/admin/admin.service";
 
 @Component({
   selector: "app-analyst-assessment",
@@ -39,17 +44,20 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
   isLoader: boolean = false;
   urlBase = environment.apiUrl;
   isAssessementFinalized = false;
-
+  isAItransfer: boolean = false;
+  selectedYear = new Date().getFullYear();
   constructor(
     private analystService: AnalystService,
     private userService: UserService,
     private toaster: ToasterService,
     private fb: FormBuilder,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private aiComputationService: AiComputationService,
+    private adminService: AdminService
   ) { }
 
   ngOnInit(): void {
-    this.isLoader =true;
+    this.isLoader = true;
     this.formInitialized();
     this.GetAllPillars();
     this.getCityByUserIdForAssessment();
@@ -109,7 +117,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
 
   GetAllPillars() {
     this.analystService.getAllPillars().subscribe((pillars) => {
-      this.pillars = pillars;      
+      this.pillars = pillars;
     });
   }
   pillarChanged(pillar?: PillarsVM) {
@@ -349,5 +357,99 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
       return txt.value.replace(/\u00a0/g, ' '); // Replace non-breaking space with normal space
     }
     return "";
+  }
+  aiResultTransfer() {
+
+    const city = this.cities.find(x => x.userCityMappingID === Number(this.selectedUserCityMappingID));
+
+    if (!city) {
+      this.toaster.showWarning("Please select a city");
+      return;
+    }
+
+    const payload: AITransferAssessmentRequestDto = {
+      cityID: city.cityID,
+      transferToUserID: this.userService.userInfo?.userID
+    };
+
+    this.isAItransfer = true;
+    this.isLoader = true;
+
+    this.aiComputationService.aiResultTransfer(payload)
+      .pipe(finalize(() => {
+        this.isLoader = false
+        this.isAItransfer = false
+      }))
+      .subscribe({
+        next: (res: any) => {
+          if (res?.succeeded) {
+            this.cityChanged();
+            this.toaster.showSuccess(res.messages?.join(", ") || "Transfer successful");
+          } else {
+            this.toaster.showError(res.errors?.join(", ") || "Transfer failed");
+          }
+        },
+        error: () => {
+          this.toaster.showError("Failed to transfer assessment. Please try again.");
+        }
+      });
+  }
+  downloadQuestions(mode: string) {
+    if (mode === 'excel') { this.ImportQuestions() }
+    else { this.exportPillarsHistoryByUserId('pdf'); }
+
+
+  }
+
+  exportPillarsHistoryByUserId(type: 'excel' | 'pdf') {   
+    if (
+      this.userService?.userInfo?.userID == null ||
+      !this.selectedUserCityMappingID ||
+      this.selectedUserCityMappingID == 0 ||
+      this.selectedUserCityMappingID == null
+    ) {
+      return;
+    }
+
+    const selectedCity = this.cities.find(
+      (x: any) => x.userCityMappingID == this.selectedUserCityMappingID
+    );
+
+    if (!selectedCity) {
+      this.isLoader = false;
+      return;
+    }
+
+    let payload: GetCityPillarHistoryRequestDto = {
+      userID: this.userService?.userInfo?.userID,
+      cityID: selectedCity.cityID,   // ✅ Correct cityID
+      updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
+      exportType: type
+    };
+
+
+    this.adminService.exportPillarsHistoryByUserId(payload).subscribe({
+      next: (res: Blob) => {
+        const url = window.URL.createObjectURL(res);
+
+        const a = document.createElement("a");
+        a.href = url;
+
+        // ✅ Dynamic filename
+        a.download = type === 'pdf'
+          ? "PillarQuestionHistory.pdf"
+          : "PillarQuestionHistory.xlsx";
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+        this.isLoader = false;
+        this.toaster.showSuccess(`Pillars History ${type.toUpperCase()} downloaded successfully`);
+      },
+      error: () => {
+        this.isLoader = false;
+        this.toaster.showError("There is an error please try later");
+      },
+    });
   }
 }

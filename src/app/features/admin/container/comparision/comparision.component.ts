@@ -476,7 +476,8 @@ export class ComparisionComponent implements OnInit {
       userID: this.userService?.userInfo?.userID,
       pillarID: pillarID,
       cityID: this.selectedCities,
-      updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear)
+      updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
+      exportType:'excel'
     };
     this.adminService.getQuestionsHistoryByPillar(payload).subscribe({
       next: (res) => {
@@ -506,7 +507,8 @@ export class ComparisionComponent implements OnInit {
     let payload: GetCityPillarHistoryRequestDto = {
       userID: this.userService?.userInfo?.userID,
       cityID: this.selectedCities,
-      updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear)
+      updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
+      exportType:'excel'
     };
     if (this.selectedPillarID) {
       payload.pillarID = this.selectedPillarID;

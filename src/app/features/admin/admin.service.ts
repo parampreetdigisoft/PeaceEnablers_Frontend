@@ -227,9 +227,12 @@ export class AdminService {
     return this.http.post(`Kpi/compareCities`, request).pipe(map(x => x as ResultResponseDto<CompareCityResponseDto>));
   }
   public getMutiplekpiLayerResults(payload: GetMutiplekpiLayerRequestDto) {
-    return this.http.post(`kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
+    return this.http.post(`Kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
   }
  public exportCompareCities(params: any) {
-  return this.http.ImportFile(`kpi/ExportCompareCities`, params);
+  return this.http.ImportFile(`Kpi/ExportCompareCities`, params);
+}
+ public exportCompareCitiesCityUsers(params: any) {
+  return this.http.ImportFile(`CityUser/ExportCompareCities`, params);
 }
 }
