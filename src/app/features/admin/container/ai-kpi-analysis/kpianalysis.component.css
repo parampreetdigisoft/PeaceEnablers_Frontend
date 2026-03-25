@@ -169,41 +169,31 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 }
 .faq_inner_svg img
 {
-    width: 44px;
+    width: 27px;
 }
-.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #2B1D1A; }
-.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #3A241F; }
-.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #4A2E26; }
-.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #5A3830; }
-
-.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #6A423A; }
-.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #7A4C44; }
-.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #8A5650; }
-
-.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #9A605A; }
-.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #AA6A64; }
-
-.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #BA746E; }
-.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #C87F78; }
-.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #D68A82; }
-
-.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #E4958C; }
-.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #F2A096; }
-
-.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #E08C7F; }
-.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #CC786C; }
-
-.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #B86459; }
-.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #A45046; }
-
-.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #904C42; }
-.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #7C4038; }
-
-.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #68342E; }
-.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #542824; }
-
-.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #3F1C1A; }
-
+.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #5DADE2; } /* Soft Blue */
+.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #45B39D; } /* Sage Teal */
+.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #E67E22; } /* Soft Pumpkin */
+.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #A569BD; } /* Muted Amethyst */
+.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #52BE80; } /* Forest Mist */
+.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #85C1E9; } /* Pale Blue */
+.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #D98880; } /* Dusty Rose */
+.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #5499C7; } /* Ocean Blue */
+.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #AF7AC5; } /* Soft Lavender */
+.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #76D7C4; } /* Pale Aqua */
+.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #F5B041; } /* Golden Sand */
+.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #E59866; } /* Peach Clay */
+.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #1E8449; } /* Deep Moss */
+.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #566573; } /* Slate Grey */
+.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #808B96; } /* Blue Grey */
+.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #D35400; } /* Burnt Orange */
+.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #138D75; } /* Dark Teal */
+.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #AAB7B8; } /* Silver Mist */
+.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #935116; } /* Bronze Brown */
+.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #48C9B0; } /* Turquoise Tint */
+.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #F8C471; } /* Soft Mustard */
+.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #C0392B; } /* Brick Red */
+.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #2E86C1; } /* Steel Blue */
 
 .faq_sidebar_item.active .current-active span.faq_inner_svg {
     background-color: var(--Secondary-Color) !important;

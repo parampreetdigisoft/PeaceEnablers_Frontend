@@ -527,7 +527,7 @@ export class EvaluatorDashboardComponent {
           }
         }
       },
-      colors: ["#303131", "#2ee9ca","#2d5e56", "#aaadad"],
+      colors: ["#003160", "#c2dbf5","#77bd3e", "#6c8fb5"],
       labels: ["Total City", "Active", "InProgress", "Completed"],
       legend: {
         show: true,

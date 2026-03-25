@@ -152,32 +152,32 @@
     width: 44px;
 }
 
-.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #C2A86D; } /* muted gold */
-.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #4CAF50; } /* ACTIVE GREEN */
-.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #8D6E63; } /* soft brown */
-.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #D46A4A; } /* soft red-orange */
-.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #F4A261; } /* peach */
-.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #D7A9A3; } /* dusty pink */
-.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #A1887F; } /* neutral brown */
-.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #81C784; } /* light green */
-.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #64B5F6; } /* soft blue */
-.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #9575CD; } /* muted purple */
-.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #4DB6AC; } /* teal */
-.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #FFB74D; } /* amber */
-.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #E57373; } /* soft red */
-.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #90A4AE; } /* blue grey */
+.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #5DADE2; } /* Soft Blue */
+.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #45B39D; } /* Sage Teal */
+.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #E67E22; } /* Soft Pumpkin */
+.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #A569BD; } /* Muted Amethyst */
+.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #52BE80; } /* Forest Mist */
+.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #85C1E9; } /* Pale Blue */
+.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #D98880; } /* Dusty Rose */
+.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #5499C7; } /* Ocean Blue */
+.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #AF7AC5; } /* Soft Lavender */
+.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #76D7C4; } /* Pale Aqua */
+.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #F5B041; } /* Golden Sand */
+.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #E59866; } /* Peach Clay */
+.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #1E8449; } /* Deep Moss */
+.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #566573; } /* Slate Grey */
+.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #808B96; } /* Blue Grey */
+.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #D35400; } /* Burnt Orange */
+.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #138D75; } /* Dark Teal */
+.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #AAB7B8; } /* Silver Mist */
+.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #935116; } /* Bronze Brown */
+.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #48C9B0; } /* Turquoise Tint */
+.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #F8C471; } /* Soft Mustard */
+.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #C0392B; } /* Brick Red */
+.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #2E86C1; } /* Steel Blue */
 
-/* 🔥 Extended (15–23) — same system, no randomness */
 
-.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #AED581; } /* light olive green */
-.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #7986CB; } /* indigo soft */
-.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #4FC3F7; } /* sky blue */
-.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #A1887F; } /* warm neutral */
-.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #FF8A65; } /* coral */
-.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #81D4FA; } /* light cyan */
-.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #CE93D8; } /* soft violet */
-.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #B0BEC5; } /* neutral grey */
-.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #66BB6A; } /* secondary green */
+
 
 .heading_area .input_field {
     flex: 1;

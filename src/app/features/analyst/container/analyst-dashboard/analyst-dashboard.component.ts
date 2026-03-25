@@ -227,7 +227,7 @@ export class AnalystDashboardComponent implements OnInit {
         },
         background: {
           enabled: true,
-          borderRadius: 8,
+          borderRadius: 5,
           padding: 6,
           borderWidth: 1,
           borderColor: "#e1ebd1",
