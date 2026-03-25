@@ -770,7 +770,10 @@ padding-right: 40px;
     color: #e74c3c;
     border: 1px solid rgba(231, 76, 60, 0.35);
 }
-
+.city_img {
+    background-color: #0c2e5d;
+    border-radius: 15px !important;
+}
 
 .last_data td .sparkline-container .score-label {
     color: #ffffff !important;

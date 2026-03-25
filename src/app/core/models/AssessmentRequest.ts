@@ -1,4 +1,5 @@
 import { AssessmentPhase } from "../enums/AssessmentPhase";
+import { ExportType } from "../enums/exportEnum";
 import { UserRoleValue } from "../enums/UserRole";
 import { PaginationUserRequest } from "./PaginationRequest";
 
@@ -40,7 +41,7 @@ export interface GetCityPillarHistoryRequestDto {
   userID: number;
   pillarID?: number;
   updatedAt:string;
-  exportType:string
+  exportType: ExportType;
 }
 export interface GetCityPillarHistoryRequestNewDto extends PaginationUserRequest {
   cityID: number;

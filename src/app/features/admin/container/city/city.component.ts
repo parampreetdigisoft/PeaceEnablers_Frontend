@@ -7,6 +7,10 @@ import { ToasterService } from 'src/app/core/services/toaster.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { SortDirection } from 'src/app/core/enums/SortDirection';
 import { environment } from 'src/environments/environment';
+import { ExportCityWithOptionDto } from 'src/app/core/models/ExportCityWithOptionDto';
+import { AiComputationService } from 'src/app/core/services/ai-computation.service';
+import { DownloadReportDto } from 'src/app/core/models/aiVm/DownloadReportDto';
+import { DocumentFormat } from 'src/app/core/enums/documentFormat';
 declare var bootstrap: any;
 @Component({
   selector: 'app-city',
@@ -25,7 +29,12 @@ export class CityComponent implements OnInit, OnDestroy {
   isOpendialog = false;
   isExporting: boolean = false;
   cities: CityVM[] = [];
-  constructor(private adminService: AdminService, private toaster: ToasterService, private userService: UserService) { }
+  selectedCities: CityVM[] = [];
+  isReportExporting: boolean = false;
+   private selectedCityIds = new Set<number>();
+  constructor(private adminService: AdminService, private toaster: ToasterService, private userService: UserService,
+    private aiComputationService: AiComputationService
+  ) { }
 
   ngOnInit(): void {
     this.getCities(1);
@@ -150,11 +159,22 @@ export class CityComponent implements OnInit, OnDestroy {
     });
   }
 
-  exportCities() {
-    this.isExporting =true;
-    this.adminService.exportCities().subscribe({
+   exportCities(isAllCity?: boolean, isRanking?: boolean, isPillarLevel?: boolean) {
+
+    this.isExporting = true;
+    let payload: ExportCityWithOptionDto = {
+      isAllCity: isAllCity,
+      isRanking: isRanking,
+      isPillarLevel: isPillarLevel
+    }
+    if (this.selectedCities.length && !isAllCity) {
+      payload.cityIDs = this.selectedCities.map(x => x.cityID);
+    }
+
+
+    this.adminService.exportCities(payload).subscribe({
       next: (res) => {
-        this.isExporting =false;
+        this.isExporting = false;
         const formattedDate = new Date().toLocaleDateString('en-US', {
           month: '2-digit',
           day: '2-digit',
@@ -169,9 +189,107 @@ export class CityComponent implements OnInit, OnDestroy {
         this.toaster.showSuccess("Pillars History downloaded successfully");
       },
       error: () => {
-        this.isExporting =false;
+        this.isExporting = false;
         this.toaster.showError('Failed to download cities');
       }
     });
+  }
+  
+  aiAllCityDetailsReport(format: string = 'pdf') {
+
+    if (!this.selectedCities.length) {
+      this.toaster.showWarning('Please select at least one city');
+      return;
+    }
+
+    this.isReportExporting = true;
+
+    const payload: DownloadReportDto = {
+      cityIDs: this.selectedCities.map(x => x.cityID),
+      format: format
+    };
+
+    this.aiComputationService.aiAllCitiesDetailReport(payload).subscribe({
+      next: (blob) => {
+        this.isReportExporting = false;
+        if (blob.size > 0) {
+          const ext = format == DocumentFormat.Pdf ? 'pdf' : 'docx';
+
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `All_Cities_Details_${new Date().toISOString().split('T')[0]}.${ext}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          this.toaster.showSuccess('Report generated successfully');
+        } else {
+          this.toaster.showWarning(
+            'No data available for the selected city or the PDF could not be generated.'
+          );
+        }
+      },
+      error: () => {
+        this.toaster.showError('There is an error occured, please try again');
+        this.isReportExporting = false;
+      }
+    });
+  }
+   get isAllCurrentPageSelected(): boolean {
+    const currentData = this.citiesResponse?.data ?? [];
+    return (
+      currentData.length > 0 &&
+      currentData.every(city => this.selectedCityIds.has(city.cityID))
+    );
+  }
+
+  // ─── Computed: are SOME (but not all) cities on current page selected? ────
+  get isSomeCurrentPageSelected(): boolean {
+    const currentData = this.citiesResponse?.data ?? [];
+    return (
+      currentData.some(city => this.selectedCityIds.has(city.cityID)) &&
+      !this.isAllCurrentPageSelected
+    );
+  }
+
+  AllCitySelected(event: any) {
+    const isChecked = event.target.checked;
+    const currentData = this.citiesResponse?.data ?? [];
+
+    if (isChecked) {
+      currentData.forEach(city => {
+        city.selected = true;
+        if (!this.selectedCityIds.has(city.cityID)) {
+          this.selectedCityIds.add(city.cityID);
+          this.selectedCities.push(city);
+        }
+      });
+    } else {
+      currentData.forEach(city => {
+        city.selected = false;
+        this.selectedCityIds.delete(city.cityID);
+      });
+      const currentIds = new Set(currentData.map(c => c.cityID));
+      this.selectedCities = this.selectedCities.filter(
+        c => !currentIds.has(c.cityID)
+      );
+    }
+  }
+   CitySelected(event: any, city: CityVM) {
+    const isChecked = event.target.checked;
+    city.selected = isChecked;
+
+    if (isChecked) {
+      if (!this.selectedCityIds.has(city.cityID)) {
+        this.selectedCityIds.add(city.cityID);
+        this.selectedCities.push(city);
+      }
+    } else {
+      this.selectedCityIds.delete(city.cityID);
+      this.selectedCities = this.selectedCities.filter(
+        c => c.cityID !== city.cityID
+      );
+    }
   }
 }

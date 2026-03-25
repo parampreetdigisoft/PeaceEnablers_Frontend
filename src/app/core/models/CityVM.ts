@@ -9,6 +9,7 @@ export interface CityVM extends AddUpdateCityDto {
   score?: number;
   progress?: number;
   aiScore?: number; 
+  selected:boolean;
 }
 export interface AddUpdateCityDto {
   cityID: number;

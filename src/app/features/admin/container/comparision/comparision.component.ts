@@ -15,6 +15,7 @@ import { QuestionsByUserPillarsResponsetDto } from "src/app/core/models/GetQuest
 
 import { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexYAxis, ApexDataLabels, ApexTooltip, ApexLegend, ApexPlotOptions, ApexGrid, ApexStroke } from "ng-apexcharts";
 import { AdminService } from "../../admin.service";
+import { ExportType } from "src/app/core/enums/exportEnum";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -477,7 +478,7 @@ export class ComparisionComponent implements OnInit {
       pillarID: pillarID,
       cityID: this.selectedCities,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
-      exportType:'excel'
+      exportType:ExportType.Excel
     };
     this.adminService.getQuestionsHistoryByPillar(payload).subscribe({
       next: (res) => {
@@ -508,7 +509,7 @@ export class ComparisionComponent implements OnInit {
       userID: this.userService?.userInfo?.userID,
       cityID: this.selectedCities,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
-      exportType:'excel'
+      exportType:ExportType.Excel
     };
     if (this.selectedPillarID) {
       payload.pillarID = this.selectedPillarID;

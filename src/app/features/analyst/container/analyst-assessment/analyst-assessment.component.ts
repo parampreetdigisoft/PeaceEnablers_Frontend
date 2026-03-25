@@ -24,6 +24,7 @@ import { finalize } from "rxjs";
 import { AiComputationService } from "src/app/core/services/ai-computation.service";
 import { AITransferAssessmentRequestDto } from "src/app/core/models/aiVm/AITransferAssessmentRequestDto";
 import { AdminService } from "src/app/features/admin/admin.service";
+import { ExportType } from "src/app/core/enums/exportEnum";
 
 @Component({
   selector: "app-analyst-assessment",
@@ -95,6 +96,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
             Validators.required,
           ],
           source: [q.isSelected ? option?.source : ""],
+          historyQuestionOptionID: [""],
         })
       );
     });
@@ -111,6 +113,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
       formGroup.patchValue({
         questionOptionID: selectedOption.optionID,
         score: selectedOption.scoreValue,
+        historyQuestionOptionID: ''
       });
     }
   }
@@ -396,12 +399,12 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
   }
   downloadQuestions(mode: string) {
     if (mode === 'excel') { this.ImportQuestions() }
-    else { this.exportPillarsHistoryByUserId('pdf'); }
+    else { this.exportPillarsHistoryByUserId(ExportType.Pdf); }
 
 
   }
 
-  exportPillarsHistoryByUserId(type: 'excel' | 'pdf') {   
+  exportPillarsHistoryByUserId(type: ExportType) {   
     if (
       this.userService?.userInfo?.userID == null ||
       !this.selectedUserCityMappingID ||
@@ -436,7 +439,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
         a.href = url;
 
         // ✅ Dynamic filename
-        a.download = type === 'pdf'
+        a.download = type === ExportType.Pdf
           ? "PillarQuestionHistory.pdf"
           : "PillarQuestionHistory.xlsx";
 
@@ -444,12 +447,32 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
 
         this.isLoader = false;
-        this.toaster.showSuccess(`Pillars History ${type.toUpperCase()} downloaded successfully`);
+        const fileType = type === ExportType.Pdf ? "PDF" : "EXCEL";
+
+        this.toaster.showSuccess(`Pillars History ${fileType} downloaded successfully`);
       },
       error: () => {
         this.isLoader = false;
         this.toaster.showError("There is an error please try later");
       },
     });
+  }
+  onHistoryOptionChange(event: any, index: number) {
+    const userId = +event.target.value;
+    const selectedOption = this.pillerQuestions?.questions[
+      index
+    ].history.find((o) => o.userID === userId);
+
+    if (selectedOption) {
+      const formGroup = this.questionsArray.at(index) as FormGroup;
+      formGroup.patchValue({
+        questionOptionID: selectedOption.optionID,
+        score: selectedOption.scoreValue,
+        source: selectedOption.source,
+        justification: selectedOption.justification,
+        historyQuestionOptionID: selectedOption.userID
+      });
+      this.autoSaveSingleAssessemnt(index);
+    }
   }
 }

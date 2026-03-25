@@ -36,6 +36,7 @@ import { RegeneratePilalrAiSearchDto } from 'src/app/core/models/aiVm/Regenerate
 import { RegenerateAiScoreAndAddViewerComponent } from 'src/app/shared/standAlone/regenerate-ai-score-and-add-viewer/regenerate-ai-score-and-add-viewer.component';
 import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 import { AiCitySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCitySummeryRequestPdfDto';
+import { DocumentFormat } from 'src/app/core/enums/documentFormat';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -449,23 +450,27 @@ export class KPIAnalysisComponent implements OnInit {
       return label;
     });
   }
-  aiPillarDetailsReport(city: AiCityPillarVM, selectedIndex: number) {
+
+  aiPillarDetailsReport(city: AiCityPillarVM, selectedIndex: number, format: string) {
     if (this.selectedIndex != -1) return;
     this.selectedIndex = selectedIndex;
     let payload: AiCitySummeryRequestPdfDto = {
       cityID: city.cityID,
       year: this.selectedYear,
-      pillarID: city.pillarID
+      pillarID: city.pillarID,
+      format:format
     }
     this.aiComputationService.aiPillarDetailsReport(payload).subscribe({
       next: (blob) => {
         this.selectedIndex = -1;
         if (blob) {
           // Create download link
+          const ext = format == DocumentFormat.Pdf ? 'pdf' : 'docx';          
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `${city.pillarName}_Details_${new Date().toISOString().split('T')[0]}.pdf`;
+
+          link.download = `${city.pillarName}_Details_${new Date().toISOString().split('T')[0]}..${ext}`;
 
           // Trigger download
           document.body.appendChild(link);
