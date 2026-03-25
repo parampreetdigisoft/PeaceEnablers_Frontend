@@ -13,6 +13,7 @@ textarea.form-control {
 {
   height: 80px;
   width: 80px;
-  border-radius: 12px;
+  border-radius: 20px;
   object-fit: cover;
+  background-color: #0c2e5d;
 }
