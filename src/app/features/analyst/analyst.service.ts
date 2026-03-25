@@ -78,9 +78,9 @@ export class AnalystService {
   public exportPillarsHistoryByUserId(request: GetCityPillarHistoryRequestDto) {
     return this.http.ImportFile(`Pillar/ExportPillarsHistoryByUserId`, request);
   }
-  public getQuestionsByCityId(payload: CityMappingPillerRequestDto) {
-    return this.http.getWithQueryParams(`Question/getQuestionsByCityMappingId`, payload).pipe(map(x => x as ResultResponseDto<GetQuestionByCityMappingRespones>));
-  }
+  // public getQuestionsByCityId(payload: CityMappingPillerRequestDto) {
+  //   return this.http.getWithQueryParams(`Question/getQuestionsByCityMappingId`, payload).pipe(map(x => x as ResultResponseDto<GetQuestionByCityMappingRespones>));
+  // }
   public ExportQuestions(userCityMappingID: number) {
     return this.http.ImportFile(`Question/ExportAssessment/` + userCityMappingID);
   }
@@ -129,5 +129,9 @@ export class AnalystService {
   }
   public getMutiplekpiLayerResults(payload: GetMutiplekpiLayerRequestDto) {
     return this.http.post(`kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
+  }
+
+  public getQuestionsByCityId(payload: CityMappingPillerRequestDto) {
+    return this.http.getWithQueryParams(`Question/getQuestionsByCityMappingIdForAnalyst`, payload).pipe(map(x => x as ResultResponseDto<GetQuestionByCityMappingRespones>));
   }
 }

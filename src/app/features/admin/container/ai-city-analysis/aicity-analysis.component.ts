@@ -26,6 +26,9 @@ import { AdminService } from '../../admin.service';
 import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 import { AiCitySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCitySummeryRequestPdfDto';
 import { ActivatedRoute } from '@angular/router';
+import { ExportType } from 'src/app/core/enums/exportEnum';
+import { DocumentFormat } from 'src/app/core/enums/documentFormat';
+import { DownloadReportDto } from 'src/app/core/models/aiVm/DownloadReportDto';
 
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 @Component({
@@ -139,39 +142,42 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
     offcanvas.show();
   }
 
-  aiCityDetailsReport(city: AiCitySummeryDto, selectedIndex: number) {
-    if (this.selectedIndex != -1) return;
+   aiCityDetailsReport(city: AiCitySummeryDto, selectedIndex: number, format: string) {
     this.selectedIndex = selectedIndex;
+    if (this.selectedIndex == -1) return;
+
     let payload: AiCitySummeryRequestPdfDto = {
       cityID: city.cityID,
-      year: this.selectedYear
-    }
+      year: this.selectedYear,
+      format: format
+    };
+
     this.aiComputationService.aiCityDetailsReport(payload).subscribe({
       next: (blob) => {
         this.selectedIndex = -1;
+
         if (blob) {
-          // Create download link
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement("a");
-          link.href = url;
-          link.download = `${city.cityName}_Details_${
-            new Date().toISOString().split("T")[0]
-          }.pdf`;
 
-          // Trigger download
+          const ext = format == DocumentFormat.Pdf ? 'pdf' : 'docx';
+
+          link.href = url;
+          link.download = `${city.cityName}_Details_${new Date().toISOString().split("T")[0]}.${ext}`;
+
           document.body.appendChild(link);
           link.click();
 
-          // Cleanup
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
+
           this.toaster.showSuccess("Report generated successfully");
         }
       },
       error: () => {
-        this.toaster.showError("There is an error occure please try again");
         this.selectedIndex = -1;
-      },
+        this.toaster.showError("There is an error occurred please try again");
+      }
     });
   }
 
@@ -281,34 +287,41 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
       this.closeModal();
     }
   }
-  exportAllCities()
-  {
-     this.aiComputationService.aiAllCitiesDetailReport().subscribe({
-      next: (blob:any) => {
-        this.selectedIndex = -1;
-        if (blob) {
-          // Create download link
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `All_Cites_Detail_${
-            new Date().toISOString().split("T")[0]
-          }.pdf`;
+  
+  aiAllCityDetailsReport(format: string = 'pdf') {    
 
-          // Trigger download
+    this.isLoader = true;
+
+    const payload: DownloadReportDto = {
+      cityIDs: [],
+      format: format
+    };
+
+    this.aiComputationService.aiAllCitiesDetailReport(payload).subscribe({
+      next: (blob) => {
+         this.isLoader = false;
+        if (blob.size > 0) {
+          const ext = format == DocumentFormat.Pdf ? 'pdf' : 'docx';
+
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `All_Cities_Details_${new Date().toISOString().split('T')[0]}.${ext}`;
           document.body.appendChild(link);
           link.click();
-
-          // Cleanup
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-          this.toaster.showSuccess("Report generated successfully");
+          this.toaster.showSuccess('Report generated successfully');
+        } else {
+          this.toaster.showWarning(
+            'No data available for the selected city or the PDF could not be generated.'
+          );
         }
       },
       error: () => {
-        this.toaster.showError("There is an error occure please try again");
-        this.selectedIndex = -1;
-      },
+        this.toaster.showError('There is an error occured, please try again');
+        this.isLoader = false;
+      }
     });
   }
 

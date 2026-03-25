@@ -24,6 +24,7 @@ import { ChangeAssessmentStatusRequestDto, GetAssessmentQuestoinRequestDto, GetA
 import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto';
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
 import { EmailExistDto } from 'src/app/core/models/EmailExistDto';
+import { ExportCityWithOptionDto } from 'src/app/core/models/ExportCityWithOptionDto';
 
 @Injectable({
   providedIn: "root",
@@ -80,8 +81,8 @@ export class AdminService {
       .get(`City/getCityHistory/` + updatedAt)
       .pipe(map((x) => x as ResultResponseDto<CityHistoryDto>));
   }
-  public exportCities() {
-    return this.http.ImportFile(`City/exportCities`);
+  public exportCities(request:ExportCityWithOptionDto) {
+    return this.http.ImportFile(`City/exportCities`,request);
   }
 
   public getAnalyst(request: GetUserByRoleRequestDto) {

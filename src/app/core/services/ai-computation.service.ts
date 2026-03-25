@@ -13,6 +13,7 @@ import { ChangedAiCityEvaluationStatusDto } from '../models/aiVm/ChangedAiCityEv
 import { RegenerateAiSearchDto } from '../models/aiVm/RegenerateAiSearchDto';
 import { AiCitySummeryRequestPdfDto } from '../models/aiVm/AiCitySummeryRequestPdfDto';
 import { AITransferAssessmentRequestDto } from '../models/aiVm/AITransferAssessmentRequestDto';
+import { DownloadReportDto } from '../models/aiVm/DownloadReportDto';
 
 @Injectable({
   providedIn: 'root'
@@ -46,9 +47,12 @@ export class AiComputationService {
     return this.http
       .ImportFile(`AiComputation/aiCityDetailsReport`,request);
   }
-  public aiAllCitiesDetailReport( ) {
+  public aiAllCitiesDetailReport( payload:DownloadReportDto) {
+    if (!payload.cityIDs || payload.cityIDs.length === 0) {
+  delete payload.cityIDs; // 🔥 removes it completely
+}
     return this.http
-      .ImportFile(`AiComputation/aiAllCityDetailsReport`,null);
+      .ImportFile(`AiComputation/aiAllCityDetailsReport`,payload);
   }
   public aiPillarDetailsReport(request:AiCitySummeryRequestPdfDto) {
     return this.http

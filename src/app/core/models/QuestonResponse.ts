@@ -49,10 +49,15 @@ export interface AssessmentQuestionResponse {
   questionText: string;
   isSelected: boolean;
   questionOptions: AssessmentQuestionOptionResonse[];
+  history: HistoryQuestionAnswerRawDto[];
 }
 
 export interface AssessmentQuestionOptionResonse  extends QuestionOption {
   isSelected: boolean;
   justification:string
   source:string
+}
+export interface HistoryQuestionAnswerRawDto  extends AssessmentQuestionOptionResonse {
+  fullName:string
+  userID:number
 }

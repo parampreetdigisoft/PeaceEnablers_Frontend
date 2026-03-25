@@ -11,8 +11,8 @@ textarea.form-control {
 }
 .pp_pic
 {
-  height: 48px;
-  width: 100px;
+  height: 80px;
+  width: 80px;
   border-radius: 12px;
   object-fit: cover;
 }
