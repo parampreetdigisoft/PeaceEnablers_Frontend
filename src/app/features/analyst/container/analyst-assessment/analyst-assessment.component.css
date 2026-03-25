@@ -161,49 +161,35 @@
 
 /*color shades*/
 
-.faq_sidebar_item:nth-child(1) .faq_inner_svg {
-    background-color: #B79B61;
-}
+.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #2C2A4A; }  /* indigo muted */
+.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #3A2E39; }  /* plum gray */
+.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #2F3E46; }  /* slate */
+.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #354F52; }  /* teal gray */
+.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #3A5A40; }  /* olive green */
 
-.faq_sidebar_item:nth-child(2) .faq_inner_svg {
-    background-color: #D46B4A;
-}
-.faq_sidebar_item:nth-child(3) .faq_inner_svg {
-    background-color: #9E7C5D ;
-}
-.faq_sidebar_item:nth-child(4) .faq_inner_svg {
-    background-color: #B75E3A;
-}
-.faq_sidebar_item:nth-child(5) .faq_inner_svg {
-    background-color: #F2A57A;
-}
-.faq_sidebar_item:nth-child(6) .faq_inner_svg {
-    background-color: #D4A29C;
-}
-.faq_sidebar_item:nth-child(7) .faq_inner_svg {
-    background-color: #A97B6A;
-}
-.faq_sidebar_item:nth-child(8) .faq_inner_svg {
-    background-color: #C9977F;
-}
-.faq_sidebar_item:nth-child(9) .faq_inner_svg {
-    background-color: #8E5A3D;
-}
-.faq_sidebar_item:nth-child(10) .faq_inner_svg {
-    background-color: #B89C70;
-}
-.faq_sidebar_item:nth-child(11) .faq_inner_svg {
-    background-color: #D39A6A;
-}
-.faq_sidebar_item:nth-child(12) .faq_inner_svg {
-    background-color: #9C5E3B;
-}
-.faq_sidebar_item:nth-child(13) .faq_inner_svg {
-    background-color: #7A4A37;
-}
-.faq_sidebar_item:nth-child(14) .faq_inner_svg {
-    background-color: #5F4033;
-}
+.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #4A3F35; }  /* warm brown */
+.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #5E503F; }  /* sand brown */
+.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #6B4226; }  /* coffee */
+.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #7F5539; }  /* clay */
+
+.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #6D6875; } /* muted violet */
+.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #4A4E69; } /* dusty blue */
+.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #3D405B; } /* navy gray */
+
+.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #283618; } /* dark olive */
+.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #344E41; } /* forest muted */
+.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #2B2D42; } /* charcoal blue */
+
+.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #403D39; } /* dark stone */
+.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #252422; } /* deep gray */
+.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #1B1B2F; } /* midnight */
+
+.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #3C2F2F; } /* cocoa */
+.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #4B3832; } /* earthy */
+
+.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #2D3142; } /* cool dark */
+.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #1A1A2E; } /* deep navy */
+.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #0F0F1A; } /* near black */
 
 
 /*color shades close*/

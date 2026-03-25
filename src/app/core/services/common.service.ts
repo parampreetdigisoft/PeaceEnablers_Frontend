@@ -251,16 +251,18 @@ isValidDate(date: any): boolean {
 }
   get PillarColors() {
     return [
-      "#a2c3ba",
-      "#8eb5ab",
-      "#79a89b",
-      "#649b8c",
-      "#578679",
-      "#4a7167",
-      "#3c5d54",
-      "#2f4841",
-      "#21342f",
-      "#141f1c",
+      "#AFC6D9", // light (but visible)
+      "#8FB1C9",
+      "#6F9CB9",
+      "#4F86A8",
+
+      "#3A6F96", // strong mid
+      "#2F5E87",
+      "#245078",
+
+      "#1A4269",
+      "#12365A",
+      "#003160"  // base (strong highlight)
     ];
   }
   get radarColors() {

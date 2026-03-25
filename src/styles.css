@@ -615,7 +615,7 @@ padding-right: 40px;
     font-size: 20px;
 }
 .dashboard_number h5 {
-    color: #14416c;
+    color: #77bd3e;
     font-size: 28px;
     line-height: normal;
     font-weight: 700;
@@ -684,7 +684,7 @@ padding-right: 40px;
 .action_td input[type="checkbox"] {
     width: 20px;
     height: 20px;
-    accent-color: #397b69;
+    accent-color: #003160;
     border-radius: 5px;
 }
 .heading_area .input_field.input_flex {
@@ -693,11 +693,11 @@ padding-right: 40px;
 .modal_design .modal-body .ng-value {
     padding: 2px 5px !important;
     border-radius: 5px !important;
-    background-color: #304a43 !important;
+    background-color: #003160 !important;
     color: #ffffff !important;
 }
 .modal_design .tab-pane label .text-primary {
-    color: #397b69 !important;
+    color: #003160 !important;
 }
 
 
@@ -772,3 +772,6 @@ padding-right: 40px;
 }
 
 
+.last_data td .sparkline-container .score-label {
+    color: #ffffff !important;
+}

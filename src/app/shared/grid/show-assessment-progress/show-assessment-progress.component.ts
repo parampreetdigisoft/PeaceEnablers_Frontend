@@ -76,7 +76,7 @@ export class ShowAssessmentProgressComponent implements OnInit, OnChanges, OnDes
           hollow: {
             margin: 2,
             size: "80%",
-            background: "#12352f",
+            background: "#14416c",
             image: undefined,
             position: "front",
             dropShadow: {
@@ -124,7 +124,7 @@ export class ShowAssessmentProgressComponent implements OnInit, OnChanges, OnDes
       },
       fill: {
         type: "solid",               // ❗ Use solid color (no gradient)
-        colors: ["#FFD700"]          // 🌟 PURE YELLOW (Gold)
+        colors: ["#77bd3e"]          // 🌟 PURE YELLOW (Gold)
       },
       stroke: {
         lineCap: "round"

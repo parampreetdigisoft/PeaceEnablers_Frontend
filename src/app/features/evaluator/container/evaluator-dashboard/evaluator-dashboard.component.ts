@@ -166,7 +166,7 @@ export class EvaluatorDashboardComponent {
       plotOptions: {
         bar: {
           horizontal: true,
-          borderRadius: 8,
+          borderRadius: 5,
           borderRadiusApplication: 'end',
           barHeight: '70%',
           distributed: true,

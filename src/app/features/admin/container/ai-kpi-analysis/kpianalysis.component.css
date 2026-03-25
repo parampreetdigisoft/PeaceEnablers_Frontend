@@ -171,36 +171,38 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 {
     width: 27px;
 }
-.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #2E2E60; }
-.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #464678; }
-.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #5E5E90; }
-.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #7676A8; }
+.faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #2B1D1A; }
+.faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #3A241F; }
+.faq_sidebar_item:nth-child(3) .faq_inner_svg { background-color: #4A2E26; }
+.faq_sidebar_item:nth-child(4) .faq_inner_svg { background-color: #5A3830; }
 
-.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #8E8EC0; }
-.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #A6A6D8; }
-.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #BEBEF0; }
+.faq_sidebar_item:nth-child(5) .faq_inner_svg { background-color: #6A423A; }
+.faq_sidebar_item:nth-child(6) .faq_inner_svg { background-color: #7A4C44; }
+.faq_sidebar_item:nth-child(7) .faq_inner_svg { background-color: #8A5650; }
 
-.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #D2D2FF; }
-.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #C6C6F6; }
+.faq_sidebar_item:nth-child(8) .faq_inner_svg { background-color: #9A605A; }
+.faq_sidebar_item:nth-child(9) .faq_inner_svg { background-color: #AA6A64; }
 
-.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #BABAE7; }
-.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #AEAED8; }
-.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #A2A2C9; }
+.faq_sidebar_item:nth-child(10) .faq_inner_svg { background-color: #BA746E; }
+.faq_sidebar_item:nth-child(11) .faq_inner_svg { background-color: #C87F78; }
+.faq_sidebar_item:nth-child(12) .faq_inner_svg { background-color: #D68A82; }
 
-.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #9696BA; }
-.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #8A8AAB; }
-.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #7E7E9C; }
+.faq_sidebar_item:nth-child(13) .faq_inner_svg { background-color: #E4958C; }
+.faq_sidebar_item:nth-child(14) .faq_inner_svg { background-color: #F2A096; }
 
-.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #72728D; }
-.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #66667E; }
-.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #5A5A6F; }
+.faq_sidebar_item:nth-child(15) .faq_inner_svg { background-color: #E08C7F; }
+.faq_sidebar_item:nth-child(16) .faq_inner_svg { background-color: #CC786C; }
 
-.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #4E4E60; }
-.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #424251; }
-.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #363642; }
+.faq_sidebar_item:nth-child(17) .faq_inner_svg { background-color: #B86459; }
+.faq_sidebar_item:nth-child(18) .faq_inner_svg { background-color: #A45046; }
 
-.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #2A2A33; }
-.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #1E1E24; }
+.faq_sidebar_item:nth-child(19) .faq_inner_svg { background-color: #904C42; }
+.faq_sidebar_item:nth-child(20) .faq_inner_svg { background-color: #7C4038; }
+
+.faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #68342E; }
+.faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #542824; }
+
+.faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #3F1C1A; }
 
 
 .faq_sidebar_item.active .current-active span.faq_inner_svg {
