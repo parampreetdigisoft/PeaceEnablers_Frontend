@@ -239,12 +239,12 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
         },
       },
       colors: [
-        "#141f1c",
-        "#a2c3ba",
-        "#2d4e46",
-        "#657e78",
-        "#9aebc9",
-        "#69a080",
+        "#002147",
+        "#C2DBF5",
+        "#003160",
+        "#6C8FB5",
+        "#77BD3E",
+        "#5AA52F"
       ],
       labels: [
         "Total",
@@ -340,7 +340,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#4a7167', '#334e4e']
+        colors: ['#6C8FB5', '#003160']
       },
 
       fill: {
@@ -353,17 +353,17 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
           colorStops: [
             {
               offset: 0,
-              color: '#79a89b',
+              color: '#6C8FB5',
               opacity: 0.8
             },
             {
               offset: 50,
-              color: '#8eb5ab',
+              color: '#6C8FB5',
               opacity: 0.5
             },
             {
               offset: 100,
-              color: '#a2c3ba',
+              color: '#6C8FB5',
               opacity: 0.2
             }
           ]
@@ -683,7 +683,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     //let score = pillar.aiValue;
     const colors = [
       "#a2c3ba", "#8eb5ab", "#79a89b", "#649b8c", "#578679",
-      "#4a7167", "#3c5d54", "#2f4841", "#21342f", "#141f1c"
+      "#4E8F2B",  "#3F7A24", "#2F651D", "#1F5016", "#003160"
     ];
 
     if (score === null || score === undefined || isNaN(score)) {

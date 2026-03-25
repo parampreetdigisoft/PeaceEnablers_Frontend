@@ -12,7 +12,7 @@
 
 
 .city_card_img .score {
-    background-color: rgb(239, 191, 4);
+    background-color: #77bd3e;
     color: #ffffff;
     display: inline-block;
     padding: 3px 10px;
@@ -71,16 +71,16 @@
 
 
 .cus_table .table th {
-    background: #efbf07;
+    background-color: #77BD3E;
     font-weight: 600;
-    color: #304a43;
+    color: #ffffff;
     font-size: 14px;
     white-space: nowrap;
 }
 
 
 .cus_table .score_label_tab {
-    background: #304a43;
+    background: #003160;
     color: #ffffff;
     padding: 0.3rem 0.5rem;
     border-radius: 0.5rem;
@@ -166,19 +166,19 @@ span:empty, div:empty{
     border-radius: 15px;
 }
 .active_row td {
-    background-color: #304a43;
+    background-color: #003160;
     color: #ffffff;
 }
 .active_row td .score_label_tab {
-    background-color: #44625a !important;
+    background-color: rgba(255,255,255,0.08) !important;
 }
 .last_data td {
-    background-color: #304a43;
+    background-color: #003160;
     color: #ffffff;
 }
 .last_data td span {
-    color: #000000;
-    background-color: #efbf04;
+    color: #ffffff;
+    background-color: #77BD3E;
     white-space: nowrap;
     padding: 5px 8px;
     border-radius: 30px;

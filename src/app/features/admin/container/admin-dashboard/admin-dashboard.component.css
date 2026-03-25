@@ -74,7 +74,7 @@ app-admin-dashboard app-ag-bar:nth-child(3) {
     z-index: 1;
     top: -105px;
     right: -120px;
-    background-color: rgb(122 194 174 / 20%);
+    background-color: rgb(207 207 207 / 25%);
 }
 .dashboard_card:before {
     content: '';
@@ -84,7 +84,7 @@ app-admin-dashboard app-ag-bar:nth-child(3) {
     width: 210px;
     height: 210px;
     z-index: -1;
-    background-color: rgb(122 194 174 / 10%);
+    background-color: rgb(207 207 207 / 15%);
     top: -145px;
     right: -55px;
 }

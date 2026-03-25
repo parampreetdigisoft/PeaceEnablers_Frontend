@@ -1,14 +1,14 @@
 
 .cus_table .table th {
-    background: #efbf07;
+    background-color: #77BD3E;
     font-weight: 600;
-    color: #304a43;
+    color: #ffffff;
     font-size: 14px;
     white-space: nowrap;
 }
 
 .cus_table .score_label_tab {
-    background: #304a43;
+    background: #003160;
     color: #ffffff;
     padding: 0.3rem 0.5rem;
     border-radius: 0.5rem;

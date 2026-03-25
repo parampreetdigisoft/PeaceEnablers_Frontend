@@ -91,7 +91,7 @@ export class ViewCityUserKpiLayerComponent implements OnInit, OnChanges {
 
   ApexGetPieOptions() {
     const round = (val: number) =>
-      Math.round((val + Number.EPSILON) * 100) / 100;
+    Math.round((val + Number.EPSILON) * 100) / 100;
 
     const aiValue = this.selectedLayer?.aiCalValue5 ?? 0;
     const value = round(aiValue);
@@ -161,7 +161,7 @@ export class ViewCityUserKpiLayerComponent implements OnInit, OnChanges {
       },
       fill: {
         type: "solid",
-        colors: ["#efbf04"]
+        colors: ["#77bd3e"]
       },
       stroke: {
         lineCap: "round"

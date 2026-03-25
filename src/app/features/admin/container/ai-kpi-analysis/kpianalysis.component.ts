@@ -186,9 +186,9 @@ export class KPIAnalysisComponent implements OnInit {
     );
 
     let colors = [
-      "#8eb5ab",
-      "#578679",
-      "#2f4841",
+      "#728da7",
+      "#85c451",
+      "#2c547b",
     ]
 
     this.chartOptions = {
@@ -218,7 +218,7 @@ export class KPIAnalysisComponent implements OnInit {
         bar: {
           horizontal: false,
           columnWidth: '55%',
-          borderRadius: 8,
+          borderRadius: 5,
           borderRadiusApplication: "end",
           distributed: false,
           dataLabels: {
@@ -286,9 +286,9 @@ export class KPIAnalysisComponent implements OnInit {
         type: 'vertical',
         shadeIntensity: 0.3,
         gradientToColors: [
-          "#78C2CC", // AI lighter
-          "#5A5F66", // Evaluator lighter
-          "#F07A67", // Discrepancy lighter
+          "#728da7", // AI lighter
+          "#85c451", // Evaluator lighter
+          "#2c547b", // Discrepancy lighter
         ],
         inverseColors: false,
         opacityFrom: 1,

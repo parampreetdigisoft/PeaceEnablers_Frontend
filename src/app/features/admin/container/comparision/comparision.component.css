@@ -224,7 +224,7 @@ min-width: max-content;
 }
 
 .score_col {
-    color: #7AC2AE !important;
+    color: #77bd3e !important;
     font-weight: 700 !important;
 }
 
@@ -242,4 +242,8 @@ min-width: max-content;
   font-size: 20px;
   color: #495057;          /* darker grey for text */
   letter-spacing: 0.5px;
+}
+
+::ng-deep .evaluater_design tbody tr td .question_name_single {
+    width: 100%;
 }

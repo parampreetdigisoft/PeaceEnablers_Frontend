@@ -23,7 +23,7 @@
 
 .kpi_td_data .bold_num,
 ::ng-deep .kpi_sidebar app-view-city-user-kpi-layer .bold_num {
-    background: #304a43;
+    background: #003160;
     color: #ffffff;
     padding: 2px 8px;
     border-radius: 0.5rem;
@@ -74,7 +74,7 @@
 
 .compare_city_table tbody td.action_td table .action_icons a.mat-mdc-tooltip-trigger span {
     display: inline-block;
-    background-color: #397b69;
+    background-color: #14416c;
     padding: 8px 10px;
     white-space: nowrap;
     color: #ffffff;
@@ -103,7 +103,7 @@
 
 ::ng-deep .analyst_multi_select .ng-option-selected {
     background-color: #e8f0ff !important;
-    color: #304a43 !important;
+    color: #003160 !important;
     font-weight: 600;
 }
 
@@ -161,6 +161,6 @@
     white-space: nowrap;
     padding: 2px 5px !important;
     border-radius: 5px !important;
-    background-color: #304a43 !important;
+    background-color: #003160 !important;
     color: #ffffff !important;
 }
