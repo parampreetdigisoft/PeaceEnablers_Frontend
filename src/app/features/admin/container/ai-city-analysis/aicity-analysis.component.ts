@@ -142,14 +142,15 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
     offcanvas.show();
   }
 
-   aiCityDetailsReport(city: AiCitySummeryDto, selectedIndex: number, format: string) {
+   aiCityDetailsReport(city: AiCitySummeryDto, selectedIndex: number, format: string,mode: 'ai' | 'manual')  {
     this.selectedIndex = selectedIndex;
     if (this.selectedIndex == -1) return;
 
     let payload: AiCitySummeryRequestPdfDto = {
       cityID: city.cityID,
       year: this.selectedYear,
-      format: format
+      format: format,
+      reportType : mode
     };
 
     this.aiComputationService.aiCityDetailsReport(payload).subscribe({

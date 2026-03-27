@@ -3,4 +3,5 @@ export interface AiCitySummeryRequestPdfDto {
   year: number;
   pillarID?: number;
   format?:string;
+   reportType?:string;
 }

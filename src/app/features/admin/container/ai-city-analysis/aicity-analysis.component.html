@@ -194,9 +194,10 @@
                         </span>
                       </a>
                       <div class="dropdown d-inline-block">
-                        <a style="cursor:pointer" data-bs-toggle="dropdown" aria-expanded="false" [matTooltip]="'Download Report'">
+                        <a style="cursor:pointer" data-bs-toggle="dropdown" aria-expanded="false"
+                          [matTooltip]="'Download Report'">
 
-                          <span style="display: inline-block" *ngIf="i != selectedIndex">
+                          <span *ngIf="i != selectedIndex">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                               xmlns="http://www.w3.org/2000/svg">
                               <path
@@ -204,26 +205,48 @@
                                 fill="white" />
                             </svg>
                           </span>
+
                           <p *ngIf="i == selectedIndex" class="btn_spinner">
                             <span class="spinner-border spinner-border-sm ms-2"></span>
                           </p>
                         </a>
 
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" style="cursor:pointer">
+
+                          <!-- AI Section -->
+                          <li class="dropdown-header">AI Report</li>
                           <li>
-                            <a style="cursor:pointer" class="dropdown-item"
-                              (click)="aiCityDetailsReport(city, i, 'pdf')">
+                            <a class="dropdown-item" (click)="aiCityDetailsReport(city, i, 'pdf', 'ai')">
                               Download PDF
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" (click)="aiCityDetailsReport(city, i, 'docx', 'ai')">
+                              Download DOCX
                             </a>
                           </li>
 
                           <li>
-                            <a style="cursor:pointer" class="dropdown-item"
-                              (click)="aiCityDetailsReport(city, i, 'docx')">
-                              Download DOCX                             </a>
+                            <hr class="dropdown-divider">
                           </li>
+
+                          <!-- Manual Section -->
+                          <li class="dropdown-header">Manual Report</li>
+                          <li>
+                            <a class="dropdown-item" (click)="aiCityDetailsReport(city, i, 'pdf', 'manual')">
+                              Download PDF
+                            </a>
+                          </li>
+                          <li>
+                            <a class="dropdown-item" (click)="aiCityDetailsReport(city, i, 'docx', 'manual')">
+                              Download DOCX
+                            </a>
+                          </li>
+
                         </ul>
                       </div>
+
+
 
                       <a
                         *ngIf="selectedYear == currentYear"
