@@ -26,6 +26,7 @@ export interface AddUpdateCityDto {
   income:number;
   cityAliasName :string; 
   peerCitiesIDs?: number[]; 
+   ppp: number;
 }
 
 export interface BulkAddCityDto {

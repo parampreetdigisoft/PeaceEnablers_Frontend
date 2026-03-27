@@ -53,6 +53,7 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
       cityAliasName: [this.city?.cityAliasName],
       cities: [this.city?.peerCitiesIDs || []],
       imageFile: [''],
+      pPP: [this.city?.ppp || null, [Validators.required, Validators.min(1), this.validatePPP]],
     });
     this.onFormChange();
     if(this.cityForm.get('latitude')?.invalid && this.cityForm.get('cityName')?.valid && this.cityForm.get('state')?.valid && this.cityForm.get('country')?.valid){
@@ -67,6 +68,23 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
         }
       }
     })
+  }
+   validatePPP(group: FormGroup) {
+    const income = group.get('income')?.value;
+    const ppp = group.get('pPP')?.value;
+
+    if (income == null || ppp == null) return null;
+
+    const incomeVal = Number(income);
+    const pppVal = Number(ppp);
+
+    if (isNaN(incomeVal) || isNaN(pppVal)) return null;
+
+    if (pppVal < incomeVal * 0.3 || pppVal > incomeVal * 5) {
+      return { invalidPPPRange: true };
+    }
+
+    return null;
   }
   getLatitudeLongitude(){
     let c = {
@@ -155,6 +173,7 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
   formData.append('CityAliasName', this.cityForm.get('cityAliasName')?.value);
 
   formData.append('CityID', (this.city?.cityID ?? 0).toString());
+   formData.append('PPP', this.cityForm.get('pPP')?.value);
 
   // 👇 Peer Cities (array)
   const peerCities = this.cityForm.get('cities')?.value;
@@ -197,6 +216,7 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
     CityAliasName: "Enter City Alias Name",
     Population: "Enter Population",
     Income: "Enter Income",
+    PPP: "Enter PPP adjusted income",
   };
 
   const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], { header: headers });
@@ -242,7 +262,8 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
       "Latitude",
       "Longitude",
       "Population",
-      "Income"
+      "Income",
+      "PPP"
     ];
 
     // Optional column
@@ -286,7 +307,7 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
       const population = Number(row["Population"] || "");
       const income = Number(row["Income"] || "");
       const cityAliasName = String(row["CityAliasName"] || "").trim(); // optional
-
+      const ppp = Number(row["PPP"] || "");
       const isCompletelyBlank = !cityName && !state && !region;
 
       if (isCompletelyBlank) continue;
@@ -310,7 +331,7 @@ export class AddUpdateCityComponent implements OnChanges, OnInit {
         return;
       }
         // ✅ Construct DTO
-        const dto = { cityName, state, region, country, postalCode, latitude, longitude,population,income, cityAliasName } as CityVM;
+        const dto = { cityName, state, region, country, postalCode, latitude, longitude,population,income, cityAliasName,ppp } as CityVM;
         excelData.push(dto);
       }
 
