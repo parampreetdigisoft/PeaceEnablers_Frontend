@@ -58,6 +58,7 @@ export class AICityAnalaysisComponent implements OnInit, OnDestroy {
   selectedChangedStatusIndex: number = -1;
   evaluatorList: PublicUserResponse[] = [];
   isOpenResearchBox: boolean = false;
+  isRecalcualteKpi:boolean =false;
   constructor(private aiComputationService: AiComputationService, private adminService: AdminService,
     private toaster: ToasterService, private userService: UserService, private cdr: ChangeDetectorRef,
      public commonService: CommonService, private route: ActivatedRoute,) { }
@@ -337,4 +338,25 @@ refresh()
 {
     this.getAiCities(this.currentPage);
 }
+reCalculateKpis() {
+    this.isRecalcualteKpi =true;
+
+      this.aiComputationService.reCalculateKpis().subscribe({
+        next: (res) => {
+          this.isRecalcualteKpi =false;
+          if (res.succeeded) {
+            this.toaster.showSuccess(res.messages.join(", "));
+          } else {
+            this.toaster.showError(res.errors.join(", "));
+          }
+          this.closeModal();
+        },
+        error: () => {
+          this.isRecalcualteKpi =false;
+          this.toaster.showError("There is an error occure please try again");
+          this.closeModal();
+        },
+      });
+    
+  }
 }

@@ -78,4 +78,9 @@ export class AiComputationService {
    public aiResultTransfer(payload:AITransferAssessmentRequestDto) {
     return this.http.post(`AiComputation/aiResultTransfer`, payload).pipe(map(x => x as ResultResponseDto<string>));;
   }
+  public reCalculateKpis() {
+    return this.http
+      .get(`AiComputation/reCalculateKpis`)
+      .pipe(map((x) => x as ResultResponseDto<string>));
+  }
 }
