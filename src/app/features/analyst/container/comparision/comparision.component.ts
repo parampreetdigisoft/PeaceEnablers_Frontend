@@ -120,6 +120,8 @@ export class ComparisionComponent implements OnInit {
       pageNumber: this.currentPage,
       pageSize: this.pageSize
     };
+    this.questionsByUserPillars = [];
+    this.loadPillarQuestion();
     this.analystService.getResponsesByUserId(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
@@ -480,6 +482,8 @@ export class ComparisionComponent implements OnInit {
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
       exportType:ExportType.Excel
     };
+    this.questionsByUserPillars = [];
+    this.loadPillarQuestion();
     this.analystService.getQuestionsHistoryByPillar(payload).subscribe({
       next: (res) => {
         if (res.succeeded) {
