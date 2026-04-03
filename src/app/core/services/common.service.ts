@@ -6,8 +6,8 @@ import { UserService } from "./user.service";
 import { BehaviorSubject, catchError, from, map, Observable, switchMap, tap } from "rxjs";
 import { HttpService } from "../http/http.service";
 import { UpdateUserResponseDto, UserInfo } from "../models/UserInfo";
-import { CityVM } from "../models/CityVM";
-import { GetNearestCityRequestDto } from "../models/GetNearestCityRequestDto";
+import { CountryVM } from "../models/CountryVM";
+import { GetNearestCountryRequestDto } from "../models/GetNearestCountryRequestDto";
 import { ToasterService } from "./toaster.service";
 
 @Injectable({
@@ -21,19 +21,19 @@ export class CommonService {
 
   constructor(private http: HttpService, private userService: UserService, private toaster: ToasterService) { }
 
-  public getAllCityByLocation(): Observable<ResultResponseDto<CityVM[]>> {
-    const payload: GetNearestCityRequestDto = {
+  public getAllCountryByLocation(): Observable<ResultResponseDto<CountryVM[]>> {
+    const payload: GetNearestCountryRequestDto = {
       userID: this.userService.userInfo.userID,
       latitude: this.latitude,
       longitude: this.longitude,
     };
 
     return this.http
-      .getWithQueryParams('City/getAllCityByLocation', payload)
-      .pipe(map((x) => x as ResultResponseDto<CityVM[]>));
+      .getWithQueryParams('Country/getAllCountryByLocation', payload)
+      .pipe(map((x) => x as ResultResponseDto<CountryVM[]>));
   }
 
-  public getUserNearestCity(): Observable<ResultResponseDto<CityVM[]>> {
+  public getUserNearestCountry(): Observable<ResultResponseDto<CountryVM[]>> {
     if (navigator.geolocation) {
       return from(
         new Promise<GeolocationPosition>((resolve, reject) => {
@@ -43,19 +43,19 @@ export class CommonService {
         switchMap((position) => {
           this.latitude = position.coords.latitude;
           this.longitude = position.coords.longitude;
-          return this.getAllCityByLocation();
+          return this.getAllCountryByLocation();
         }),
         catchError((error) => {
           console.error('Geolocation error:', error);
           this.toaster.showError(
-            'Location access denied or unavailable. Showing all cities.'
+            'Location access denied or unavailable. Showing all countries.'
           );
-          return this.getAllCityByLocation(); // fallback
+          return this.getAllCountryByLocation(); // fallback
         })
       );
     } else {
       this.toaster.showError('Geolocation not supported by this browser.');
-      return this.getAllCityByLocation();
+      return this.getAllCountryByLocation();
     }
   }
 
@@ -158,11 +158,17 @@ export class CommonService {
     }
     return years;
   }
-  public getLatitudeLongitude(city: any) {
-    return this.http
-      .getExternalApi('https://nominatim.openstreetmap.org/search', city)
-      .pipe(map((x) => x as any[]));
-  }
+  public getLatitudeLongitude(country: any) {
+  const params = {
+    q: country,
+    format: 'json',
+    limit: 1
+  };
+
+  return this.http
+    .getExternalApi('https://nominatim.openstreetmap.org/search', params)
+    .pipe(map((x) => x as any[]));
+}
   getGeneratedTime(utcDate: string | Date | null | undefined): string {
   if (!utcDate) return 'NA';
 

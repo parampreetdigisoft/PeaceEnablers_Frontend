@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { UserService } from "src/app/core/services/user.service";
-import { CityVM } from "src/app/core/models/CityVM";
+import { CountryVM } from "src/app/core/models/CountryVM";
 import { CommonService } from "src/app/core/services/common.service";
-import { GetCityPillarHistoryRequestDto, GetCityPillarHistoryRequestNewDto } from "src/app/core/models/AssessmentRequest";
+import { GetCountryPillarHistoryRequestDto, GetCountryPillarHistoryRequestNewDto } from "src/app/core/models/AssessmentRequest";
 import { PillarsVM } from "src/app/core/models/PillersVM";
 import { MatTableDataSource } from "@angular/material/table";
 import {
@@ -41,11 +41,11 @@ export class ComparisionComponent implements OnInit {
   pillers: PillarsVM[] = [];
   pillersHistory: PillarsHistoryResponse[] = [];
   questionsByUserPillars: QuestionsByUserPillarsResponsetDto[] = [];
-  cities: CityVM[] | null = [];
-  selectedCities: number | any = "";
+  countries: CountryVM[] | null = [];
+  selectedCountries: number | any = "";
   selectedPillarID: number | any = "";
   isLoader: boolean = false;
-  isPillarHistroyDownloading: boolean = false;
+  isPillarHistoryDownloading: boolean = false;
   dataSource = new MatTableDataSource<PillarsTableRow>([]);
   displayedColumns: string[] = []; // pillarName + dynamic users
   userMap = new Map<number, string>(); // userID -> fullName
@@ -69,7 +69,7 @@ export class ComparisionComponent implements OnInit {
   ngOnInit(): void {
     this.isLoader = true;
     this.GetAllPillars();
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
     this.initializeChart();
   }
   GetAllPillars() {
@@ -77,18 +77,18 @@ export class ComparisionComponent implements OnInit {
       this.pillers = p;
     });
   }
-  getAllCitiesByUserId() {
+  getAllCountriesByUserId() {
     this.analystService
-      .getAllCitiesByUserId(this.userService?.userInfo?.userID)
+      .getAllCountriesByUserId(this.userService?.userInfo?.userID)
       .subscribe({
         next: (res) => {
           setTimeout(() => {
             this.isLoader = false;
           }, 1000);
 
-          this.cities = res.result;
-          if (this.cities && this.cities.length > 0) {
-            this.selectedCities = this.cities[0].cityID;
+          this.countries = res.result;
+          if (this.countries && this.countries.length > 0) {
+            this.selectedCountries = this.countries[0].countryID;
             this.getResponsesByUserId();
           }
         },
@@ -101,21 +101,21 @@ export class ComparisionComponent implements OnInit {
   getResponsesByUserId() {
     if (
       this.userService?.userInfo?.userID == null ||
-      !this.selectedCities ||
-      this.selectedCities === "" ||
-      this.selectedCities == null
+      !this.selectedCountries ||
+      this.selectedCountries === "" ||
+      this.selectedCountries == null
     ) {
       return;
     }
 
     this.isLoader = true;
-    let payload: GetCityPillarHistoryRequestNewDto = {
+    let payload: GetCountryPillarHistoryRequestNewDto = {
       userId: this.userService?.userInfo?.userID,
       pillarID:
         this.selectedPillarID && this.selectedPillarID > 0
           ? this.selectedPillarID
           : null,
-      cityID: this.selectedCities,
+      countryID: this.selectedCountries,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
       pageNumber: this.currentPage,
       pageSize: this.pageSize
@@ -137,7 +137,7 @@ export class ComparisionComponent implements OnInit {
     });
   }
 
-  compareCities(event: any) {
+  compareCountries(event: any) {
     this.currentPage = event;
     this.getResponsesByUserId();
   }
@@ -468,17 +468,17 @@ export class ComparisionComponent implements OnInit {
   getQuestionsHistoryByPillar(pillarID: number) {
     if (
       this.userService?.userInfo?.userID == null ||
-      !this.selectedCities ||
-      this.selectedCities === "" ||
-      this.selectedCities == null
+      !this.selectedCountries ||
+      this.selectedCountries === "" ||
+      this.selectedCountries == null
     ) {
       return;
     }
 
-    let payload: GetCityPillarHistoryRequestDto = {
+    let payload: GetCountryPillarHistoryRequestDto = {
       userID: this.userService?.userInfo?.userID,
       pillarID: pillarID,
-      cityID: this.selectedCities,
+      countryID: this.selectedCountries,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
       exportType:ExportType.Excel
     };
@@ -502,16 +502,16 @@ export class ComparisionComponent implements OnInit {
   exportPillarsHistoryByUserId() {
     if (
       this.userService?.userInfo?.userID == null ||
-      !this.selectedCities ||
-      this.selectedCities === "" ||
-      this.selectedCities == null || this.pillarColumns?.length == 0
+      !this.selectedCountries ||
+      this.selectedCountries === "" ||
+      this.selectedCountries == null || this.pillarColumns?.length == 0
     ) {
       return;
     }
-    this.isPillarHistroyDownloading = true;
-    let payload: GetCityPillarHistoryRequestDto = {
+    this.isPillarHistoryDownloading = true;
+    let payload: GetCountryPillarHistoryRequestDto = {
       userID: this.userService?.userInfo?.userID,
-      cityID: this.selectedCities,
+      countryID: this.selectedCountries,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear),
       exportType:ExportType.Excel
     };
@@ -525,11 +525,11 @@ export class ComparisionComponent implements OnInit {
         a.href = url;
         a.download = "PillarQuestionHistory.xlsx";
         a.click();
-        this.isPillarHistroyDownloading = false;
+        this.isPillarHistoryDownloading = false;
         this.toaster.showSuccess("Pillars History downloaded successfully");
       },
       error: () => {
-        this.isPillarHistroyDownloading = false;
+        this.isPillarHistoryDownloading = false;
         this.toaster.showError("There is an error please try later");
       },
     });

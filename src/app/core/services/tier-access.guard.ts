@@ -12,7 +12,7 @@ export const tierAccessGuard: CanActivateFn = (route, state) => {
     return true;
   }
   else {
-    router.navigate(['cityuser/payment']);
+    router.navigate(['countryuser/payment']);
     return false;
   }
 };

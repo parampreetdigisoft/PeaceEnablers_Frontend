@@ -8,10 +8,10 @@
 
       <form [formGroup]="assesmentForm" (ngSubmit)="onSubmit()">
 
-        <!-- City Info -->
+        <!-- Country Info -->
         <div class="details_list">
-          <strong>City:</strong>
-          <span *ngIf="city">{{ city.cityName }}, {{ city.state }} ({{ city.country }})</span>
+          <strong>Country:</strong>
+          <span *ngIf="country">{{ country.countryName }} ({{ country.continent }})</span>
         </div>
 
         <!-- AI Import Options -->
@@ -40,10 +40,10 @@
             </ng-template>
           </ng-select>
         </div>
-        <div class="input_field mt-4" *ngIf="city?.comment">
+        <div class="input_field mt-4" *ngIf="country?.comment">
           <label>Evaluator Comment</label>
             <small>
-              {{city?.comment}}
+              {{country?.comment}}
             </small>
         </div>
 

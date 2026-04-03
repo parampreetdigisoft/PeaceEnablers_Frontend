@@ -3,7 +3,7 @@
         <div class="modal-body">
             <div class="alert alert-info text-center mb-4 rounded-3 shadow-sm">
                 <h4>Customize Your Access</h4><br />
-                Select the <b>Pillars</b>, and <b>Cities</b> you want to work with.
+                Select the <b>Pillars</b>, and <b>Countries</b> you want to work with.
                 You’ll only be able to view and manage data for the items you choose here.
             </div>
 
@@ -41,28 +41,28 @@
                                 </div>
                             </div>
 
-                            <!-- City Multi-Select -->
+                            <!-- Country Multi-Select -->
                             <div class="input_field">
-                                <label>Assign City *</label>
-                                <ng-select [items]="cityList" bindValue="cityID" bindLabel="cityName"
-                                    formControlName="cities" [multiple]="true" class="form-control analyst_multi_select"
+                                <label>Assign Country *</label>
+                                <ng-select [items]="countryList" bindValue="countryID" bindLabel="countryName"
+                                    formControlName="countries" [multiple]="true" class="form-control analyst_multi_select"
                                     [searchable]="true"
-                                    [placeholder]="kpiForm.get('cities')?.invalid ? 'Assign City' : ''"
-                                    (change)="checkSelectionLimit('cities')">
+                                    [placeholder]="kpiForm.get('countries')?.invalid ? 'Assign Country' : ''"
+                                    (change)="checkSelectionLimit('countries')">
                                     <ng-template ng-label-tmp let-item="item">
-                                        {{ item.cityName }},
+                                        {{ item.countryName }},
                                     </ng-template>
 
                                     <ng-template ng-option-tmp let-item="item">
-                                        {{ item.cityName }}, {{ item.state }}
+                                        {{ item.countryName }}, {{ item.state }}
                                     </ng-template>
                                 </ng-select>
                                 <div class="error-msg"
-                                    *ngIf="kpiForm.get('cities')?.invalid && (isSubmitted || kpiForm.get('cities')?.touched)">
-                                    Please select at least one city.
+                                    *ngIf="kpiForm.get('countries')?.invalid && (isSubmitted || kpiForm.get('countries')?.touched)">
+                                    Please select at least one country.
                                 </div>
-                                <div *ngIf="limitMessages['cities']" class="text-danger small mt-1">
-                                    {{ limitMessages['cities'] }}
+                                <div *ngIf="limitMessages['countries']" class="text-danger small mt-1">
+                                    {{ limitMessages['countries'] }}
                                 </div>
                             </div>
 

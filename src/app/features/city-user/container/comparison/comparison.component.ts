@@ -1,11 +1,11 @@
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexGrid, ApexLegend, ApexMarkers, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent } from 'ng-apexcharts';
-import { CompareCityKpiDetailComponent } from 'src/app/shared/standAlone/compare-city-kpi-detail/compare-city-kpi-detail.component';
+import { CompareCountryKpiDetailComponent } from 'src/app/shared/standAlone/compare-country-kpi-detail/compare-country-kpi-detail.component';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
 import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto';
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
-import { CompareCityResponseDto, ChartTableRowDto } from 'src/app/core/models/CompareCityResponseDto';
+import { CompareCountryResponseDto, ChartTableRowDto } from 'src/app/core/models/CompareCountryResponseDto';
 import { AnalyticalLayerResponseDto } from 'src/app/core/models/GetAnalyticalLayerResultDto';
-import { CompareCityRequestDto } from 'src/app/core/models/CompareCityRequestDto';
+import { CompareCountryRequestDto } from 'src/app/core/models/CompareCountryRequestDto';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonService } from 'src/app/core/services/common.service';
@@ -13,8 +13,8 @@ import { UserDataShareService } from '../../user-data-share.service';
 import { SharedModule } from 'src/app/shared/share.module';
 import { environment } from 'src/environments/environment';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
-import { CityUserService } from '../../city-user.service';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryUserService } from '../../country-user.service';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { CommonModule } from '@angular/common';
 import { debounceTime, Subject } from 'rxjs';
 import { AdminService } from 'src/app/features/admin/admin.service';
@@ -37,22 +37,22 @@ export type ChartOptions = {
   selector: 'app-comparison',
   templateUrl: './comparison.component.html',
   styleUrl: './comparison.component.css',
-  imports: [CommonModule, SharedModule, CircularScoreComponent,CompareCityKpiDetailComponent]
+  imports: [CommonModule, SharedModule, CircularScoreComponent,CompareCountryKpiDetailComponent]
 })
 export class ComparisonComponent implements OnInit, OnDestroy {
 
   selectedYear = new Date().getFullYear();
   pillers: PillarsVM[] = [];
-  selectedCities: number[] = [];
+  selectedCountries: number[] = [];
   selectedKpis: number[] = [];
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   pageSize: number = 10;
   currentPage: number = 1;
   totalRecords: number = 10;
   kpis: AnalyticalLayerResponseDto[] = [];
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
-  compareCityResponseDto: CompareCityResponseDto | null = null;
+  compareCountryResponseDto: CompareCountryResponseDto | null = null;
   isLoader: boolean = false;
   environment = environment.apiUrl;
   chartTableData: ChartTableRowDto[] = [];
@@ -60,7 +60,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
   mutipleCitykpiLayerResults: GetMutiplekpiLayerResultsDto | null = null;
   viewDetailIndex = -1;
   constructor(
-    private cityUserService: CityUserService,
+    private countryUserService: CountryUserService,
     private toaster: ToasterService,
     public commonService: CommonService,
     private userDataShareService: UserDataShareService,
@@ -69,17 +69,17 @@ export class ComparisonComponent implements OnInit, OnDestroy {
 
   }
   ngOnDestroy(): void {
-    this.userDataShareService.compareCity.set([]);
+    this.userDataShareService.compareCountry.set([]);
   }
 
   ngOnInit(): void {
     this.isLoader = true;
-    this.selectedCities = this.userDataShareService.compareCity()?.map(x => x.cityID) ?? [];
-    this.cityUserService
+    this.selectedCountries = this.userDataShareService.compareCountry()?.map(x => x.countryID) ?? [];
+    this.countryUserService
     this.GetAllKpi();
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.$kpiChanged.pipe(debounceTime(1000)).subscribe(x => {
-      this.compareCities();
+      this.compareCountries();
     });
   }
 
@@ -87,7 +87,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     this.$kpiChanged.next(true);
   }
   GetAllKpi() {
-    this.cityUserService.GetAllKpi().subscribe({
+    this.countryUserService.GetAllKpi().subscribe({
       next: (res) => {
         if (res.succeeded) {
           this.kpis = res.result ?? [];
@@ -96,33 +96,33 @@ export class ComparisonComponent implements OnInit, OnDestroy {
       }
     });
   }
-  getCityUserCities() {
-    this.cityUserService.getCityUserCities().subscribe((p) => {
+  getCountryUserCountries() {
+    this.countryUserService.getCountryUserCountries().subscribe((p) => {
       this.isLoader = false;
-      this.cities = p.result || [];
-      if (this.cities?.length && this.selectedCities.length < 2) {
-        this.selectedCities = this.cities.slice(0, 2).map(x => x.cityID);
+      this.countries = p.result || [];
+      if (this.countries?.length && this.selectedCountries.length < 2) {
+        this.selectedCountries = this.countries.slice(0, 2).map(x => x.countryID);
       }
-      this.compareCities();
+      this.compareCountries();
     });
   }
   getMutiplekpiLayerResults(layerID: number, viewDetailIndex:number) {
 
-    if (this.selectedCities.length < 1) {
-      this.compareCityResponseDto = null;
+    if (this.selectedCountries.length < 1) {
+      this.compareCountryResponseDto = null;
       this.getChartOptions();
-      this.toaster.showWarning("Please select at least one city to view data.");
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
 
     this.viewDetailIndex = viewDetailIndex;
 
     let payload: GetMutiplekpiLayerRequestDto = {
-      cityIDs: this.selectedCities,
+      countryIDs: this.selectedCountries,
       year: this.selectedYear,
       layerID: layerID
     }
-    this.cityUserService.getMutiplekpiLayerResults(payload).subscribe({
+    this.countryUserService.getMutiplekpiLayerResults(payload).subscribe({
       next: (res) => {
         this.viewDetailIndex = -1;
         if (res.succeeded) {
@@ -132,7 +132,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
           offcanvas.show();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
+          this.toaster.showInfo("No comparison data available for the selected countries.");
         }
       },
       error: (err) => {
@@ -141,31 +141,31 @@ export class ComparisonComponent implements OnInit, OnDestroy {
       }
     });
   }
-  compareCities(currentPage = 1) {
-    if (this.selectedCities.length < 1) {
-      this.compareCityResponseDto = null;
+  compareCountries(currentPage = 1) {
+    if (this.selectedCountries.length < 1) {
+      this.compareCountryResponseDto = null;
       this.getChartOptions();
-      this.toaster.showWarning("Please select at least one city to view data.");
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
     this.isLoader = true;
     this.currentPage = currentPage;
 
-    let payload: CompareCityRequestDto = {
-      cities: this.selectedCities,
+    let payload: CompareCountryRequestDto = {
+      countries: this.selectedCountries,
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
       Kpis: this.selectedKpis
     }
-    this.cityUserService.compareCities(payload).subscribe({
+    this.countryUserService.compareCountries(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res.succeeded) {
-          this.compareCityResponseDto = res.result || null;
+          this.compareCountryResponseDto = res.result || null;
           this.getChartOptions();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
+          this.toaster.showInfo("No comparison data available for the selected countries.");
         }
       },
       error: (err) => {
@@ -175,7 +175,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     });
   }
   getChartOptions() {
-    this.chartTableData = this.compareCityResponseDto?.tableData ?? [];
+    this.chartTableData = this.compareCountryResponseDto?.tableData ?? [];
 
     if (!this.chartTableData?.length) {
       this.totalRecords = 0;
@@ -191,9 +191,9 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     let series: any[] = [];
     let strokeDashArray: number[] = [];
 
-    (this.compareCityResponseDto?.series ?? []).forEach((cityData, index) => {
-      // Skip the last city if AI View is enabled (assuming last city is AI benchmark)
-      if (index === (this.compareCityResponseDto?.series ?? []).length - 1) {
+    (this.compareCountryResponseDto?.series ?? []).forEach((countryData, index) => {
+      // Skip the last country if AI View is enabled (assuming last country is AI benchmark)
+      if (index === (this.compareCountryResponseDto?.series ?? []).length - 1) {
         return;
       }
 
@@ -201,8 +201,8 @@ export class ComparisonComponent implements OnInit, OnDestroy {
 
       // Evaluation series (solid line)
       series.push({
-        name: `${cityData.name}`,
-        data: cityData.aiData,
+        name: `${countryData.name}`,
+        data: countryData.aiData,
         color: baseColor,
         type: 'line'
       });
@@ -299,7 +299,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
       },
       xaxis: {
         type: "category",
-        categories: this.compareCityResponseDto?.categories,
+        categories: this.compareCountryResponseDto?.categories,
         labels: {
           rotate: -15,
           rotateAlways: true,
@@ -352,7 +352,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
         shared: true,
         intersect: false,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const layerCode = this.compareCityResponseDto?.categories?.[dataPointIndex] ?? "";
+          const layerCode = this.compareCountryResponseDto?.categories?.[dataPointIndex] ?? "";
           const layerName = kpiMap.get(layerCode) ?? "";
 
           let tooltipHtml = `
@@ -363,19 +363,19 @@ export class ComparisonComponent implements OnInit, OnDestroy {
         `;
 
           // Group evaluation and AI values together
-          const cities = this.compareCityResponseDto?.series ?? [];
-          cities.forEach((city, idx) => {
-            // Skip last city if it's the AI benchmark
-            if (idx === cities.length - 1) {
+          const countries = this.compareCountryResponseDto?.series ?? [];
+          countries.forEach((country, idx) => {
+            // Skip last country if it's the AI benchmark
+            if (idx === countries.length - 1) {
               return;
             }
-            const aiValue = city.aiData?.[dataPointIndex];
+            const aiValue = country.aiData?.[dataPointIndex];
             const color = colorPalette[idx % colorPalette.length];
 
             tooltipHtml += `
               <div style="margin: 8px 0; padding: 8px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 6px; border-left: 3px solid ${color};">
                 <div style="font-weight: 600; color: ${color}; margin-bottom: 6px; font-size: 12px;">
-                  ${city.name}
+                  ${country.name}
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                   <span style="color: #666;">📊 Score:</span>
@@ -394,24 +394,24 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     this.chartOptions = option;
   }
 
-  getCityImage(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.image || '';
+  getCountryImage(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.image || '';
   }
 
-  getCityScore(cityID: number, isAi: boolean = false): string {
-    const city = this.cities?.find(c => c.cityID === cityID);
+  getCountryScore(countryID: number, isAi: boolean = false): string {
+    const country = this.countries?.find(c => c.countryID === countryID);
     if (isAi) {
-      return city?.aiScore?.toFixed(2) || '0';
+      return country?.aiScore?.toFixed(2) || '0';
     }
-    return city?.score?.toFixed(2) || '0';
+    return country?.score?.toFixed(2) || '0';
   }
 
-  getCityCountry(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.country || '';
+  getCountry(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.countryName || '';
   }
 
-  getCityState(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.state || '';
+  getCountryContinent(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.continent || '';
   }
 
   onImgError(event: Event) {
@@ -422,16 +422,16 @@ export class ComparisonComponent implements OnInit, OnDestroy {
 
     if (!this.chartTableData?.length) return 'NA';
 
-    const peerCities = this.cities?.filter(city =>
-      this.chartTableData[0].cityValues?.some(row => row.cityID === city.cityID)
+    const peerCountries = this.countries?.filter(country =>
+      this.chartTableData[0].countryValues?.some(row => row.countryID === country.countryID)
     ) ?? [];
 
-    const avgPeerCityScore =
-      peerCities.length > 0
-        ? peerCities.reduce((sum, row) => sum + (row.score ?? 0), 0) / peerCities.length
+    const avgPeerCountryScore =
+      peerCountries.length > 0
+        ? peerCountries.reduce((sum, row) => sum + (row.score ?? 0), 0) / peerCountries.length
         : 0;
 
-    return avgPeerCityScore.toFixed(2);
+    return avgPeerCountryScore.toFixed(2);
   }
 
   customSearchFn(term: string, item: any) {
@@ -442,25 +442,25 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     );
   }
   exportData() { 
-  if (!this.selectedCities.length) {
-    this.toaster.showWarning("Please select cities");
+  if (!this.selectedCountries.length) {
+    this.toaster.showWarning("Please select countries");
     return;
   }
   this.isLoader = true;
   const params = {
-    cities: this.selectedCities.join(','),
+    countries: this.selectedCountries.join(','),
     kpis: null,
     updatedAt: new Date().toISOString()
   };
 
-  this.adminService.exportCompareCitiesCityUsers(params)
+  this.adminService.exportCompareCountriesCountryUsers(params)
     .subscribe({
       next: (res: Blob) => {
         this.isLoader = false;
         const url = window.URL.createObjectURL(res);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "City_Comparison.xlsx";
+        a.download = "Country_Comparison.xlsx";
         a.click();
         window.URL.revokeObjectURL(url); // good practice
       },

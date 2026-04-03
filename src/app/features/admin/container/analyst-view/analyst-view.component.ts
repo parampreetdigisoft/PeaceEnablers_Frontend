@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { AdminService } from "../../admin.service";
-import { CityVM } from "../../../../core/models/CityVM";
+import { CountryVM } from "../../../../core/models/CountryVM";
 import { PaginationResponse } from "src/app/core/models/PaginationResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { UserService } from "src/app/core/services/user.service";
@@ -24,12 +24,12 @@ declare var bootstrap: any;
 export class AnalystViewComponent implements OnInit, OnDestroy {
   isLoader: boolean = false;
   selectedAnalyst: GetUserByRoleResponse | null = null;
-  selectedCity: CityVM | null = null;
+  selectedCity: CountryVM | null = null;
   analystResponse: PaginationResponse<GetUserByRoleResponse> | undefined;
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   loading: boolean = false;
   isOpendialog: boolean = false;
   roleId: number | any = 0;
@@ -37,7 +37,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
   selectedIndex?:number;
   rolesList = [
     { name: "Evaluator", role: UserRoleValue.Evaluator },
-    { name: "CityUser", role: UserRoleValue.CityUser },
+    { name: "CountryUser", role: UserRoleValue.CountryUser },
   ];
 
   constructor(
@@ -53,15 +53,15 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       this.selectedRoleID = this.roleId;
     });
     this.getAnalyst();
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
   }
 
-  getAllCitiesByUserId() {
+  getAllCountriesByUserId() {
     this.adminService
-      .getAllCitiesByUserId(this.userService?.userInfo?.userID)
+      .getAllCountriesByUserId(this.userService?.userInfo?.userID)
       .subscribe({
         next: (res) => {
-          this.cities = res.result;          
+          this.countries = res.result;          
         },
       });
   }
@@ -122,7 +122,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       password: "",
       role: UserRoleValue.Analyst,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      cityID: analyst.cities.map((x) => x.cityID),
+      countryID: analyst.countries.map((x) => x.countryID),
       userID: analyst.userID,
     };
     this.addUpdateAnalyst(payload);
@@ -140,7 +140,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       password: analyst.password,
       role: UserRoleValue.Analyst,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      cityID: analyst.cityID,
+      countryID: analyst.countryID,
       userID: analyst.userID,
     };
 

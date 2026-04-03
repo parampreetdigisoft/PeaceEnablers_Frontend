@@ -1,6 +1,6 @@
 export class RegenerateAiSearchDto {
-  cityID!: number;
-  cityEnable = false;
+  countryID!: number;
+  countryEnable = false;
   pillarEnable = false;
   questionEnable = false;
   viewerUserIDs: number[] = [];

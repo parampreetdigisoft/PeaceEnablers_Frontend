@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { AnalystComponent } from './analyst.component';
-import { AssignedCityComponent } from './container/assigned-city/assigned-city.component';
+import { AssignedCountryComponent } from './container/assigned-country/assigned-country.component';
 import { EvaluatorViewComponent } from './container/evaluator-view/evaluator-view.component';
 import { AnalystAssessmentComponent } from './container/analyst-assessment/analyst-assessment.component';
 import { SharedModule } from 'src/app/shared/share.module';
@@ -19,11 +19,11 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AnalystDashboardComponent },
-      { path: 'assigned-city', component: AssignedCityComponent },
+      { path: 'assigned-country', component: AssignedCountryComponent },
       { path: 'evaluator-view', component: EvaluatorViewComponent },
       { path: 'evaluator-response/:assessmentUserID', component: EvaluatorResponsesComponent },
       { path: 'evaluator-response', component: EvaluatorResponsesComponent },
-      { path: 'evaluator-response/:userID/:cityID', component: EvaluatorResponsesComponent },
+      { path: 'evaluator-response/:userID/:countryID', component: EvaluatorResponsesComponent },
       { path: 'analyst-assessment', component: AnalystAssessmentComponent },
       { path: 'assessment-result/:assessmentID/:userName', component: EvaluatorResponseViewComponent },
       { path: 'evaluator-Comparision', component: ComparisionComponent },
@@ -36,12 +36,12 @@ const routes: Routes = [
         loadComponent: () => import('./container/kpi-comparision/kpi-comparision.component').then(m => m.KpiComparisionComponent)
       },
       {
-        path: 'ai/city-analysis',
-        loadComponent: () => import('./container/ai-city-analysis/aicity-analysis.component').then(m => m.AICityAnalaysisComponent)
+        path: 'ai/country-analysis',
+        loadComponent: () => import('./container/ai-country-analysis/aicountry-analysis.component').then(m => m.AICountryAnalaysisComponent)
       },
       {
-        path: 'ai/city-comparison',
-        loadComponent: () => import('./container/ai-city-comparison/ai-city-comparison.component').then(m => m.AiCityComparisonComponent)
+        path: 'ai/country-comparison',
+        loadComponent: () => import('./container/ai-country-comparison/ai-country-comparison.component').then(m => m.AiCountryComparisonComponent)
       },
       {
         path: 'ai/questions-analysis',
@@ -59,7 +59,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     AnalystComponent,
-    AssignedCityComponent,
+    AssignedCountryComponent,
     EvaluatorViewComponent,
     AnalystAssessmentComponent,
     AddUpdateEvaluatorComponent,

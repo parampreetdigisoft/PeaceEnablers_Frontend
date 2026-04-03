@@ -4,7 +4,7 @@ import { ToasterService } from 'src/app/core/services/toaster.service';
 import { SortDirection } from 'src/app/core/enums/SortDirection';
 import { UserService } from 'src/app/core/services/user.service';
 import { environment } from 'src/environments/environment';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { AdminService } from '../../admin.service';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -25,7 +25,7 @@ export class KpiLayersComponent {
   selectedYear = new Date().getFullYear();
   urlBase = environment.apiUrl;
   selectedKpi: GetAnalyticalLayerResultDto | null | undefined = null;
-  selectedCityID?: number;
+  selectedCountryID?: number;
   selectedkpiLayerID?: number;
   kpiLayersResponse: PaginationResponse<GetAnalyticalLayerResultDto> | undefined;
   totalRecords: number = 0;
@@ -34,14 +34,14 @@ export class KpiLayersComponent {
   loading: boolean = false;
   isLoader: boolean = false;
   kpis: AnalyticalLayerResponseDto[] = [];
-  cityList: CityVM[] = [];
+  countryList: CountryVM[] = [];
   $kpiChanged = new Subject();
   kpiLayers: GetAnalyticalLayerResultDto[] = [];
   constructor(private adminService: AdminService, private toaster: ToasterService, private userService: UserService, public commonService:CommonService) { }
 
   ngOnInit(): void {
     this.GetAnalyticalLayerResults(1);
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.GetAllKpi();
     this.$kpiChanged.pipe(debounceTime(1000)).subscribe(x => {
       this.GetAnalyticalLayerResults();
@@ -60,8 +60,8 @@ export class KpiLayersComponent {
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID
     }
-    if (this.selectedCityID != undefined && this.selectedCityID != 0) {
-      payload.cityID = this.selectedCityID;
+    if (this.selectedCountryID != undefined && this.selectedCountryID != 0) {
+      payload.countryID = this.selectedCountryID;
     }
     if (this.selectedkpiLayerID != undefined && this.selectedkpiLayerID != 0) {
       payload.layerID = this.selectedkpiLayerID;
@@ -83,9 +83,8 @@ export class KpiLayersComponent {
 
   }
 
-  viewDetails(city: GetAnalyticalLayerResultDto) {   
-    this.selectedKpi = city;
-    console.log(this.selectedKpi);
+  viewDetails(country: GetAnalyticalLayerResultDto) {   
+    this.selectedKpi = country;  
     const sidebarEl = document.getElementById('kpiLayerSidebar');
     const offcanvas = new bootstrap.Offcanvas(sidebarEl);
     offcanvas.show();
@@ -99,11 +98,11 @@ export class KpiLayersComponent {
       }
     });
   }
-  getCityUserCities() {
-    this.adminService.getAllCitiesByUserId(this.userService.userInfo.userID ?? 0).subscribe({
+  getCountryUserCountries() {
+    this.adminService.getAllCountriesByUserId(this.userService.userInfo.userID ?? 0).subscribe({
       next: (res) => {
         if (res.succeeded) {
-          this.cityList = res.result ?? [];
+          this.countryList = res.result ?? [];
         }
       }
     });

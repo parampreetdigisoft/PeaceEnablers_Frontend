@@ -37,13 +37,13 @@ const routes: Routes = [
         data: { role: UserRole.Evaluator },
       },
       {
-        path: "cityuser",
+        path: "countryuser",
         loadChildren: () =>
-          import("./features/city-user/city-user.module").then(
-            (m) => m.CityUserModule
+          import("./features/city-user/country-user.module").then(
+            (m) => m.CountryUserModule
           ),
         canActivate: [RoleGuard],
-        data: { role: UserRole.CityUser },
+        data: { role: UserRole.CountryUser },
       },
     ],
   },

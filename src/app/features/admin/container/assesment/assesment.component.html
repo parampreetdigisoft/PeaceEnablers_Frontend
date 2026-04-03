@@ -10,10 +10,10 @@
             {{ year }}
           </option>
         </select>
-        <select [(ngModel)]="selectedcityID" name="cityID" class="form-control" (change)="getAssessments()">
-          <option value="">Search by City</option>
-          <option *ngFor="let city of cities" [value]="city.cityID">
-            {{ city.cityName }}
+        <select [(ngModel)]="selectedCountryID" name="countryID" class="form-control" (change)="getAssessments()">
+          <option value="">Search by Country</option>
+          <option *ngFor="let country of countries" [value]="country.countryID">
+            {{ country.countryName }}
           </option>
         </select>
         <select [(ngModel)]="selectedRoleID" name="role" class="form-control" (change)="getAssessments()">
@@ -33,7 +33,7 @@
       <tr>
         <th>S.No.</th>
         <th>Submitted By</th>
-        <th>City</th>
+        <th>Country</th>
         <th>Score</th>
         <th>Status</th>
         <th>Unknown</th>
@@ -46,7 +46,7 @@
       <tr *ngFor="let assessment of assessmentsResponse?.data; let i = index">
         <td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
         <td>{{ assessment.userName }}</td>
-        <td>{{ assessment.cityName }}</td>
+        <td>{{ assessment.countryName }}</td>
         <td>
           <span class="bold_num">{{ assessment.score ?? 0 }}</span>
         </td>
@@ -137,7 +137,7 @@
   <div class="modal fade modal_design" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
     aria-hidden="">
     <app-transter-assessment [assesment]="selectedAssessment" (closeModal)="closeModal()"
-      [userofSelecteCityResponse]="userofSelecteCityResponse" [loading]="loading"
+      [userOfSelectedCountryResponse]="userofSelectedCountryResponse" [loading]="loading"
       (assesmentChange)="transferAssessment($event)">
     </app-transter-assessment>
   </div>

@@ -1,5 +1,5 @@
 export interface AIEstimatedQuestionScoreDto {
-  cityId: number;
+  countryID: number;
   pillarId: number;
   questionId: number;
   questionText: string;

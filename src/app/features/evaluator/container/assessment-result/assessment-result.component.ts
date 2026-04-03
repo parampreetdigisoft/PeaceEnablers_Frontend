@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { CityVM } from "src/app/core/models/CityVM";
+import { CountryVM } from "src/app/core/models/CountryVM";
 import { PaginationUserRequest } from "src/app/core/models/PaginationRequest";
 import { PaginationResponse } from "src/app/core/models/PaginationResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
@@ -11,7 +11,7 @@ import { GetAssessmentRequestDto } from "src/app/core/models/AssessmentRequest";
 import { SortDirection } from "src/app/core/enums/SortDirection";
 import { CommonService } from "src/app/core/services/common.service";
 import { AssessmentPhase } from "src/app/core/enums/AssessmentPhase";
-import { SendRequestMailToUpdateCity } from "src/app/core/models/AnalystVM";
+import { SendRequestMailToUpdateCountry } from "src/app/core/models/AnalystVM";
 
 @Component({
   selector: "app-assessment-result",
@@ -21,12 +21,12 @@ import { SendRequestMailToUpdateCity } from "src/app/core/models/AnalystVM";
 export class AssessmentResultComponent implements OnInit {
   currentYear = new Date().getFullYear();
   selectedYear= this.currentYear;
-  selectedcityID: number | any = "";
+  selectedcountryID: number | any = "";
   assessmentsResponse: PaginationResponse<GetAssessmentResponse> | undefined;
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   isLoader: boolean = false;
   constructor(
     private evaluatorService: EvaluatorService,
@@ -37,7 +37,7 @@ export class AssessmentResultComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
     this.getAssessments();
   }
 
@@ -60,7 +60,7 @@ export class AssessmentResultComponent implements OnInit {
       pageNumber: currentPage,
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID,
-      cityID: this.selectedcityID,
+      countryID: this.selectedcountryID,
       updatedAt:this.commonService.getStartOfYearLocal(this.selectedYear)
     };
     this.evaluatorService
@@ -73,16 +73,16 @@ export class AssessmentResultComponent implements OnInit {
         this.isLoader = false;
       });
   }
-  getAllCitiesByUserId() {
+  getAllCountriesByUserId() {
     this.evaluatorService
-      .getAllCitiesByUserId(this.userService?.userInfo?.userID)
+      .getAllCountriesByUserId(this.userService?.userInfo?.userID)
       .subscribe({
         next: (res) => {
-          this.cities = res.result;
-          if (this.cities) {
-            //this.selectedcityID = this.cities?.length > 0 ? this.cities[0].cityID : null
+          this.countries = res.result;
+          if (this.countries) {
+            //this.selectedcountryID = this.countries?.length > 0 ? this.countries[0].countryID : null
           } else {
-            this.toaster.showWarning("No city assigned");
+            this.toaster.showWarning("No country assigned");
           }
         },
       });
@@ -92,15 +92,15 @@ export class AssessmentResultComponent implements OnInit {
     let userRole = this.userService.userInfo.role;
     switch (assessment.assessmentPhase) {
       case AssessmentPhase.InProgress: {
-        this.evaluatorService.userCityMappingIDSubject$.next(
-          assessment.userCityMappingID
+        this.evaluatorService.userCountryMappingIDSubject$.next(
+          assessment.userCountryMappingID
         );
         this.router.navigate(["evaluator/make-assessment"]);
         break;
       }
       case  AssessmentPhase.EditApproved: {
-        this.evaluatorService.userCityMappingIDSubject$.next(
-          assessment.userCityMappingID
+        this.evaluatorService.userCountryMappingIDSubject$.next(
+          assessment.userCountryMappingID
         );
         this.router.navigate(["evaluator/make-assessment"]);
         break;
@@ -109,14 +109,14 @@ export class AssessmentResultComponent implements OnInit {
         break;
         case AssessmentPhase.EditRejected : {
         this.sendMailForEditAssessment(
-          assessment.userCityMappingID,
+          assessment.userCountryMappingID,
           assessment.assignedByUserId
         );
         break;
       }
       case AssessmentPhase.Completed : {
         this.sendMailForEditAssessment(
-          assessment.userCityMappingID,
+          assessment.userCountryMappingID,
           assessment.assignedByUserId
         );
         break;
@@ -125,10 +125,10 @@ export class AssessmentResultComponent implements OnInit {
     }
   }
 
-  sendMailForEditAssessment(userCityMappingID: number, mailToUserID: number) {
-    let payload: SendRequestMailToUpdateCity = {
+  sendMailForEditAssessment(userCountryMappingID: number, mailToUserID: number) {
+    let payload: SendRequestMailToUpdateCountry = {
       userID: this.userService.userInfo.userID,
-      userCityMappingID: userCityMappingID,
+      userCountryMappingID: userCountryMappingID,
       mailToUserID: mailToUserID,
     };
     this.evaluatorService.sendMailForEditAssessment(payload).subscribe({

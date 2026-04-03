@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { UserService } from 'src/app/core/services/user.service';
 
 
@@ -9,13 +9,13 @@ import { UserService } from 'src/app/core/services/user.service';
 })
 export class UserDataShareService {
 
-  public city = signal<CityVM | null>(null);
+  public country = signal<CountryVM | null>(null);
 
-  public compareCity = signal<CityVM[] | null>(null);
+  public compareCountry = signal<CountryVM[] | null>(null);
 
   userService = inject(UserService);
 
-  public userCityMappingIDSubject$ = new BehaviorSubject<number | null>(null);
+  public userCountryMappingIDSubject$ = new BehaviorSubject<number | null>(null);
 
 
 

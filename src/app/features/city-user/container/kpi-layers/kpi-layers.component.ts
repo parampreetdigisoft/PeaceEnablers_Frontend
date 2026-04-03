@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SortDirection } from 'src/app/core/enums/SortDirection';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { environment } from 'src/environments/environment';
-import { CityUserService } from '../../city-user.service';
+import { CountryUserService } from '../../country-user.service';
 import { UserDataShareService } from '../../user-data-share.service';
 import { AnalyticalLayerResponseDto, GetAnalyticalLayerRequestDto, GetAnalyticalLayerResultDto } from 'src/app/core/models/GetAnalyticalLayerResultDto';
 import { debounceTime, Subject } from 'rxjs';
@@ -14,12 +14,12 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/share.module';
 import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-score/sparkline-score.component';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
-import { ViewCityUserKpiLayerComponent } from '../../features/view-kpi-layer/view-city-user-kpi-layer.component';
+import { ViewCountryUserKpiLayerComponent } from '../../features/view-kpi-layer/view-country-user-kpi-layer.component';
 import { CommonService } from 'src/app/core/services/common.service';
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 @Component({
   standalone: true,
-  imports: [CommonModule,SparklineScoreComponent,CircularScoreComponent,ViewCityUserKpiLayerComponent,SharedModule],
+  imports: [CommonModule,SparklineScoreComponent,CircularScoreComponent,ViewCountryUserKpiLayerComponent,SharedModule],
   selector: 'app-kpi-layers',
   templateUrl: './kpi-layers.component.html',
   styleUrl: './kpi-layers.component.css'
@@ -28,7 +28,7 @@ export class KpiLayersComponent {
     selectedYear = new Date().getFullYear();
   urlBase = environment.apiUrl;
   selectedKpi: GetAnalyticalLayerResultDto | null | undefined = null;
-  selectedCityID?: number;
+  selectedCountryID?: number;
   selectedkpiLayerID?: number;
   kpiLayersResponse: PaginationResponse<GetAnalyticalLayerResultDto> | undefined;
   totalRecords: number = 0;
@@ -37,14 +37,14 @@ export class KpiLayersComponent {
   loading: boolean = false;
   isLoader: boolean = false;
   kpis: AnalyticalLayerResponseDto[] = [];
-  cityList: CityVM[] = [];
+  countryList: CountryVM[] = [];
   $kpiChanged = new Subject();
   kpiLayers: GetAnalyticalLayerResultDto[] = [];
-  constructor(private cityuserService: CityUserService, private toaster: ToasterService, private userService: UserService, private router: Router, private userDataService: UserDataShareService, public commonService:CommonService) { }
+  constructor(private countryUserService: CountryUserService, private toaster: ToasterService, private userService: UserService, private router: Router, private userDataService: UserDataShareService, public commonService:CommonService) { }
 
   ngOnInit(): void {
     this.GetAnalyticalLayerResults(1);
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.GetAllKpi();
     this.$kpiChanged.pipe(debounceTime(1000)).subscribe(x => {
       this.GetAnalyticalLayerResults();
@@ -63,8 +63,8 @@ export class KpiLayersComponent {
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID
     }
-    if (this.selectedCityID != undefined && this.selectedCityID != 0) {
-      payload.cityID = this.selectedCityID
+    if (this.selectedCountryID != undefined && this.selectedCountryID != 0) {
+      payload.countryID = this.selectedCountryID
     }
       if (this.selectedkpiLayerID != undefined && this.selectedkpiLayerID != 0) {
       payload.layerID = this.selectedkpiLayerID
@@ -72,7 +72,7 @@ export class KpiLayersComponent {
     if(this.selectedYear > 0){
       payload.year = Number(this.selectedYear);
     }
-    this.cityuserService.GetAnalyticalLayerResults(payload).subscribe(kpiLayers => {
+    this.countryUserService.GetAnalyticalLayerResults(payload).subscribe(kpiLayers => {
       this.kpiLayersResponse = kpiLayers;
       this.totalRecords = kpiLayers.totalRecords;
       this.currentPage = currentPage;
@@ -85,14 +85,14 @@ export class KpiLayersComponent {
 
   }
 
-  viewDetails(city: GetAnalyticalLayerResultDto) {
-    this.selectedKpi = city;
+  viewDetails(country: GetAnalyticalLayerResultDto) {
+    this.selectedKpi = country;
     const sidebarEl = document.getElementById('kpiLayerSidebar');
     const offcanvas = new bootstrap.Offcanvas(sidebarEl);
     offcanvas.show();
   }
   GetAllKpi() {
-    this.cityuserService.getCityUserKpi().subscribe({
+    this.countryUserService.getCountryUserKpi().subscribe({
       next: (res) => {
         if (res.succeeded) {
           this.kpis = res.result ?? [];
@@ -100,11 +100,11 @@ export class KpiLayersComponent {
       }
     });
   }
-  getCityUserCities() {
-    this.cityuserService.getCityUserCities().subscribe({
+  getCountryUserCountries() {
+    this.countryUserService.getCountryUserCountries().subscribe({
       next: (res) => {
         if (res.succeeded) {
-          this.cityList = res.result ?? [];
+          this.countryList = res.result ?? [];
         }
       }
     });

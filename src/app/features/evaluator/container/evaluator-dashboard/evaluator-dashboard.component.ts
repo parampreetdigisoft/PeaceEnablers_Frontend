@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { CityHistoryDto, GetCitiesSubmitionHistoryReponseDto, GetCityQuestionHistoryReponseDto, UserCityRequstDto } from 'src/app/core/models/cityHistoryDto';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryHistoryDto, GetCountriesSubmitionHistoryResponseDto, GetCountryQuestionHistoryResponseDto, UserCountryRequestDto } from 'src/app/core/models/countryHistoryDto';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { EvaluatorService } from '../../evaluator.service';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { UserService } from 'src/app/core/services/user.service';
@@ -33,10 +33,10 @@ export type ChartOptions = {
 export class EvaluatorDashboardComponent {
   currentYear = new Date().getFullYear();
   selectedYear = this.currentYear;
-  cities: CityVM[] | null = [];
-  selectedCities: number | any = '';
-  cityHistory: CityHistoryDto | null = null;
-  cityQuestionHistoryReponse: GetCityQuestionHistoryReponseDto | null = null;
+  countries: CountryVM[] | null = [];
+  selectedCountries: number | any = '';
+  countryHistory: CountryHistoryDto | null = null;
+  countryQuestionHistoryResponse: GetCountryQuestionHistoryResponseDto | null = null;
   @ViewChild("chartPillar") chartPillar!: ChartComponent;
   public chartPillarOptions: any = {};
   isLoader: boolean = false;
@@ -46,53 +46,53 @@ export class EvaluatorDashboardComponent {
   constructor(private evaluatorService: EvaluatorService, private toaster: ToasterService, private userService: UserService, public commonService: CommonService) { }
   ngOnInit(): void {
     this.isLoader = true;
-    this.getAllCitiesByUserId();
-    this.GetCityHistory();
+    this.getAllCountriesByUserId();
+    this.GetCountryHistory();
   }
   yearChanged() {
-    this.GetCityHistory();
-    this.getCityQuestionHistory();
+    this.GetCountryHistory();
+    this.getCountryQuestionHistory();
   }
 
   ngAfterViewInit() { }
 
-  getAllCitiesByUserId() {
-    this.evaluatorService.getAllCitiesByUserId(this.userService?.userInfo?.userID).subscribe({
+  getAllCountriesByUserId() {
+    this.evaluatorService.getAllCountriesByUserId(this.userService?.userInfo?.userID).subscribe({
       next: (res) => {
         this.isLoader = false;
-        this.cities = res.result;
-        if (this.cities && this.cities.length > 0) {
+        this.countries = res.result;
+        if (this.countries && this.countries.length > 0) {
           this.isLoader = true;
-          this.selectedCities = this.cities[0].cityID;
-          this.getCityQuestionHistory();
+          this.selectedCountries = this.countries[0].countryID;
+          this.getCountryQuestionHistory();
         }
       }
     });
   }
 
-  GetCityHistory() {
-    this.evaluatorService.getCityHistory(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
+  GetCountryHistory() {
+    this.evaluatorService.getCountryHistory(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
       next: (res) => {
-        this.cityHistory = res.result;
+        this.countryHistory = res.result;
         this.GetApexPieOptions();
       }
     });
   }
-  getCityQuestionHistory() {
-    if (this.userService?.userInfo?.userID == null || !this.selectedCities || this.selectedCities === '' || this.selectedCities == null) {
+  getCountryQuestionHistory() {
+    if (this.userService?.userInfo?.userID == null || !this.selectedCountries || this.selectedCountries === '' || this.selectedCountries == null) {
       return;
     }
-    let request: UserCityRequstDto = {
+    let request: UserCountryRequestDto = {
       userID: this.userService?.userInfo?.userID ?? 0,
-      cityID: this.selectedCities,
+      countryID: this.selectedCountries,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear)
     }
-    this.evaluatorService.getCityQuestionHistory(request).subscribe({
+    this.evaluatorService.getCountryQuestionHistory(request).subscribe({
       next: (res) => {
         this.isLoader = false;
-        this.cityQuestionHistoryReponse = res;
-        if (this.cityQuestionHistoryReponse) {
-          this.GetPillarBarOptions(this.cityQuestionHistoryReponse);
+        this.countryQuestionHistoryResponse = res;
+        if (this.countryQuestionHistoryResponse) {
+          this.GetPillarBarOptions(this.countryQuestionHistoryResponse);
         }
       },
       error: (err) => {
@@ -101,7 +101,7 @@ export class EvaluatorDashboardComponent {
     });
   }
 
-  GetPillarBarOptions(history: GetCityQuestionHistoryReponseDto) {
+  GetPillarBarOptions(history: GetCountryQuestionHistoryResponseDto) {
     let colors = this.commonService.PillarColors;
     const rawMax = Math.max(...history.pillars.map(p => p.scoreProgress));
     const maxNumber = Math.ceil(rawMax / 10) * 10;
@@ -464,10 +464,10 @@ export class EvaluatorDashboardComponent {
   }
 
   GetApexPieOptions() {
-    const total = this.cityHistory?.totalCity ?? 0;
-    const active = this.cityHistory?.activeCity ?? 0;
-    const inprogress = this.cityHistory?.inprocessCity ?? 0;
-    const complete = this.cityHistory?.compeleteCity ?? 0;
+    const total = this.countryHistory?.totalCountry ?? 0;
+    const active = this.countryHistory?.activeCountry ?? 0;
+    const inprogress = this.countryHistory?.inprocessCountry ?? 0;
+    const complete = this.countryHistory?.compeleteCountry ?? 0;
 
     this.chartOptions = {
       series: [
@@ -519,7 +519,7 @@ export class EvaluatorDashboardComponent {
             },
             total: {
               show: true,
-              label: "Total City",
+              label: "Total Country",
               formatter: (value: any) => {
                 return `${total}`;
               },
@@ -528,7 +528,7 @@ export class EvaluatorDashboardComponent {
         }
       },
       colors: ["#003160", "#c2dbf5","#77bd3e", "#6c8fb5"],
-      labels: ["Total City", "Active", "InProgress", "Completed"],
+      labels: ["Total Country", "Active", "InProgress", "Completed"],
       legend: {
         show: true,
         floating: true,
@@ -548,12 +548,12 @@ export class EvaluatorDashboardComponent {
       }
     };
   }
-  ExportCityPillar() {
-    let city = this.cities?.find((x) => x.cityID == this.selectedCities);
-    if (this.cityQuestionHistoryReponse?.pillars && city) {
-      var exportData = this.cityQuestionHistoryReponse?.pillars.map((x) => {
+  ExportCountryPillar() {
+    let country = this.countries?.find((x) => x.countryID == this.selectedCountries);
+    if (this.countryQuestionHistoryResponse?.pillars && country) {
+      var exportData = this.countryQuestionHistoryResponse?.pillars.map((x) => {
         return {
-          CityName: city?.cityName,
+          countryName: country?.countryName,
           PillarName: x.pillarName,
           Score: x.scoreProgress?.toFixed(2),
           AnsweredQuestion: x.ansQuestion,
@@ -562,7 +562,7 @@ export class EvaluatorDashboardComponent {
       });
       this.commonService.exportExcel(exportData);
     } else {
-      this.toaster.showWarning("Please select city to export the records");
+      this.toaster.showWarning("Please select country to export the records");
     }
   }
 }

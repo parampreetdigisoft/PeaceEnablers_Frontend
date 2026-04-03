@@ -8,10 +8,10 @@
     <div class="col-lg-auto">
       <div class="header_btns">
         <div class="input_field">
-          <select [(ngModel)]="selectedUserCityMappingID" name="cityID" class="form-control" (change)="cityChanged()">
-            <option value="0">Select City-Analyst</option>
-            <option *ngFor="let city of cities" [value]="city.userCityMappingID">
-              {{ city.cityName }} - {{ city.assignedBy }}
+          <select [(ngModel)]="selectedUserCountryMappingID" name="countryID" class="form-control" (change)="countryChanged()">
+            <option value="0">Select Country-Analyst</option>
+            <option *ngFor="let country of countries" [value]="country.userCountryMappingID">
+              {{ country.countryName }} - {{ country.assignedBy }}
             </option>
           </select>
         </div>
@@ -34,7 +34,7 @@
           <span *ngIf="isUploading" class="spinner-border spinner-border-sm ms-2"></span>
         </a>
         <div class="next_btn">
-          <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer" [disabled]="!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0"
+          <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer" [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0"
             class="common_button" (click)="isAssessementFinalized=true">
             {{'Submit Assesment' }}
           </button>
@@ -94,9 +94,9 @@
           </div>
         </div>
 
-        <div class="next_btn"  [class.loading-bottom]="isLoader" *ngIf="this.selectedUserCityMappingID || !(this.selectedUserCityMappingID == 0)">
+        <div class="next_btn"  [class.loading-bottom]="isLoader" *ngIf="this.selectedUserCountryMappingID || !(this.selectedUserCountryMappingID == 0)">
           <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer"
-            class="common_button" [disabled]="!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0">
+            class="common_button" [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0">
             {{pillerQuestions?.displayOrder == 14 ? 'Submit' :'Save & NEXT' }}
           </button>
         </div>
@@ -113,7 +113,7 @@
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized? 'Submit Pillar' : 'Save Pillar'
   " [message]="
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized
-      ? 'Are you sure you want to submit this city? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
+      ? 'Are you sure you want to submit this country? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
       : 'Are you sure you want to save this pillar?'
   " [confirmText]="pillerQuestions?.displayOrder == 14 || isAssessementFinalized ? 'Submit' : 'Save'"
   [cancelText]="'Cancel'" (confirm)="SaveAssessment()" (cancel)="isAssessementFinalized=false">

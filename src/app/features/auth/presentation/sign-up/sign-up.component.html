@@ -55,14 +55,14 @@
 
         <!-- <div class="col-md-6">
           <div class="input_field">
-            <label class="form-label">City</label>
+            <label class="form-label">Country</label>
             <select formControlName="city" class="form-select">
               <option value="" disabled selected>Select your city</option>
-              <option *ngFor="let c of cities()" [value]="c.cityID">{{ c.cityName }}</option>
+              <option *ngFor="let c of countries()" [value]="c.countryID">{{ c.countryName }}</option>
             </select>
               @if(f['city'] !=null && f['city'].touched && f['city'].errors){
               @if(f['city'].errors['required']){
-              <div class="error-msg">City is required.</div>
+              <div class="error-msg">Country is required.</div>
               } }
           </div>
         </div> -->

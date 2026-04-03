@@ -60,7 +60,7 @@
           <th>Role</th>
           <th>Analyst</th>
         </ng-container>
-        <th>Assigned City</th>
+        <th>Assigned Country</th>
         <th *ngIf="!roleId">Mail Status</th>
         <!-- <th>Assigned By</th> -->
         <th class="action_th" *ngIf="!roleId">Actions</th>
@@ -78,8 +78,8 @@
         </ng-container>
 
         <td>
-          <span *ngFor="let city of analyst?.cities; let last = last">
-            {{ city?.cityName }}{{ last ? "" : ", " }}
+          <span *ngFor="let country of analyst?.countries; let last = last">
+            {{ country?.countryName }}{{ last ? "" : ", " }}
           </span>
           <!-- <td>{{analyst.createdByName}}</td> -->
         </td>
@@ -168,7 +168,7 @@
   >
     <app-add-update-analyst
       [analyst]="selectedAnalyst"
-      [cities]="cities"
+      [countries]="countries"
       (analystChange)="addUpdateAnalyst($event)"
       (bulkImportChange)="addBulkAnalyst($event)"
       (closeAnalystModel)="closeModal()"

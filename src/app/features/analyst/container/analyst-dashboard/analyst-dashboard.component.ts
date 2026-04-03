@@ -3,8 +3,8 @@ import { AgBarSeriesOptions, AgLineSeriesOptions, AgTooltipRendererDataRow } fro
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { AnalystService } from '../../analyst.service';
-import { CityHistoryDto, GetCitiesSubmitionHistoryReponseDto, UserCityRequstDto } from 'src/app/core/models/cityHistoryDto';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryHistoryDto, GetCountriesSubmitionHistoryResponseDto, UserCountryRequestDto } from 'src/app/core/models/countryHistoryDto';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { CommonService } from 'src/app/core/services/common.service';
 
 import {
@@ -15,8 +15,9 @@ import {
   ChartComponent, ApexAxisChartSeries, ApexXAxis, ApexYAxis, ApexStroke, ApexTooltip, ApexDataLabels,
   ApexStates
 } from "ng-apexcharts";
-import { AiCityPillarDashboardResponseDto } from 'src/app/core/models/AiCityPillarDashboardResponseDto';
+import { AiCountryPillarDashboardResponseDto } from 'src/app/core/models/AiCountryPillarDashboardResponseDto';
 import { ActivatedRoute, Router } from '@angular/router';
+
 
 
 
@@ -58,14 +59,14 @@ export type PillarChartOptions = {
 @Component({
   selector: 'app-analyst-dashboard',
   templateUrl: './analyst-dashboard.component.html',
-  styleUrl: './analyst-dashboard.component.css'
+  styleUrl: './analyst-dashboard.component.css',
 })
 export class AnalystDashboardComponent implements OnInit {
   selectedYear = new Date().getFullYear();
-  cities: CityVM[] | null = [];
-  selectedCities: number | any = '';
-  cityHistory: CityHistoryDto | null = null;
-  cityQuestionHistoryReponse: AiCityPillarDashboardResponseDto | null = null;
+  countries: CountryVM[] | null = [];
+  selectedCountries: number | any = '';
+  countryHistory: CountryHistoryDto | null = null;
+  countryQuestionHistoryReponse: AiCountryPillarDashboardResponseDto | null = null;
   pillarBarOptions: any = {};
   isLoader: boolean = false;
   resizeTimeout: any;
@@ -84,60 +85,60 @@ export class AnalystDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoader = true;
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
     this.yearChanged();
 
   }
   yearChanged() {
-    this.GetCityHistory();
-    this.getCitiesProgressByUserId();
-    this.getCityPillarHistory();
+    this.GetCountryHistory();
+    this.getCountriesProgressByUserId();
+    this.getCountryPillarHistory();
   }
-  getCitiesProgressByUserId() {
-    this.analystService.getCitiesProgressByUserId(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
+  getCountriesProgressByUserId() {
+    this.analystService.getCountriesProgressByUserId(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
       next: (res) => {
         if (res.succeeded && res.result) {
-          this.apexchartOptions = this.getCityLineChartOptions(res.result);
+          this.apexchartOptions = this.getCountryLineChartOptions(res.result);
         }
       }
     })
   }
-  getAllCitiesByUserId() {
-    this.analystService.getAllCitiesByUserId(this.userService?.userInfo?.userID).subscribe({
+  getAllCountriesByUserId() {
+    this.analystService.getAllCountriesByUserId(this.userService?.userInfo?.userID).subscribe({
       next: (res) => {
-        this.cities = res.result;
+        this.countries = res.result;
         this.isLoader = false;
-        if (this.cities && this.cities.length > 0) {
+        if (this.countries && this.countries.length > 0) {
           this.isLoader = true;
-          this.selectedCities = this.cities[0].cityID;
-          this.getCityPillarHistory();
+          this.selectedCountries = this.countries[0].countryID;
+          this.getCountryPillarHistory();
         }
       }
     });
   }
 
-  GetCityHistory() {
-    this.analystService.getCityHistory(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
+  GetCountryHistory() {
+    this.analystService.getCountryHistory(this.userService?.userInfo?.userID ?? 0, this.commonService.getStartOfYearLocal(this.selectedYear)).subscribe({
       next: (res) => {
-        this.cityHistory = res.result;;
+        this.countryHistory = res.result;;
         this.GetApexPieOptions();
       }
     });
   }
-  getCityPillarHistory() {
-    if (this.userService?.userInfo?.userID == null || !this.selectedCities || this.selectedCities === '' || this.selectedCities == null) {
+  getCountryPillarHistory() {
+    if (this.userService?.userInfo?.userID == null || !this.selectedCountries || this.selectedCountries === '' || this.selectedCountries == null) {
       return;
     }
-    let request: UserCityRequstDto = {
+    let request: UserCountryRequestDto = {
       userID: this.userService?.userInfo?.userID ?? 0,
-      cityID: this.selectedCities,
+      countryID: this.selectedCountries,
       updatedAt: this.commonService.getStartOfYearLocal(this.selectedYear)
     }
-    this.analystService.getCityPillarHistory(request).subscribe({
+    this.analystService.getCountryPillarHistory(request).subscribe({
       next: (res) => {
         this.isLoader = false;
-        this.cityQuestionHistoryReponse = res.result;
-        if (this.cityQuestionHistoryReponse) {
+        this.countryQuestionHistoryReponse = res.result;
+        if (this.countryQuestionHistoryReponse) {
           this.buildPillarComparisonChart();
         }
       },
@@ -146,22 +147,22 @@ export class AnalystDashboardComponent implements OnInit {
       }
     });
   }
-  goToCityAnalysis() {
-    // If cityID exists, pass it as a query parameter
+  goToCountryAnalysis() {
+    // If countryID exists, pass it as a query parameter
     const queryParams: any = {};
-    if (this.selectedCities > 0) {
-      queryParams.cityID = this.selectedCities;
+    if (this.selectedCountries > 0) {
+      queryParams.countryID = this.selectedCountries;
     }
 
-    this.router.navigate(["/analyst/ai/city-analysis"], { queryParams });
+    this.router.navigate(["/analyst/ai/country-analysis"], { queryParams });
   }
 
-  ExportCityPillar() {
-    let city = this.cities?.find((x) => x.cityID == this.selectedCities);
-    if (this.cityQuestionHistoryReponse?.pillars && city) {
-      var exportData = this.cityQuestionHistoryReponse?.pillars.map((x) => {
+  ExportCountryPillar() {
+    let country = this.countries?.find((x) => x.countryID == this.selectedCountries);
+    if (this.countryQuestionHistoryReponse?.pillars && country) {
+      var exportData = this.countryQuestionHistoryReponse?.pillars.map((x) => {
         return {
-          CityName: city?.cityName,
+          countryName: country?.countryName,
           PillarName: x.pillarName,
           AIScore: x.aiValue?.toFixed(2),
           EvaluationScore: x.evaluationValue?.toFixed(2)
@@ -169,17 +170,17 @@ export class AnalystDashboardComponent implements OnInit {
       });
       this.commonService.exportExcel(exportData);
     } else {
-      this.toaster.showWarning("Please select city to export the records");
+      this.toaster.showWarning("Please select country to export the records");
     }
   }
-  getCityLineChartOptions(citiesHistory: GetCitiesSubmitionHistoryReponseDto[]) {
+  getCountryLineChartOptions(countriesHistory: GetCountriesSubmitionHistoryResponseDto[]) {
 
     const evaluationColor = "#61615a";
     const aiColor = "#c0c097";
 
-    const categories = citiesHistory.map(x => x.cityName);
-    const evaluationSeries = citiesHistory.map(x => x.scoreProgress ?? 0);
-    const aiSeries = citiesHistory.map(x => x.aiScore ?? 0);
+    const categories = countriesHistory.map(x => x.countryName);
+    const evaluationSeries = countriesHistory.map(x => x.scoreProgress ?? 0);
+    const aiSeries = countriesHistory.map(x => x.aiScore ?? 0);
 
     let option: Partial<ApexChartOptions> = {
       series: [
@@ -213,12 +214,12 @@ export class AnalystDashboardComponent implements OnInit {
         enabled: true,
         offsetY: -8,
         formatter: (val: number, opts: any) => {
-          const d = citiesHistory[opts.dataPointIndex];
+          const d = countriesHistory[opts.dataPointIndex];
           if (!d || val <= 0) return "";
 
-          const city = d.cityName;
+          const country = d.countryName;
           const percent = val.toFixed(val >= 100 ? 0 : 1);
-          return `${city} ${percent}%`;
+          return `${country} ${percent}%`;
         },
         style: {
           fontSize: "11px",
@@ -255,13 +256,13 @@ export class AnalystDashboardComponent implements OnInit {
 
       tooltip: {
         custom: ({ dataPointIndex }) => {
-          const d = citiesHistory[dataPointIndex];
+          const d = countriesHistory[dataPointIndex];
           if (!d) return "";
 
           return `
           <div style="padding:10px; font-size:12px;">
             <div style="font-weight:600; margin-bottom:6px;">
-              ${d.cityName}
+              ${d.countryName}
             </div>
             <div style="margin-top:6px; color:#666;">
               Total Answered: ${d.ansQuestion}
@@ -289,13 +290,13 @@ export class AnalystDashboardComponent implements OnInit {
 
 
   GetApexPieOptions() {
-    const total = this.cityHistory?.totalCity ?? 0;
-    const active = this.cityHistory?.activeCity ?? 0;
-    const inprogress = this.cityHistory?.inprocessCity ?? 0;
-    const complete = this.cityHistory?.compeleteCity ?? 0;
+    const total = this.countryHistory?.totalCountry ?? 0;
+    const active = this.countryHistory?.activeCountry  ?? 0;
+    const inprogress = this.countryHistory?.inprocessCountry  ?? 0;
+    const complete = this.countryHistory?.compeleteCountry  ?? 0;
 
-    const finalizeCity = this.cityHistory?.finalizeCity ?? 0;
-    const unFinalize = this.cityHistory?.unFinalize ?? 0;
+    const finalizeCountry = this.countryHistory?.finalizeCountry  ?? 0;
+    const unFinalize = this.countryHistory?.unFinalize ?? 0;
 
     this.chartOptions = {
       series: [
@@ -303,7 +304,7 @@ export class AnalystDashboardComponent implements OnInit {
         (active / total) * 100,
         (inprogress / total) * 100,
         (complete / total) * 100,
-        (finalizeCity / total) * 100,
+        (finalizeCountry / total) * 100,
         (unFinalize / total) * 100,
       ],
 
@@ -342,7 +343,7 @@ export class AnalystDashboardComponent implements OnInit {
             },
             total: {
               show: true,
-              label: "Total City",
+              label: "Total Country",
               formatter: (value: any) => {
                 return `${total}`;
               },
@@ -395,7 +396,7 @@ export class AnalystDashboardComponent implements OnInit {
 
 
   buildPillarComparisonChart() {
-    const data = [...(this.cityQuestionHistoryReponse?.pillars ?? [])];
+    const data = [...(this.countryQuestionHistoryReponse?.pillars ?? [])];
 
     const categories = this.buildUniqueCategories(data);
     const aiSeries = data.map(x => x.aiValue);

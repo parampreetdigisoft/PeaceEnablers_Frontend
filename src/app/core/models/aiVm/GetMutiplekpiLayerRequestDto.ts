@@ -1,5 +1,5 @@
 export interface GetMutiplekpiLayerRequestDto {
   layerID: number;
-  cityIDs: number[];
+  countryIDs: number[];
   year: number;
 }

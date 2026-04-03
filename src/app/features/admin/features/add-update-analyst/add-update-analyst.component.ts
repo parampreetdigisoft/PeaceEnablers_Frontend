@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { CityVM } from "../../../../core/models/CityVM";
+import { CountryVM } from "../../../../core/models/CountryVM";
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import {
   InviteUserDto,
@@ -30,7 +30,7 @@ import { AdminService } from "../../admin.service";
 })
 export class AddUpdateAnalystComponent implements OnInit {
   @Input() analyst: GetUserByRoleResponse | null = null;
-  @Input() cities: CityVM[] | null = [];
+  @Input() countries: CountryVM[] | null = [];
   @Output() analystChange = new EventEmitter<UpdateInviteUserDto | null>();
   @Output() closeAnalystModel = new EventEmitter<boolean>();
   @Output() bulkImportChange = new EventEmitter<UpdateInviteUserDto[] | null>();
@@ -40,7 +40,7 @@ export class AddUpdateAnalystComponent implements OnInit {
   alertMsg = "";
   excelData: any;
   isSubmitted: boolean = false;
-  requiredHeaders = ["FullName", "Email", "Phone", "CityName"];
+  requiredHeaders = ["FullName", "Email", "Phone", "countryName"];
   analystForm: FormGroup<any> = this.fb.group({});
 
   constructor(private fb: FormBuilder, private userService: UserService,private adminService: AdminService,) { 
@@ -53,8 +53,8 @@ export class AddUpdateAnalystComponent implements OnInit {
       fullName: [this.analyst?.fullName, [Validators.required]],
       email: [this.analyst?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
       phone: [this.analyst?.phone, [Validators.required]],
-      city: [
-        this.analyst?.cities?.map((x) => x?.cityID) ?? [],
+      country: [
+        this.analyst?.countries?.map((x) => x?.countryID) ?? [],
         [Validators.required],
       ],
     });
@@ -85,10 +85,10 @@ emailExistsValidator(): AsyncValidatorFn {
   ngOnChanges(changes: SimpleChanges): void {
     this.alertMsg = "";
     this.isSubmitted = false;
-    if (this.analyst && this.analyst.cities) {
-    const selectedCityIds = this.analyst.cities.map(c => c.cityID);
+    if (this.analyst && this.analyst.countries) {
+    const selectedCountryIds = this.analyst.countries.map(c => c.countryID);
     this.analystForm.patchValue({
-      city: selectedCityIds
+      country: selectedCountryIds
     });
   }
     //this.initializeForm();
@@ -98,23 +98,23 @@ emailExistsValidator(): AsyncValidatorFn {
   onSubmit() {
     this.isSubmitted = true;
     if (this.analystForm.valid) {
-      const cityData: UpdateInviteUserDto = {
+      const countryData: UpdateInviteUserDto = {
         ...this.analystForm.value,
         userID: this.analyst?.userID ?? 0,
-        cityID: this.analystForm.value.city,
+        countryID: this.analystForm.value.country,
       };
-      this.analystChange.emit(cityData);
+      this.analystChange.emit(countryData);
     }
   }
   downloadTemplate() {
-    const headers = ["FullName", "Email", "Phone", "CityName"];
+    const headers = ["FullName", "Email", "Phone", "countryName"];
 
     const sampleRow = {
       FullName: "FullName of Analyst",
       Email: "Enter Email of Analyst",
       Phone: "Enter Phone Number of Analyst",
-      CityName:
-        "Enter city seprated by comma, like :- Chandigarh, Mohali, Swar",
+      countryName:
+        "Enter country seprated by comma, like :- Chandigarh, Mohali, Swar",
     };
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], {
@@ -172,14 +172,14 @@ emailExistsValidator(): AsyncValidatorFn {
         const fullName = String(row["FullName"] || "").trim();
         const email = String(row["Email"] || "").trim();
         const phone = String(row["Phone"] || "").trim();
-        const cityName = String(row["CityName"] || "").trim();
+        const countryName = String(row["countryName"] || "").trim();
 
-        const isCompletelyBlank = !fullName && !email && !phone && !cityName;
+        const isCompletelyBlank = !fullName && !email && !phone && !countryName;
         if (isCompletelyBlank) {
           continue;
         }
         // ✅ Required check
-        if (!fullName || !email || !phone || !cityName) {
+        if (!fullName || !email || !phone || !countryName) {
           this.alertMsg = `Row ${i + 2}: All fields are required.`;
           this.fileInput.nativeElement.value = "";
           return;
@@ -218,7 +218,7 @@ emailExistsValidator(): AsyncValidatorFn {
           phone,
           password: email,
           role: UserRoleValue.Analyst,
-          cityID: this.getCityByName(cityName),
+          countryID: this.getCountryByName(countryName),
         };
         excelData.push(dto);
       }
@@ -231,12 +231,12 @@ emailExistsValidator(): AsyncValidatorFn {
     reader.readAsBinaryString(target.files[0]);
   }
 
-  getCityByName(cityNames: string): number[] {
-    if (!cityNames) return [];
-    return cityNames
+  getCountryByName(countryNames: string): number[] {
+    if (!countryNames) return [];
+    return countryNames
       .split(",")
       .map((name) => name.trim())
-      .map((name) => this.cities?.find((c) => c.cityName === name)?.cityID)
+      .map((name) => this.countries?.find((c) => c.countryName === name)?.countryID)
       .filter((id): id is number => id !== undefined);
   }
 

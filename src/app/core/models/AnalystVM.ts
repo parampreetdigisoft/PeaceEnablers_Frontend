@@ -9,7 +9,7 @@ export interface RegisterDto {
 
 export interface InviteUserDto extends RegisterDto {
   invitedUserID: number;
-  cityID: number[]; 
+  countryID: number[]; 
 }
 
 export interface UpdateInviteUserDto extends InviteUserDto {
@@ -18,8 +18,8 @@ export interface UpdateInviteUserDto extends InviteUserDto {
 export interface InviteBulkUserDto {
   users: InviteUserDto[];
 }
-export interface SendRequestMailToUpdateCity {
+export interface SendRequestMailToUpdateCountry {
     userID: number;
     mailToUserID: number;
-    userCityMappingID: number;
+    userCountryMappingID: number;
 }

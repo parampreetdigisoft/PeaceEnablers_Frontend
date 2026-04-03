@@ -28,8 +28,8 @@ export class ViewKpiLayerComponent implements OnInit, OnChanges {
 
   @Input() selectedLayer?: GetAnalyticalLayerResultDto | null = null;
   urlBase = environment.apiUrl;
-  get city() {
-    return this.selectedLayer?.city;
+  get country() {
+    return this.selectedLayer?.country;
   }
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions!: Partial<ChartOptions>;

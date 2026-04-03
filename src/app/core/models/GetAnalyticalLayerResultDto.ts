@@ -1,15 +1,15 @@
-import { CityVM } from "./CityVM";
+import { CountryVM } from "./CountryVM";
 import { PaginationUserRequest } from "./PaginationRequest";
 
 export interface GetAnalyticalLayerRequestDto extends PaginationUserRequest {
   layerID?: number ;
-  cityID?:number;
+  countryID?:number;
   year?:number;
 }
 
 export interface GetAnalyticalLayerResultDto extends AnalyticalLayerResponseDto {
   layerResultID: number;
-  cityID: number;
+  countryID: number;
   interpretationID?: number | null;
   normalizeValue?: number | null;
   calValue1?: number ;
@@ -29,7 +29,7 @@ export interface GetAnalyticalLayerResultDto extends AnalyticalLayerResponseDto 
   aiLastUpdated?: string; 
 
   fiveLevelInterpretations: FiveLevelInterpretation[];
-  city?: CityVM | null;
+  country?: CountryVM | null;
 }
 
 export interface AnalyticalLayerResponseDto {

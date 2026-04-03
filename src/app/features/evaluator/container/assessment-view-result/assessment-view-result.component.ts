@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { PaginationUserRequest } from 'src/app/core/models/PaginationRequest';
 import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
 import { ToasterService } from 'src/app/core/services/toaster.service';
@@ -8,7 +8,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { EvaluatorService } from '../../evaluator.service';
 import { ActivatedRoute } from '@angular/router';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
-import { GetAssessmentQuestoinRequestDto } from 'src/app/core/models/AssessmentRequest';
+import { GetAssessmentQuestionRequestDto } from 'src/app/core/models/AssessmentRequest';
 import { GetAssessmentQuestionResponseDto } from 'src/app/core/models/AssessmentResponse';
 import { SortDirection } from 'src/app/core/enums/SortDirection';
 
@@ -61,7 +61,7 @@ export class AssessmentViewResultComponent implements OnInit {
   getAssessmentQuestoins(currentPage: number = 1) {
     this.questionResponse = undefined;
     this.isLoader = true;
-    let payload: GetAssessmentQuestoinRequestDto = {
+    let payload: GetAssessmentQuestionRequestDto = {
       sortDirection: SortDirection.ASC,
       sortBy: 'questoinID',
       pageNumber: currentPage,
@@ -70,11 +70,11 @@ export class AssessmentViewResultComponent implements OnInit {
       assessmentID: this.assessmentID,
       pillarID: this.selectedPillarId
     }
-    this.evaluatorService.getAssessmentQuestoins(payload).subscribe(cities => {
-      this.questionResponse = cities;
-      this.totalRecords = cities.totalRecords;
+    this.evaluatorService.getAssessmentQuestoins(payload).subscribe(countries => {
+      this.questionResponse = countries;
+      this.totalRecords = countries.totalRecords;
       this.currentPage = currentPage;
-      this.pageSize = cities.pageSize;
+      this.pageSize = countries.pageSize;
       this.isLoader = false;
     });
   }

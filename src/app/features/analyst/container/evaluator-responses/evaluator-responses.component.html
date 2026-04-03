@@ -17,21 +17,21 @@
         </select>
 
         <select
-          [(ngModel)]="selectedcityID"
-          name="cityID"
+          [(ngModel)]="selectedcountryID"
+          name="countryID"
           class="form-control"
           (change)="getAssessments()"
         >
-          <option value="">Search by City</option>
-          <option *ngFor="let city of cities" [value]="city.cityID">
-            {{ city.cityName }}
+          <option value="">Search by Country</option>
+          <option *ngFor="let country of countries" [value]="country.countryID">
+            {{ country.countryName }}
           </option>
         </select>
 
         <select
           *ngIf="!assessmentUserID"
           [(ngModel)]="selecteduserID"
-          name="cityID"
+          name="countryID"
           class="form-control"
           (change)="getAssessments()"
         >
@@ -53,7 +53,7 @@
     <thead>
       <tr>
         <th>S.No.</th>
-        <th>City</th>
+        <th>Country</th>
         <th>Evaluator</th>        
         <th>Score</th>
         <th>Status</th>
@@ -65,7 +65,7 @@
     <tbody>
       <tr *ngFor="let assessment of assessmentsResponse?.data; let i = index">
         <td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
-        <td>{{ assessment.cityName }}</td>
+        <td>{{ assessment.countryName }}</td>
         <td>{{ assessment.userName }}</td>
         <td>
           <span class="bold_num">{{ assessment.score ?? 0 }}</span>

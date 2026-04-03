@@ -39,16 +39,14 @@ export class HttpService {
       catchError(this.handleError)
     );
   }
-  public getExternalApi(url: string, params = null) {
-    const options = { headers: this.headers, params: null, };
-    if (params) {
-      options.params = params;
-    }
-    return this.http.get(url + this.getQueryString(params)).pipe(
-      catchError(this.handleError)
-    );
-  }
-
+  public getExternalApi(url: string, params?: any) {
+  return this.http.get(url, {
+    headers: this.headers,
+    params: params
+  }).pipe(
+    catchError(this.handleError)
+  );
+}
   public getWithQueryParams(url: string, params: any = null) {
     const options = { headers: this.headers, params: null, };
     if (params) {

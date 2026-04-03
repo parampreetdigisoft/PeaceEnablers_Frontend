@@ -49,7 +49,7 @@ export interface LoginResponse {
 export interface GetAssignUserDto {
   userID: number;
   searchUserID?: number;
-  cityID?: number;
+  countryID?: number;
 }
 export interface UpdateUserResponseDto {
   userID: number;

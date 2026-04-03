@@ -8,11 +8,11 @@
     <div class="col-lg-auto">
       <div class="header_btns">
         <div class="input_field">
-          <select [(ngModel)]="selectedUserCityMappingID" name="userCityMappingID" class="form-control"
-            (change)="cityChanged()">
-            <option value="0">Search by City</option>
-            <option *ngFor="let city of cities" [value]="city.userCityMappingID">
-              {{ city.cityName }}
+          <select [(ngModel)]="selectedUserCountryMappingID" name="userCountryMappingID" class="form-control"
+            (change)="countryChanged()">
+            <option value="0">Search by Country</option>
+            <option *ngFor="let country of countries" [value]="country.userCountryMappingID">
+              {{ country.countryName }}
             </option>
           </select>
         </div>
@@ -56,14 +56,14 @@
         <div class="next_btn">
           <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer"
             class="common_button" (click)="isAssessementFinalized=true"
-            [disabled]="!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0">
+            [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0">
             {{'Submit' }}
           </button>
         </div>
         <div class="next_btn">
           <button type="button" data-bs-toggle="modal" data-bs-target="#AiTransferResult" style="cursor: pointer"
             class="common_button" [matTooltip]="'Import AI-generated assessment into your current assessment'"
-            [disabled]="!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0">
+            [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0">
             AI
             <svg *ngIf="!isAItransfer" width="21" height="20" viewBox="0 0 21 20" fill="none"
               xmlns="http://www.w3.org/2000/svg">
@@ -150,7 +150,7 @@
 
         <div class="next_btn" [class.loading-bottom]="isLoader">
           <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer"
-            class="common_button" [disabled]="!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0">
+            class="common_button" [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0">
             {{pillerQuestions?.displayOrder == 14 ? 'Submit' :'Save & NEXT' }}
           </button>
         </div>
@@ -169,7 +169,7 @@
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized? 'Submit Pillar' : 'Save Pillar'
   " [message]="
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized
-      ? 'Are you sure you want to submit this city? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
+      ? 'Are you sure you want to submit this country? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
       : 'Are you sure you want to save this pillar?'
   " [confirmText]="pillerQuestions?.displayOrder == 14 || isAssessementFinalized ? 'Submit' : 'Save'"
   [cancelText]="'Cancel'" (confirm)="SaveAssessment()" (cancel)="isAssessementFinalized=false">

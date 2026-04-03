@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule, Routes } from "@angular/router";
 import { AdminComponent } from "./component/admin.component";
-import { CityComponent } from "./container/city/city.component";
+import { CountryComponent } from "./container/country/country.component";
 import { PillarComponent } from "./container/pillar/pillar.component";
 import { QuestionComponent } from "./container/question/question.component";
 import { AssesmentComponent } from "./container/assesment/assesment.component";
@@ -19,12 +19,12 @@ const routes: Routes = [
     children: [
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
       { path: "dashboard", component: AdminDashboardComponent },
-      { path: "city", component: CityComponent },
+      { path: "country", component: CountryComponent },
       { path: "analyst", component: AnalystViewComponent },
       { path: "pillar", component: PillarComponent },
       { path: "question", component: QuestionComponent },
       { path: "assesment", component: AssesmentComponent },
-      { path: "assesment/:roleID/:cityID", component: AssesmentComponent },
+      { path: "assesment/:roleID/:countryID", component: AssesmentComponent },
       {
         path: "assessment-result/:assessmentID/:userName",
         component: EvaluatoinResponseViewComponent,
@@ -46,19 +46,19 @@ const routes: Routes = [
           ),
       },
       {
-        path: "ai/city-analysis",
+        path: "ai/country-analysis",
         loadComponent: () =>
-          import("./container/ai-city-analysis/aicity-analysis.component").then(
-            (m) => m.AICityAnalaysisComponent
+          import("./container/ai-country-analysis/ai-country-analysis.component").then(
+            (m) => m.AICountryAnalaysisComponent
           ),
       },
 
       {
-        path: "ai/city-comparison",
+        path: "ai/country-comparison",
         loadComponent: () =>
           import(
-            "./container/ai-city-comparison/ai-city-comparison.component"
-          ).then((m) => m.AiCityComparisonComponent),
+            "./container/ai-country-comparison/ai-country-comparison.component"
+          ).then((m) => m.AiCountryComparisonComponent),
       },
       {
         path: "ai/questions-analysis",

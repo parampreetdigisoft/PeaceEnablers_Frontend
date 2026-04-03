@@ -21,9 +21,9 @@
 								</span>
 							</div>
 							<div class="dashboard_number">
-								<h4>Total City</h4>
+								<h4>Total Country</h4>
 								<h5>
-									{{ cityHistory?.totalCity ?? 0 }}
+									{{ countryHistory?.totalCountry ?? 0 }}
 								</h5>
 							</div>
 						</div>
@@ -59,7 +59,7 @@
 							<div class="dashboard_number">
 								<h4>Analyst</h4>
 								<h5>
-									{{ cityHistory?.totalAnalyst ?? 0 }}
+									{{ countryHistory?.totalAnalyst ?? 0 }}
 								</h5>
 							</div>
 						</div>
@@ -83,7 +83,7 @@
 							<div class="dashboard_number">
 								<h4>Evaluator</h4>
 								<h5>
-									{{ cityHistory?.totalEvaluator ?? 0 }}
+									{{ countryHistory?.totalEvaluator ?? 0 }}
 								</h5>
 							</div>
 						</div>
@@ -96,27 +96,27 @@
 		<div class="row justify-content-between align-items-end">
 			<div class="col-md-auto">
 				<div class="input_field">
-					<label>Select City *</label>
+					<label>Select Country *</label>
 
 
-					<ng-select [items]="cities"
+					<ng-select [items]="countries"
 						[searchable]="true"
-						[placeholder]="selectedCities == '' ? 'Select City' : ''"
-						[(ngModel)]="selectedCities"
-						(change)="getCityPillarHistory()"
-						bindValue="cityID"
-						bindLabel="cityName"
+						[placeholder]="selectedCountries == '' ? 'Select Country' : ''"
+						[(ngModel)]="selectedCountries"
+						(change)="getCountryPillarHistory()"
+						bindValue="countryID"
+						bindLabel="countryName"
 						class="form-control analyst_multi_select">
 						<ng-template ng-label-tmp
 							let-item="item "
 							class="select_item">
-							{{ item.cityName }}
+							{{ item.countryName }}
 						</ng-template>
 
 
 						<ng-template ng-option-tmp
 							let-item="item">
-							{{ item.cityName }}, {{ item.state }}
+							{{ item.countryName }}, {{ item.continent }}
 						</ng-template>
 					</ng-select>
 				</div>
@@ -158,11 +158,11 @@
 				</div>
 			</div>
 			<div class="col-md d-flex justify-content-end gap-2 mb-3">
-				<button *ngIf="cityQuestionHistoryReponse?.pillars?.length"
-					[matTooltip]=" 'Go to the AI analysis page to review detailed city insights and scores'"
-					(click)="goToCityAnalysis()"
+				<button *ngIf="countryQuestionHistoryResponse?.pillars?.length"
+					[matTooltip]=" 'Go to the AI analysis page to review detailed country insights and scores'"
+					(click)="goToCountryAnalysis()"
 					class="common_button">
-					AI City Insights
+					AI Country Insights
 					<svg xmlns="http://www.w3.org/2000/svg"
 						width="20"
 						height="20"
@@ -176,9 +176,9 @@
 					</svg>
 				</button>
 
-				<button *ngIf="cityQuestionHistoryReponse?.pillars?.length"
+				<button *ngIf="countryQuestionHistoryResponse?.pillars?.length"
 				    [matTooltip]=" 'Export pillar details'"
-					(click)="ExportCityPillar()"
+					(click)="ExportCountryPillar()"
 					class="common_button d-flex align-items-center">
 					Export
 					<svg xmlns="http://www.w3.org/2000/svg"
@@ -219,7 +219,7 @@
 	<div *ngIf="chartOptions?.series"
 		class="apx_chart_new">
 		<div class="card_heading">
-			<h3>City Overview</h3>
+			<h3>Country Overview</h3>
 		</div>
 		<apx-chart [series]="chartOptions.series!"
 			[chart]="chartOptions.chart!"

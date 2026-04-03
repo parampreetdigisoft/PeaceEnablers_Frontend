@@ -1,7 +1,7 @@
 
 
 export interface DownloadReportDto{
-    cityIDs?:number[],
+    countryIDs?:number[],
     format:string
 }
 

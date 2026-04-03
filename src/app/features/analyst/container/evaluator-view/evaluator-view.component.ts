@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CityVM } from '../../../../core/models/CityVM';
+import { CountryVM } from '../../../../core/models/CountryVM';
 import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { UserService } from 'src/app/core/services/user.service';
@@ -21,7 +21,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   isLoader: boolean = false;
   isOpendialog: boolean = false;
   selectedIndex?:number;
@@ -29,19 +29,19 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getEvaluator();
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
   }
 
-  getAllCitiesByUserId() {
-    this.analystService.getAllCitiesByUserId(this.userService?.userInfo?.userID).subscribe({
+  getAllCountriesByUserId() {
+    this.analystService.getAllCountriesByUserId(this.userService?.userInfo?.userID).subscribe({
       next: (res) => {
-        this.cities = res.result;     
+        this.countries = res.result;     
       }
     });
   }
 
   getEvaluator(currentPage: number = 1) {
-    this.evaluatorResponse = undefined;
+        this.evaluatorResponse = undefined;
     this.isLoader = true;
     let payload: GetUserByRoleRequestDto = {
       sortDirection: 'asc',
@@ -73,7 +73,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
       userId: this.selectedEvaluator?.userID,
       assignedByUserId: this.userService.userInfo.userID
     }
-    this.analystService.unAssignCity(payload).subscribe({
+    this.analystService.unAssignCountry(payload).subscribe({
       next: (res) => {
         if (res.succeeded) {
           this.getEvaluator();
@@ -83,7 +83,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
         }
       },
       error: () => {
-        this.toaster.showError('Failed to un-assigned city');
+        this.toaster.showError('Failed to un-assigned country');
       }
     });
   }
@@ -97,7 +97,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
       password: "",
       role: UserRoleValue.Evaluator,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      cityID: analyst.cities.map((x) => x.cityID),
+      countryID: analyst.countries.map((x) => x.countryID),
       userID: analyst.userID,
     };
     this.addUpdateEvaluator(payload);
@@ -105,7 +105,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
   addUpdateEvaluator(evaluator: UpdateInviteUserDto | null) {
     if (!evaluator) {
       return;
-    }
+    }    
     this.loading = true;
     let payload: UpdateInviteUserDto = {
       fullName: evaluator.fullName,
@@ -114,7 +114,7 @@ export class EvaluatorViewComponent implements OnInit, OnDestroy {
       password: evaluator.password,
       role: UserRoleValue.Evaluator,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      cityID: evaluator.cityID,
+      countryID: evaluator.countryID,
       userID: evaluator.userID
     }
 

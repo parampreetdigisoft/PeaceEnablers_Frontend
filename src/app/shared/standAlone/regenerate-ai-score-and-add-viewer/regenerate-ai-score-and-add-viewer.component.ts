@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, O
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { PublicUserResponse } from 'src/app/core/models/UserInfo';
-import { AiCitySummeryDto } from 'src/app/core/models/aiVm/AiCitySummeryDto';
+import { AiCountrySummeryDto } from 'src/app/core/models/aiVm/AiCountrySummeryDto';
 
 @Component({
   selector: 'app-regenerate-ai-score-and-add-viewer',
@@ -14,7 +14,7 @@ import { AiCitySummeryDto } from 'src/app/core/models/aiVm/AiCitySummeryDto';
 })
 export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges {
 
-  @Input() city?: AiCitySummeryDto | any | null = null;
+  @Input() country?: AiCountrySummeryDto | any | null = null;
   @Input() loading = false;
   @Input() evaluatorList: PublicUserResponse[] = [];
   @Output() regenerate = new EventEmitter<any>();
@@ -35,15 +35,15 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
       { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 30 : 120 }
     ];
     if (!this.importPillar) {
-      this.aiOptions.unshift({ label: 'City-level AI insights', control: 'cityEnable', time: 5 });
+      this.aiOptions.unshift({ label: 'Country-level AI insights', control: 'countryEnable', time: 5 });
     }
     this.ctx.detectChanges();
   }
 
   initializeForm() {
     this.assesmentForm = this.fb.group({
-      cityID: [this.city?.cityID],
-      cityEnable: [!this.importPillar],
+      countryID: [this.country?.countryID],
+      countryEnable: [!this.importPillar],
       pillarEnable: [true],
       questionEnable: [false],
       viewerUserIDs: [[]]   // multiple viewers
@@ -51,7 +51,7 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
   }
 
   onSubmit() {
-    if (!this.city) return;
+    if (!this.country) return;
 
     const payload = {
       ...this.assesmentForm.value

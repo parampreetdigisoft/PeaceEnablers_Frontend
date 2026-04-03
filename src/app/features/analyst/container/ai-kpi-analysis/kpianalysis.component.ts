@@ -14,7 +14,7 @@ import {
   ApexDataLabels,
   ApexStroke
 } from 'ng-apexcharts';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { AnalystService } from '../../analyst.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
@@ -24,17 +24,17 @@ import { UserService } from 'src/app/core/services/user.service';
 import { CommonService } from 'src/app/core/services/common.service';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { AITrustLevelVM } from 'src/app/core/models/aiVm/AITrustLevelVM';
-import { ChartTableRowDto } from 'src/app/core/models/CompareCityResponseDto';
+import { ChartTableRowDto } from 'src/app/core/models/CompareCountryResponseDto';
 import { AiComputationService } from 'src/app/core/services/ai-computation.service';
 import { ChangeDetectorRef, Component, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { RegeneratePilalrAiSearchDto } from 'src/app/core/models/aiVm/RegenerateAiSearchDto';
-import { AiCityPillarResponseDto, AiCityPillarVM } from 'src/app/core/models/aiVm/AiCityPillarResponseDto';
+import { AiCountryPillarResponseDto, AiCountryPillarVM } from 'src/app/core/models/aiVm/AiCountryPillarResponseDto';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
 import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-score/sparkline-score.component';
 import { ViewAiPillarDetailsComponent } from '../../../../shared/standAlone/view-ai-pillar-details/view-ai-pillar-details.component';
 import { RegenerateAiScoreAndAddViewerComponent } from 'src/app/shared/standAlone/regenerate-ai-score-and-add-viewer/regenerate-ai-score-and-add-viewer.component';
 import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
-import { AiCitySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCitySummeryRequestPdfDto';
+import { AiCountrySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestPdfDto';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -63,12 +63,12 @@ export class KPIAnalysisComponent implements OnInit {
   currentYear = new Date().getFullYear();
   selectedYear = this.currentYear;
   pillers: PillarsVM[] = [];
-  selectedCity?: number;
-  cities: CityVM[] | null = [];
+  selectedCountry?: number;
+  countries: CountryVM[] | null = [];
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
-  aiCityPillarResponseDto: AiCityPillarResponseDto | null = null;
-  selectedAiCityPillar: AiCityPillarVM | null = null;
+  aiCountryPillarResponseDto: AiCountryPillarResponseDto | null = null;
+  selectedAiCountryPillar: AiCountryPillarVM | null = null;
   isLoader: boolean = false;
   chartTableData: ChartTableRowDto[] = [];
   selectedIndex: number = -1;
@@ -90,14 +90,14 @@ export class KPIAnalysisComponent implements OnInit {
   ngOnInit(): void {
     this.isLoader = true;
     this.route.queryParams.subscribe(params => {
-      let cid = +params['cityID'] || null;
+      let cid = +params['countryID'] || null;
       let sYear = +params['year'] || this.selectedYear;
       if (cid) {
-        this.selectedCity = Number(cid);
+        this.selectedCountry = Number(cid);
         this.selectedYear = Number(sYear);
       }
     });
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.getAITrustLevels();
   }
   getAITrustLevels() {
@@ -105,47 +105,47 @@ export class KPIAnalysisComponent implements OnInit {
       this.aiTrustLevels = p.result || [];
     });
   }
-  getSelectedCity() {
-    return this.cities?.find(x => x.cityID == this.selectedCity);
+  getSelectedCountry() {
+    return this.countries?.find(x => x.countryID == this.selectedCountry);
   }
 
-  getCityUserCities() {
-    this.analystService.getAllCitiesByUserId(this.userService.userInfo?.userID ?? 0).subscribe({
+  getCountryUserCountries() {
+    this.analystService.getAllCountriesByUserId(this.userService.userInfo?.userID ?? 0).subscribe({
       next: (p) => {
 
-        this.cities = p.result || [];
-        if (this.cities?.length && !this.selectedCity) {
-          this.selectedCity = this.cities[0].cityID;
+        this.countries = p.result || [];
+        if (this.countries?.length && !this.selectedCountry) {
+          this.selectedCountry = this.countries[0].countryID;
         }
-        this.getAICityPillars();
+        this.getAICountryPillars();
       },
       error: () => {
         this.toaster.showError("There is an error please Try again");
-        this.getAICityPillars();
+        this.getAICountryPillars();
       }
     });
   }
 
-  getAICityPillars() {
-    if (!this.selectedCity) {
-      this.toaster.showWarning("Please select at least one city to view data.");
+  getAICountryPillars() {
+    if (!this.selectedCountry) {
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
     this.isLoader = true;
-    let payload: AiCitySummeryRequestPdfDto = {
-      cityID: this.selectedCity,
+    let payload: AiCountrySummeryRequestPdfDto = {
+      countryID: this.selectedCountry,
       year: this.selectedYear
     }
-    this.aiComputationService.getAICityPillars(payload).subscribe({
+    this.aiComputationService.getAICountryPillars(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res.succeeded && res.result != null) {
-          this.aiCityPillarResponseDto = res.result;
+          this.aiCountryPillarResponseDto = res.result;
 
           this.buildPillarComparisonChart();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
+          this.toaster.showInfo("No comparison data available for the selected countries.");
         }
       },
       error: (err) => {
@@ -162,7 +162,7 @@ export class KPIAnalysisComponent implements OnInit {
     };
 
     // 1️⃣ Reorder: accessible first, locked last
-    const data = [...(this.aiCityPillarResponseDto?.pillars ?? [])].sort(
+    const data = [...(this.aiCountryPillarResponseDto?.pillars ?? [])].sort(
       (a, b) => Number(b.isAccess) - Number(a.isAccess)
     );
 
@@ -399,24 +399,24 @@ export class KPIAnalysisComponent implements OnInit {
     (event.target as HTMLImageElement).src = 'assets/images/Frame 1321315029.png';
   }
 
-  viewDetails(pillar: AiCityPillarVM) {
-    this.selectedAiCityPillar = pillar;
+  viewDetails(pillar: AiCountryPillarVM) {
+    this.selectedAiCountryPillar = pillar;
     const sidebarEl = document.getElementById('kpiLayerSidebar');
     const offcanvas = new bootstrap.Offcanvas(sidebarEl);
 
     // Clear selection when sidebar closes
     sidebarEl?.addEventListener('hidden.bs.offcanvas', () => {
-      this.selectedAiCityPillar = null;
+      this.selectedAiCountryPillar = null;
       this.cdr.detectChanges();
     }, { once: true });
 
     offcanvas.show();
   }
 
-  viewQuestions(pillar: AiCityPillarVM) {
+  viewQuestions(pillar: AiCountryPillarVM) {
     this.router.navigate(['/analyst/ai/questions-analysis'], {
       queryParams: {
-        cityID: this.selectedCity,
+        countryID: this.selectedCountry,
         pillarID: pillar.pillarID,
         year: this.selectedYear
       }
@@ -453,13 +453,13 @@ export class KPIAnalysisComponent implements OnInit {
       return label;
     });
   }
-  aiPillarDetailsReport(city: AiCityPillarVM, selectedIndex: number) {
+  aiPillarDetailsReport(country: AiCountryPillarVM, selectedIndex: number) {
     if (this.selectedIndex != -1) return;
     this.selectedIndex = selectedIndex;
-    let payload: AiCitySummeryRequestPdfDto = {
-      cityID: city.cityID,
+    let payload: AiCountrySummeryRequestPdfDto = {
+      countryID: country.countryID,
       year: this.selectedYear,
-      pillarID: city.pillarID
+      pillarID: country.pillarID
     }
     this.aiComputationService.aiPillarDetailsReport(payload).subscribe({
       next: (blob) => {
@@ -469,7 +469,7 @@ export class KPIAnalysisComponent implements OnInit {
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `${city.pillarName}_Details_${new Date().toISOString().split('T')[0]}.pdf`;
+          link.download = `${country.pillarName}_Details_${new Date().toISOString().split('T')[0]}.pdf`;
 
           // Trigger download
           document.body.appendChild(link);
@@ -488,9 +488,9 @@ export class KPIAnalysisComponent implements OnInit {
     });
   }
 
-  opendialog(pillar: AiCityPillarVM) {
+  opendialog(pillar: AiCountryPillarVM) {
     this.isOpenResearchBox = true;
-    this.selectedAiCityPillar = pillar;
+    this.selectedAiCountryPillar = pillar;
     setTimeout(() => {
       const modalEl = document.getElementById("RegenerateAIScoreModal");
       if (modalEl) {
@@ -511,14 +511,14 @@ export class KPIAnalysisComponent implements OnInit {
   }
 
   regenerateAiSearch(payload: RegeneratePilalrAiSearchDto) {
-    if (this.selectedAiCityPillar) {
+    if (this.selectedAiCountryPillar) {
       this.loading = true;
-      payload.pillarID = this.selectedAiCityPillar.pillarID;
+      payload.pillarID = this.selectedAiCountryPillar.pillarID;
 
       this.aiComputationService.regenerateSinglePillarAiSearch(payload).subscribe({
         next: (res) => {
           this.loading = false;
-          this.getAICityPillars();
+          this.getAICountryPillars();
           this.selectedChangedStatusIndex = -1;
           if (res.succeeded) {
             this.toaster.showSuccess(res.messages.join(", "));

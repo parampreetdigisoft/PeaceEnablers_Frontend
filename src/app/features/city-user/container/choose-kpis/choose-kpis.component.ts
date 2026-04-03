@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UpdateInviteUserDto } from 'src/app/core/models/AnalystVM';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { UserService } from 'src/app/core/services/user.service';
-import { CityUserService } from '../../city-user.service';
+import { CountryUserService } from '../../country-user.service';
 import { AnalyticalLayerResponseDto } from 'src/app/core/models/GetAnalyticalLayerResultDto';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { TieredAccessPlanValue } from 'src/app/core/enums/TieredAccessPlan';
@@ -15,7 +15,7 @@ import { TieredAccessPlanValue } from 'src/app/core/enums/TieredAccessPlan';
 })
 export class ChooseKpisComponent {
   kpis: AnalyticalLayerResponseDto[] = [];
-  cityList: CityVM[] = [];
+  countryList: CountryVM[] = [];
   @Input() pillars: PillarsVM[] = [];
   tier: TieredAccessPlanValue = TieredAccessPlanValue.Pending;
   @Output() kpiChange = new EventEmitter<any | null>();
@@ -28,18 +28,18 @@ export class ChooseKpisComponent {
   pillarLimitMsg: string = '';
   limitMessages: { [key: string]: string } = {};
 
-  constructor(private fb: FormBuilder, private cityuserService: CityUserService, private userService: UserService) {
+  constructor(private fb: FormBuilder, private countryUserService: CountryUserService, private userService: UserService) {
     this.tier = this.userService?.userInfo?.tier || TieredAccessPlanValue.Pending;
   }
   ngOnInit(): void {
     this.initializeForm();
     //this.GetAllKpi();
-    this.getAllCities();
+    this.getAllCountries();
   }
   initializeForm() {
     this.kpiForm = this.fb.group({
       pillars: [[], [Validators.required]],
-      cities: [[], [Validators.required]]
+      countries: [[], [Validators.required]]
     });
   }
   trackByFn(item: any) {
@@ -52,7 +52,7 @@ export class ChooseKpisComponent {
   }
 
   GetAllKpi() {
-    this.cityuserService.GetAllKpi().subscribe({
+    this.countryUserService.GetAllKpi().subscribe({
       next: (res) => {
         if (res.succeeded) {
           this.kpis = res.result ?? [];
@@ -60,11 +60,11 @@ export class ChooseKpisComponent {
       }
     });
   }
-  getAllCities() {
-    this.cityuserService.getAllCities().subscribe({
+  getAllCountries() {
+    this.countryUserService.getAllCountries().subscribe({
       next: (res) => {
         if (res.succeeded) {
-          this.cityList = res.result ?? [];
+          this.countryList = res.result ?? [];
         }
       }
     });
@@ -93,10 +93,10 @@ export class ChooseKpisComponent {
   onSubmit() {
     this.isSubmitted = true;
     if (this.kpiForm.valid) {
-      const cityData: UpdateInviteUserDto = {
+      const countryData: UpdateInviteUserDto = {
         ...this.kpiForm.value
       };
-      this.kpiChange.emit(cityData);
+      this.kpiChange.emit(countryData);
     }
   }
   closeModel() {

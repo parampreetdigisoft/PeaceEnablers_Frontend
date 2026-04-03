@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { CityVM } from "src/app/core/models/CityVM";
+import { CountryVM } from "src/app/core/models/CountryVM";
 import { PaginationResponse } from "src/app/core/models/PaginationResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { UserService } from "src/app/core/services/user.service";
@@ -19,7 +19,7 @@ import {
 import {
   AssessmentPhase } from "src/app/core/enums/AssessmentPhase";
 import { CommonService } from "src/app/core/services/common.service";
-import { SendRequestMailToUpdateCity } from "src/app/core/models/AnalystVM";
+import { SendRequestMailToUpdateCountry } from "src/app/core/models/AnalystVM";
 
 @Component({
   selector: "app-evaluator-responses",
@@ -29,7 +29,7 @@ import { SendRequestMailToUpdateCity } from "src/app/core/models/AnalystVM";
 export class EvaluatorResponsesComponent implements OnInit {
   currentYear = new Date().getFullYear();
   selectedYear = this.currentYear;
-  selectedcityID: number | any = "";
+  selectedcountryID: number | any = "";
   selecteduserID: number | any = "";
   selectedAssessment: GetAssessmentResponse | any = "";
   changeAssessment: ChangeAssessmentStatusRequestDto | any = "";
@@ -37,7 +37,7 @@ export class EvaluatorResponsesComponent implements OnInit {
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   evaluators: PublicUserResponse[] | null = [];
   assessmentUserID: number | any = 0;
   isLoader: boolean = false;
@@ -54,13 +54,13 @@ export class EvaluatorResponsesComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.assessmentUserID = params.get("assessmentUserID");
       let uid = params.get("userID");
-      let cid = params.get("cityID");
+      let cid = params.get("countryID");
       if (uid && cid && !this.assessmentUserID) {
-        this.selectedcityID = cid;
+        this.selectedcountryID = cid;
         this.selecteduserID = uid;
       }
     });
-    this.getAllCitiesByUserId();
+    this.getAllCountriesByUserId();
 
     if (!this.assessmentUserID) {
       this.GetEvaluatorByAnalyst();
@@ -82,8 +82,8 @@ export class EvaluatorResponsesComponent implements OnInit {
     switch (assessment.assessmentPhase) {
       case AssessmentPhase.InProgress: {
         if (this.assessmentUserID) {
-          this.analystService.userCityMappingIDSubject$.next(
-            assessment.userCityMappingID
+          this.analystService.userCountryMappingIDSubject$.next(
+            assessment.userCountryMappingID
           );
           this.router.navigate(["analyst/analyst-assessment"]);
         }
@@ -91,8 +91,8 @@ export class EvaluatorResponsesComponent implements OnInit {
       }
       case AssessmentPhase.EditApproved: {
         if (this.assessmentUserID) {
-          this.analystService.userCityMappingIDSubject$.next(
-            assessment.userCityMappingID
+          this.analystService.userCountryMappingIDSubject$.next(
+            assessment.userCountryMappingID
           );
           this.router.navigate(["analyst/analyst-assessment"]);
         }
@@ -102,7 +102,7 @@ export class EvaluatorResponsesComponent implements OnInit {
         break;
       case AssessmentPhase.EditRejected: {
         this.sendMailForEditAssessment(
-          assessment.userCityMappingID,
+          assessment.userCountryMappingID,
           assessment.assignedByUserId
         );
         break;
@@ -110,7 +110,7 @@ export class EvaluatorResponsesComponent implements OnInit {
       case AssessmentPhase.Completed: {
         if (this.assessmentUserID) {
           this.sendMailForEditAssessment(
-            assessment.userCityMappingID,
+            assessment.userCountryMappingID,
             assessment.assignedByUserId
           );
         }
@@ -127,7 +127,7 @@ export class EvaluatorResponsesComponent implements OnInit {
       pageNumber: currentPage,
       pageSize: this.pageSize,
       userId: this.userService?.userInfo?.userID,
-      cityID: this.selectedcityID,
+      countryID: this.selectedcountryID,
       subUserID: this.assessmentUserID
         ? this.assessmentUserID
         : this.selecteduserID,
@@ -143,16 +143,16 @@ export class EvaluatorResponsesComponent implements OnInit {
         this.isLoader = false;
       });
   }
-  getAllCitiesByUserId() {
+  getAllCountriesByUserId() {
     this.analystService
-      .getAllCitiesByUserId(this.userService?.userInfo?.userID)
+      .getAllCountriesByUserId(this.userService?.userInfo?.userID)
       .subscribe({
         next: (res) => {
-          this.cities = res.result;
-          if (this.cities) {
-            //this.selectedcityID = this.cities?.length > 0 ? this.cities[0].cityID : null
+          this.countries = res.result;
+          if (this.countries) {
+            //this.selectedcountryID = this.countries?.length > 0 ? this.countries[0].countryID : null
           } else {
-            this.toaster.showWarning("No city assigned");
+            this.toaster.showWarning("No country assigned");
           }
         },
       });
@@ -167,10 +167,10 @@ export class EvaluatorResponsesComponent implements OnInit {
       },
     });
   }
-  sendMailForEditAssessment(userCityMappingID: number, mailToUserID: number) {
-    let payload: SendRequestMailToUpdateCity = {
+  sendMailForEditAssessment(userCountryMappingID: number, mailToUserID: number) {
+    let payload: SendRequestMailToUpdateCountry = {
       userID: this.userService.userInfo.userID,
-      userCityMappingID: userCityMappingID,
+      userCountryMappingID: userCountryMappingID,
       mailToUserID: mailToUserID,
     };
     this.analystService.sendMailForEditAssessment(payload).subscribe({

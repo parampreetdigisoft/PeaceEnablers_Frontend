@@ -57,27 +57,27 @@
                                     Phone number is required.
                                 </div>
                             </div>
-                            <!-- City Multi-Select -->
+                            <!-- country Multi-Select -->
                             <div class="input_field">
-                                <label>Assign City *</label>
-                                <ng-select [items]="cities" bindValue="cityID" bindLabel="cityName"
-                                    formControlName="city" [multiple]="true" class="form-control analyst_multi_select"
+                                <label>Assign country *</label>
+                                <ng-select [items]="countries" bindValue="countryID" bindLabel="countryName"
+                                    formControlName="country" [multiple]="true" class="form-control analyst_multi_select"
                                     [searchable]="true"
-                                    [placeholder]="evaluatorForm.get('city')?.invalid ? 'Assign City' : ''">
+                                    [placeholder]="evaluatorForm.get('country')?.invalid ? 'Assign country' : ''">
 
                                     <ng-template ng-label-tmp let-item="item">
-                                        {{ item.cityName +', '}}
+                                        {{ item.countryName +', '}}
                                     </ng-template>
 
                                     <ng-template ng-option-tmp let-item="item">
-                                        {{ item.cityName }} {{ item.state }}
+                                        {{ item.countryName }} {{ item.state }}
                                     </ng-template>
                                 </ng-select>
 
 
                                 <div class="error-msg"
-                                    *ngIf="evaluatorForm.get('city')?.invalid && (isSubmitted || evaluatorForm.get('city')?.touched)">
-                                    Please select at least one city.
+                                    *ngIf="evaluatorForm.get('country')?.invalid && (isSubmitted || evaluatorForm.get('country')?.touched)">
+                                    Please select at least one country.
                                 </div>
                             </div>
 

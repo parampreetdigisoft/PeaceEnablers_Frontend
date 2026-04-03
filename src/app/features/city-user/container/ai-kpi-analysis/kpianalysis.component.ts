@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { SharedModule } from 'src/app/shared/share.module';
-import { ChartTableRowDto, CompareCityResponseDto } from "src/app/core/models/CompareCityResponseDto";
+import { ChartTableRowDto, CompareCountryResponseDto } from "src/app/core/models/CompareCountryResponseDto";
 import { environment } from "src/environments/environment";
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { ToasterService } from 'src/app/core/services/toaster.service';
-import { CityUserService } from 'src/app/features/city-user/city-user.service';
+import { CountryUserService } from 'src/app/features/city-user/country-user.service';
 import { AiComputationService } from 'src/app/core/services/ai-computation.service';
-import { AiCityPillarResponseDto, AiCityPillarVM } from 'src/app/core/models/aiVm/AiCityPillarResponseDto';
+import { AiCountryPillarResponseDto, AiCountryPillarVM } from 'src/app/core/models/aiVm/AiCountryPillarResponseDto';
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 
 import {
@@ -29,7 +29,7 @@ import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-sco
 import { ActivatedRoute, Router } from '@angular/router';
 import { AITrustLevelVM } from 'src/app/core/models/aiVm/AITrustLevelVM';
 import { ViewAiPillarDetailsComponent } from '../../features/view-ai-pillar-details/view-ai-pillar-details.component';
-import { AiCitySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCitySummeryRequestPdfDto';
+import { AiCountrySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestPdfDto';
 import { CommonService } from 'src/app/core/services/common.service';
 
 export type ChartOptions = {
@@ -61,19 +61,19 @@ export class KPIAnalysisComponent implements OnInit {
   currentYear = new Date().getFullYear();
   selectedYear = this.currentYear;
   pillers: PillarsVM[] = [];
-  selectedCity?: number;
-  cities: CityVM[] | null = [];
+  selectedCountry?: number;
+  countries: CountryVM[] | null = [];
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
-  aiCityPillarResponseDto: AiCityPillarResponseDto | null = null;
-  selectedAiCityPillar: AiCityPillarVM | null = null;
+  aiCountryPillarResponseDto: AiCountryPillarResponseDto | null = null;
+  selectedAiCountryPillar: AiCountryPillarVM | null = null;
   isLoader: boolean = false;
   chartTableData: ChartTableRowDto[] = [];
   selectedIndex: number = -1;
   aiTrustLevels: AITrustLevelVM[] = [];
 
   constructor(
-    private cityUserService: CityUserService,
+    private countryUserService: CountryUserService,
     private toaster: ToasterService,
     private aiComputationService: AiComputationService,
     private router: Router,
@@ -87,15 +87,15 @@ export class KPIAnalysisComponent implements OnInit {
   ngOnInit(): void {
     this.isLoader = true;
     this.route.queryParams.subscribe(params => {
-      let cid = +params['cityID'] || null;
+      let cid = +params['countryID'] || null;
       let sYear = +params['year'] || this.selectedYear;
 
       if (cid) {
-        this.selectedCity = Number(cid);
+        this.selectedCountry = Number(cid);
         this.selectedYear = Number(sYear);
       }
     });
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.getAITrustLevels();
   }
   getAITrustLevels() {
@@ -104,44 +104,44 @@ export class KPIAnalysisComponent implements OnInit {
     });
   }
 
-  getCityUserCities() {
-    this.cityUserService.getCityUserCities().subscribe({
+  getCountryUserCountries() {
+    this.countryUserService.getCountryUserCountries().subscribe({
       next: (p) => {
 
-        this.cities = p.result || [];
-        if (this.cities?.length && !this.selectedCity) {
-          this.selectedCity = this.cities[0].cityID;
+        this.countries = p.result || [];
+        if (this.countries?.length && !this.selectedCountry) {
+          this.selectedCountry = this.countries[0].countryID;
         }
-        this.getAICityPillars();
+        this.getAICountryPillars();
       },
       error: () => {
         this.toaster.showError("There is an error please Try again");
-        this.getAICityPillars();
+        this.getAICountryPillars();
       }
     });
   }
 
-  getAICityPillars() {
-    if (!this.selectedCity) {
-      this.toaster.showWarning("Please select at least one city to view data.");
+  getAICountryPillars() {
+    if (!this.selectedCountry) {
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
     this.isLoader = true;
-    let payload: AiCitySummeryRequestPdfDto = {
-      cityID: this.selectedCity,
+    let payload: AiCountrySummeryRequestPdfDto = {
+      countryID: this.selectedCountry,
       year: this.selectedYear
     }
-    this.cityUserService.getAICityPillars(payload).subscribe({
+    this.countryUserService.getAICountryPillars(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res.succeeded && res.result != null) {
-          this.aiCityPillarResponseDto = res.result;
+          this.aiCountryPillarResponseDto = res.result;
 
           this.buildPillarComparisonChart();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
-          this.aiCityPillarResponseDto=null;
+          this.toaster.showInfo("No comparison data available for the selected countries.");
+          this.aiCountryPillarResponseDto=null;
           this.buildPillarComparisonChart();
         }
       },
@@ -156,36 +156,36 @@ export class KPIAnalysisComponent implements OnInit {
     (event.target as HTMLImageElement).src = 'assets/images/Frame 1321315029.png';
   }
 
-  viewDetails(pillar: AiCityPillarVM) {
-    this.selectedAiCityPillar = pillar;
+  viewDetails(pillar: AiCountryPillarVM) {
+    this.selectedAiCountryPillar = pillar;
     const sidebarEl = document.getElementById('kpiLayerSidebar');
     const offcanvas = new bootstrap.Offcanvas(sidebarEl);
 
     // Clear selection when sidebar closes
     sidebarEl?.addEventListener('hidden.bs.offcanvas', () => {
-      this.selectedAiCityPillar = null;
+      this.selectedAiCountryPillar = null;
       this.cdr.detectChanges();
     }, { once: true });
 
     offcanvas.show();
   }
 
-  viewQuestions(pillar: AiCityPillarVM) {
-    this.router.navigate(['/cityuser/ai/questions-analysis'], {
+  viewQuestions(pillar: AiCountryPillarVM) {
+    this.router.navigate(['/countryuser/ai/questions-analysis'], {
       queryParams: {
-        cityID: this.selectedCity,
+        countryID: this.selectedCountry,
         pillarID: pillar.pillarID,
         year:this.selectedYear
       }
     });
   }
-  aiPillarDetailsReport(city: AiCityPillarVM, selectedIndex: number) {
+  aiPillarDetailsReport(country: AiCountryPillarVM, selectedIndex: number) {
     if(this.selectedIndex != -1) return;
     this.selectedIndex = selectedIndex;
-    let payload: AiCitySummeryRequestPdfDto = {
-      cityID: city.cityID,
+    let payload: AiCountrySummeryRequestPdfDto = {
+      countryID: country.countryID,
       year: this.selectedYear,
-      pillarID: city.pillarID
+      pillarID: country.pillarID
     }
     this.aiComputationService.aiPillarDetailsReport(payload).subscribe({
       next: (blob) => {
@@ -195,7 +195,7 @@ export class KPIAnalysisComponent implements OnInit {
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `${city.pillarName}_Details_${new Date().toISOString().split('T')[0]}.pdf`;
+          link.download = `${country.pillarName}_Details_${new Date().toISOString().split('T')[0]}.pdf`;
 
           // Trigger download
           document.body.appendChild(link);
@@ -219,7 +219,7 @@ export class KPIAnalysisComponent implements OnInit {
       return 15 + (pillarId * 7) % 20;
     };
 
-    const data = [...(this.aiCityPillarResponseDto?.pillars ?? [])].sort(
+    const data = [...(this.aiCountryPillarResponseDto?.pillars ?? [])].sort(
       (a, b) => Number(b.isAccess) - Number(a.isAccess)
     );
 

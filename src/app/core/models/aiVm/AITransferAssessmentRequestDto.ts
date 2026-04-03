@@ -1,5 +1,5 @@
 
 export interface AITransferAssessmentRequestDto {
-  cityID: number;
+  countryID: number;
   transferToUserID: number;
 }

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexGrid, ApexLegend, ApexMarkers, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent } from 'ng-apexcharts';
-import { CityVM } from 'src/app/core/models/CityVM';
-import { CompareCityRequestDto } from 'src/app/core/models/CompareCityRequestDto';
-import { CompareCityResponseDto, ChartTableRowDto } from 'src/app/core/models/CompareCityResponseDto';
+import { CountryVM } from 'src/app/core/models/CountryVM';
+import { CompareCountryRequestDto } from 'src/app/core/models/CompareCountryRequestDto';
+import { CompareCountryResponseDto, ChartTableRowDto } from 'src/app/core/models/CompareCountryResponseDto';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { CommonService } from 'src/app/core/services/common.service';
 import { ToasterService } from 'src/app/core/services/toaster.service';
@@ -17,7 +17,7 @@ import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score
 import { AiButtonComponent } from 'src/app/shared/standAlone/ai-button/ai-button.component';
 import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto';
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
-import { CompareCityKpiDetailComponent } from 'src/app/shared/standAlone/compare-city-kpi-detail/compare-city-kpi-detail.component';
+import { CompareCountryKpiDetailComponent } from 'src/app/shared/standAlone/compare-country-kpi-detail/compare-country-kpi-detail.component';
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -38,28 +38,28 @@ export type ChartOptions = {
   selector: 'app-kpi-comparision',
   templateUrl: './kpi-comparision.component.html',
   styleUrl: './kpi-comparision.component.css',
-  imports: [CommonModule, SharedModule, CircularScoreComponent,AiButtonComponent,CompareCityKpiDetailComponent]
+  imports: [CommonModule, SharedModule, CircularScoreComponent,AiButtonComponent,CompareCountryKpiDetailComponent]
 
 })
 export class KpiComparisionComponent implements OnInit {
   selectedYear = new Date().getFullYear();
   pillers: PillarsVM[] = [];
-  selectedCities: number[] = [];
+  selectedCountries: number[] = [];
   selectedKpis: number[] = [];
-  cities: CityVM[] | null = [];
+  countries: CountryVM[] | null = [];
   pageSize: number = 10;
   currentPage: number = 1;
   totalRecords: number = 10;
   kpis: AnalyticalLayerResponseDto[] = [];
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions> = {};
-  compareCityResponseDto: CompareCityResponseDto | null = null;
+  compareCountryResponseDto: CompareCountryResponseDto | null = null;
   isLoader: boolean = false;
   environment = environment.apiUrl;
   chartTableData: ChartTableRowDto[] = [];
   $kpiChanged = new Subject();
   isAiViewEnabled: boolean = false;
-  mutipleCitykpiLayerResults: GetMutiplekpiLayerResultsDto | null = null;
+  mutipleCountrykpiLayerResults: GetMutiplekpiLayerResultsDto | null = null;
   viewDetailIndex = -1;
   constructor(
     private adminService: AdminService,
@@ -73,9 +73,9 @@ export class KpiComparisionComponent implements OnInit {
   ngOnInit(): void {
     this.isLoader = true;
     this.GetAllKpi();
-    this.getCityUserCities();
+    this.getCountryUserCountries();
     this.$kpiChanged.pipe(debounceTime(1000)).subscribe(x => {
-      this.compareCities();
+      this.compareCountries();
     });
   }
   onAiViewToggle(value: boolean) {
@@ -95,29 +95,29 @@ export class KpiComparisionComponent implements OnInit {
       }
     });
   }
-  getCityUserCities() {
-    this.adminService.getAllCitiesByUserId(this.userService.userInfo.userID ?? 0).subscribe((p) => {
+  getCountryUserCountries() {
+    this.adminService.getAllCountriesByUserId(this.userService.userInfo.userID ?? 0).subscribe((p) => {
       this.isLoader = false;
-      this.cities = p.result || [];
-      if (this.cities?.length && this.selectedCities.length < 2) {
-        this.selectedCities = this.cities.slice(0, 2).map(x => x.cityID);
-        this.compareCities();
+      this.countries = p.result || [];
+      if (this.countries?.length && this.selectedCountries.length < 2) {
+        this.selectedCountries = this.countries.slice(0, 2).map(x => x.countryID);
+        this.compareCountries();
       }
     });
   }
   getMutiplekpiLayerResults(layerID: number, viewDetailIndex:number) {
 
-    if (this.selectedCities.length < 1) {
-      this.compareCityResponseDto = null;
+    if (this.selectedCountries.length < 1) {
+      this.compareCountryResponseDto = null;
       this.getChartOptions();
-      this.toaster.showWarning("Please select at least one city to view data.");
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
 
     this.viewDetailIndex = viewDetailIndex;
 
     let payload: GetMutiplekpiLayerRequestDto = {
-      cityIDs: this.selectedCities,
+      countryIDs: this.selectedCountries,
       year: this.selectedYear,
       layerID: layerID
     }
@@ -125,13 +125,13 @@ export class KpiComparisionComponent implements OnInit {
       next: (res) => {
         this.viewDetailIndex = -1;
         if (res.succeeded) {
-          this.mutipleCitykpiLayerResults = res.result || null;          
+          this.mutipleCountrykpiLayerResults = res.result || null;          
           const sidebarEl = document.getElementById('kpiLayerSidebar');
           const offcanvas = new bootstrap.Offcanvas(sidebarEl);
           offcanvas.show();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
+          this.toaster.showInfo("No comparison data available for the selected countries.");
         }
       },
       error: (err) => {
@@ -140,31 +140,31 @@ export class KpiComparisionComponent implements OnInit {
       }
     });
   }
-  compareCities(currentPage = 1) {
-    if (this.selectedCities.length < 1) {
-      this.compareCityResponseDto = null;
+  compareCountries(currentPage = 1) {
+    if (this.selectedCountries.length < 1) {
+      this.compareCountryResponseDto = null;
       this.getChartOptions();
-      this.toaster.showWarning("Please select at least one city to view data.");
+      this.toaster.showWarning("Please select at least one country to view data.");
       return;
     }
     this.isLoader = true;
     this.currentPage = currentPage;
 
-    let payload: CompareCityRequestDto = {
-      cities: this.selectedCities,
+    let payload: CompareCountryRequestDto = {
+      countries: this.selectedCountries,
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
       Kpis: this.selectedKpis
     }
-    this.adminService.compareCities(payload).subscribe({
+    this.adminService.compareCountries(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res.succeeded) {
-          this.compareCityResponseDto = res.result || null;
+          this.compareCountryResponseDto = res.result || null;
           this.getChartOptions();
         }
         else {
-          this.toaster.showInfo("No comparison data available for the selected cities.");
+          this.toaster.showInfo("No comparison data available for the selected countries.");
         }
       },
       error: (err) => {
@@ -175,7 +175,7 @@ export class KpiComparisionComponent implements OnInit {
   }
 
   getChartOptions() {
-    this.chartTableData = this.compareCityResponseDto?.tableData ?? [];
+    this.chartTableData = this.compareCountryResponseDto?.tableData ?? [];
 
     if (!this.chartTableData?.length) {
       this.totalRecords = 0;
@@ -192,9 +192,9 @@ export class KpiComparisionComponent implements OnInit {
     let series: any[] = [];
     let strokeDashArray: number[] = [];
 
-    (this.compareCityResponseDto?.series ?? []).forEach((cityData, index) => {
-      // Skip the last city if AI View is enabled (assuming last city is AI benchmark)
-      if (index === (this.compareCityResponseDto?.series ?? []).length - 1 && this.isAiViewEnabled) {
+    (this.compareCountryResponseDto?.series ?? []).forEach((countryData, index) => {
+      // Skip the last country if AI View is enabled (assuming last country is AI benchmark)
+      if (index === (this.compareCountryResponseDto?.series ?? []).length - 1 && this.isAiViewEnabled) {
         return;
       }
 
@@ -202,18 +202,18 @@ export class KpiComparisionComponent implements OnInit {
 
       // Evaluation series (solid line)
       series.push({
-        name: `${cityData.name} (Evaluation)`,
-        data: cityData.data,
+        name: `${countryData.name} (Evaluation)`,
+        data: countryData.data,
         color: baseColor,
         type: 'line'
       });
       strokeDashArray.push(0); // Solid line
 
       // AI series (dashed line) - only if AI view is enabled
-      if (this.isAiViewEnabled && cityData.aiData) {
+      if (this.isAiViewEnabled && countryData.aiData) {
         series.push({
-          name: `${cityData.name} (AI)`,
-          data: cityData.aiData,
+          name: `${countryData.name} (AI)`,
+          data: countryData.aiData,
           color: this.lightenColor(baseColor, 20), // Slightly lighter shade
           type: 'line'
         });
@@ -311,7 +311,7 @@ export class KpiComparisionComponent implements OnInit {
       },
       xaxis: {
         type: "category",
-        categories: this.compareCityResponseDto?.categories,
+        categories: this.compareCountryResponseDto?.categories,
         labels: {
           rotate: -15,
           rotateAlways: true,
@@ -364,7 +364,7 @@ export class KpiComparisionComponent implements OnInit {
         shared: true,
         intersect: false,
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const layerCode = this.compareCityResponseDto?.categories?.[dataPointIndex] ?? "";
+          const layerCode = this.compareCountryResponseDto?.categories?.[dataPointIndex] ?? "";
           const layerName = kpiMap.get(layerCode) ?? "";
 
           let tooltipHtml = `
@@ -375,22 +375,22 @@ export class KpiComparisionComponent implements OnInit {
         `;
 
           // Group evaluation and AI values together
-          const cities = this.compareCityResponseDto?.series ?? [];
-          cities.forEach((city, idx) => {
-            // Skip last city if it's the AI benchmark
-            if (idx === cities.length - 1 && this.isAiViewEnabled) {
+          const countries = this.compareCountryResponseDto?.series ?? [];
+          countries.forEach((country, idx) => {
+            // Skip last country if it's the AI benchmark
+            if (idx === countries.length - 1 && this.isAiViewEnabled) {
               return;
             }
 
-            const evalValue = city.data[dataPointIndex];
-            const aiValue = city.aiData?.[dataPointIndex];
+            const evalValue = country.data[dataPointIndex];
+            const aiValue = country.aiData?.[dataPointIndex];
             const color = colorPalette[idx % colorPalette.length];
             const difference = aiValue != null ? (evalValue - aiValue) : 0;
 
             tooltipHtml += `
             <div style="margin: 8px 0; padding: 8px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 6px; border-left: 3px solid ${color};">
               <div style="font-weight: 600; color: ${color}; margin-bottom: 6px; font-size: 12px;">
-                ${city.name}
+                ${country.name}
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                 <span style="color: #666;">📊 Evaluation:</span>
@@ -439,24 +439,24 @@ export class KpiComparisionComponent implements OnInit {
       (B < 255 ? (B < 1 ? 0 : B) : 255)
     ).toString(16).slice(1);
   }
-  getCityScore(cityID: number, isAi: boolean = false): string {
-    const city = this.cities?.find(c => c.cityID === cityID);
+  getCountryScore(countryID: number, isAi: boolean = false): string {
+    const country = this.countries?.find(c => c.countryID === countryID);
     if (isAi) {
-      return city?.aiScore?.toFixed(2) || '0';
+      return country?.aiScore?.toFixed(2) || '0';
     }
-    return city?.score?.toFixed(2) || '0';
+    return country?.score?.toFixed(2) || '0';
   }
 
-  getCityImage(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.image || '';
+  getCountryImage(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.image || '';
   }
 
-  getCityCountry(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.country || '';
+  getCountry(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.countryName || '';
   }
 
-  getCityState(cityID: number): string {
-    return this.cities?.find(c => c.cityID === cityID)?.state || '';
+  getCountryContinent(countryID: number): string {
+    return this.countries?.find(c => c.countryID === countryID)?.continent || '';
   }
 
   onImgError(event: Event) {
@@ -467,16 +467,16 @@ export class KpiComparisionComponent implements OnInit {
 
     if (!this.chartTableData?.length) return 'NA';
 
-    const peerCities = this.cities?.filter(city =>
-      this.chartTableData[0].cityValues?.some(row => row.cityID === city.cityID)
+    const peerCountries = this.countries?.filter(country =>
+      this.chartTableData[0].countryValues?.some(row => row.countryID === country.countryID)
     ) ?? [];
 
-    const avgPeerCityScore =
-      peerCities.length > 0
-        ? peerCities.reduce((sum, row) => sum + (row.score ?? 0), 0) / peerCities.length
+    const avgPeerCountryScore =
+      peerCountries.length > 0
+        ? peerCountries.reduce((sum, row) => sum + (row.score ?? 0), 0) / peerCountries.length
         : 0;
 
-    return avgPeerCityScore.toFixed(2);
+    return avgPeerCountryScore.toFixed(2);
   }
   customSearchFn(term: string, item: any) {
     term = term.toLowerCase();
@@ -487,25 +487,25 @@ export class KpiComparisionComponent implements OnInit {
   }
 
 exportData() { 
-  if (!this.selectedCities.length) {
-    this.toaster.showWarning("Please select cities");
+  if (!this.selectedCountries.length) {
+    this.toaster.showWarning("Please select countries");
     return;
   }
   this.isLoader = true;
   const params = {
-    cities: this.selectedCities.join(','),
+    countries: this.selectedCountries.join(','),
     kpis: null,
     updatedAt: new Date().toISOString()
   };
 
-  this.adminService.exportCompareCities(params)
+  this.adminService.exportCompareCountries(params)
     .subscribe({
       next: (res: Blob) => {
         this.isLoader = false;
         const url = window.URL.createObjectURL(res);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "City_Comparison.xlsx";
+        a.download = "Country_Comparison.xlsx";
         a.click();
         window.URL.revokeObjectURL(url); // good practice
       },

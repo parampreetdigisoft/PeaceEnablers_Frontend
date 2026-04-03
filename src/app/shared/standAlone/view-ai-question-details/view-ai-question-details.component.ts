@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
 import { TypingTextComponent } from 'src/app/shared/standAlone/typing-text/typing-text.component';
 
-import { AiCityPillarVM } from 'src/app/core/models/aiVm/AiCityPillarResponseDto';
+import { AiCountryPillarVM } from 'src/app/core/models/aiVm/AiCountryPillarResponseDto';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
 import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-score/sparkline-score.component';
 import { AITrustLevelVM } from 'src/app/core/models/aiVm/AITrustLevelVM';

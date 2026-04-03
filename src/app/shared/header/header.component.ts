@@ -102,12 +102,12 @@ export class HeaderComponent implements OnInit {
   }
 
   showRoleBasedInfor(){
-    if(this.userinfo?.role?.toLowerCase() === 'cityuser'){
+    if(this.userinfo?.role?.toLowerCase() === 'countryuser'){
       if(this.userinfo?.tier === 1){
         return 'Researcher';
       }
       else if(this.userinfo?.tier === 2){
-        return 'City Analyst';
+        return 'Country Analyst';
       }
       else if(this.userinfo?.tier === 3){
         return 'Network Administrator';

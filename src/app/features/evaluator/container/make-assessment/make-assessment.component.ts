@@ -6,10 +6,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { PillarsVM } from "src/app/core/models/PillersVM";
-import { CityVM } from "src/app/core/models/CityVM";
+import { CountryVM } from "src/app/core/models/CountryVM";
 import { UserService } from "src/app/core/services/user.service";
-import { CityMappingPillerRequestDto } from "src/app/core/models/QuestionRequest";
-import { GetQuestionByCityMappingRespones } from "src/app/core/models/QuestonResponse";
+import { CountryMappingPillerRequestDto } from "src/app/core/models/QuestionRequest";
+import { GetQuestionByCountryMappingResponse } from "src/app/core/models/QuestionResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { FormBuilder, FormGroup, FormArray, Validators } from "@angular/forms";
 import {
@@ -27,9 +27,9 @@ import { CommonService } from "src/app/core/services/common.service";
 })
 export class MakeAssessmentComponent implements OnInit, OnDestroy {
   pillars: PillarsVM[] = [];
-  cities: CityVM[] = []; // ✅ fixed type
-  selectedUserCityMappingID: number = 0;
-  pillerQuestions: GetQuestionByCityMappingRespones | null = null;
+  countries: CountryVM[] = []; // ✅ fixed type
+  selectedUserCountryMappingID: number = 0;
+  pillerQuestions: GetQuestionByCountryMappingResponse | null = null;
   form!: FormGroup;
   pillarDisplayOrder: number = 1;
   selectedPillar?: PillarsVM;
@@ -52,7 +52,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
     this.isLoader =true;
     this.formInitialized();
     this.GetAllPillars();
-    this.getCityByUserIdForAssessment();
+    this.getCountryByUserIdForAssessment();
   }
 
   get questions() {
@@ -113,15 +113,15 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
     });
   }
   pillarChanged(pillar?: PillarsVM) {
-    if (!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0) {
-      this.toaster.showWarning("Please select city first");
+    if (!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0) {
+      this.toaster.showWarning("Please select country first");
       return;
     }
 
     this.isAssessementFinalized = false;
     if (pillar) {
       this.selectedPillar = pillar;
-      this.getQuestionsByCityId();
+      this.getQuestionsByCountryId();
     } else {
       this.selectedPillar = this.pillars.find(
         (x) => x.pillarID == this.pillerQuestions?.pillarID
@@ -131,27 +131,27 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
       }
     }
   }
-  cityChanged() {
+  countryChanged() {
     this.selectedPillar = undefined;
-    this.getQuestionsByCityId();
+    this.getQuestionsByCountryId();
   }
-  getCityByUserIdForAssessment() {
+  getCountryByUserIdForAssessment() {
     this.selectedPillar = undefined;
-    this.commonService.getUserNearestCity()
+    this.commonService.getUserNearestCountry()
       .subscribe({
         next: (res) => {
-          this.cities = res.result ?? [];
-          if (this.cities.length > 0) {
-            this.selectedUserCityMappingID = this.evaluatorService.userCityMappingIDSubject$.value != null ?
-              this.evaluatorService.userCityMappingIDSubject$.value
-              : this.cities[0].userCityMappingID ?? 0;
+          this.countries = res.result ?? [];
+          if (this.countries.length > 0) {
+            this.selectedUserCountryMappingID = this.evaluatorService.userCountryMappingIDSubject$.value != null ?
+              this.evaluatorService.userCountryMappingIDSubject$.value
+              : this.countries[0].userCountryMappingID ?? 0;
 
             setTimeout(() => {
               this.toaster.showInfo(
-                "You have rediredected to assgined city, please submit all pillars for the city"
+                "You have rediredected to assgined country, please submit all pillars for the country"
               );
             }, 1000);
-            this.getQuestionsByCityId();
+            this.getQuestionsByCountryId();
           } else {
             this.toaster.showWarning(res.errors.join(", "));
           }
@@ -162,24 +162,24 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
       });
   }
 
-  getQuestionsByCityId() {
+  getQuestionsByCountryId() {
     if (
-      !this.selectedUserCityMappingID ||
-      this.selectedUserCityMappingID == 0
+      !this.selectedUserCountryMappingID ||
+      this.selectedUserCountryMappingID == 0
     ) {
-      this.toaster.showWarning("Please select city first");
+      this.toaster.showWarning("Please select country first");
       return;
     }
     this.formInitialized();
-    const payload: CityMappingPillerRequestDto = {
-      userCityMappingID: this.selectedUserCityMappingID ?? 0,
+    const payload: CountryMappingPillerRequestDto = {
+      userCountryMappingID: this.selectedUserCountryMappingID ?? 0,
     };
     if (this.selectedPillar) {
       payload.pillarID = this.selectedPillar.pillarID;
     }
     this.pillerQuestions = null;
     this.isLoader = true;
-    this.evaluatorService.getQuestionsByCityId(payload).subscribe({
+    this.evaluatorService.getQuestionsByCountryId(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res.succeeded) {
@@ -194,7 +194,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
           }
           this.loadQuestions();
         } else {
-          this.toaster.showWarning("City's assessment is already submitted");
+          this.toaster.showWarning("Country's assessment is already submitted");
         }
       },
     });
@@ -202,17 +202,17 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
 
   SaveAssessment() {
     if (
-      !this.selectedUserCityMappingID ||
-      this.selectedUserCityMappingID == 0
+      !this.selectedUserCountryMappingID ||
+      this.selectedUserCountryMappingID == 0
     ) {
-      this.toaster.showWarning("Please select city first");
+      this.toaster.showWarning("Please select country first");
       return;
     }
     const validQuestions = this.questionsArray.controls
       .filter((ctrl) => ctrl.valid)
       .map((ctrl) => ctrl.value as AddAssessmentResponseDto);
     const payload: AddAssessmentDto = {
-      userCityMappingID: this.selectedUserCityMappingID,
+      userCountryMappingID: this.selectedUserCountryMappingID,
       assessmentID: this.pillerQuestions?.assessmentID ?? 0,
       pillarID: this.pillerQuestions?.pillarID ?? 0,
       responses: validQuestions ?? [],
@@ -233,12 +233,12 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
           }, 300);
           if (res.succeeded) {
             if (this.pillerQuestions?.displayOrder == 14 || this.isAssessementFinalized) {
-              this.evaluatorService.userCityMappingIDSubject$.next(null);
-              this.getCityByUserIdForAssessment();
+              this.evaluatorService.userCountryMappingIDSubject$.next(null);
+              this.getCountryByUserIdForAssessment();
             } else {
               if (this.selectedPillar)
                 this.selectedPillar = this.pillars.find(x => x.displayOrder == (Number(this.selectedPillar?.displayOrder) + 1));
-              this.getQuestionsByCityId();
+              this.getQuestionsByCountryId();
             }
             this.toaster.showSuccess(res.messages.join(", "));
           } else {
@@ -259,21 +259,21 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
   }
 
   ImportQuestions() {
-    if (this.selectedUserCityMappingID != 0) {
+    if (this.selectedUserCountryMappingID != 0) {
       this.isloading = true;
       this.evaluatorService
-        .ExportQuestions(this.selectedUserCityMappingID)
+        .ExportQuestions(this.selectedUserCountryMappingID)
         .subscribe({
           next: (res: any) => {
-            var city = this.cities?.find(
-              (x) => x.userCityMappingID == this.selectedUserCityMappingID
+            var country = this.countries?.find(
+              (x) => x.userCountryMappingID == this.selectedUserCountryMappingID
             );
             this.isloading = false;
             const url = window.URL.createObjectURL(res);
             const a = document.createElement("a");
             a.href = url;
             a.download =
-              city?.cityName + "_" + city?.assignedBy + "_Questions.xlsx";
+              country?.countryName + "_" + country?.assignedBy + "_Questions.xlsx";
             a.click();
             this.toaster.showSuccess("Questions downloaded successfully");
           },
@@ -283,7 +283,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      this.toaster.showWarning("Please select city to get questions");
+      this.toaster.showWarning("Please select country to get questions");
     }
   }
 
@@ -297,7 +297,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
         this.selectedPillar = undefined;
         this.isUploading = false;
         if (res.succeeded) {
-          this.getCityByUserIdForAssessment();
+          this.getCountryByUserIdForAssessment();
           this.toaster.showSuccess(res.messages.join(", "));
         } else {
           this.toaster.showError(res.errors.join(", "));
@@ -322,12 +322,12 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
   }
   autoSaveSingleAssessemnt(index: number) {
     if (this.questionsArray.controls[index].valid) {
-      if (!this.selectedUserCityMappingID || this.selectedUserCityMappingID == 0) {
-        this.toaster.showWarning("Please select city first");
+      if (!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0) {
+        this.toaster.showWarning("Please select country first");
         return;
       }
       const payload: AddAssessmentDto = {
-        userCityMappingID: this.selectedUserCityMappingID,
+        userCountryMappingID: this.selectedUserCountryMappingID,
         assessmentID: this.pillerQuestions?.assessmentID ?? 0,
         pillarID: this.pillerQuestions?.pillarID ?? 0,
         responses: [this.questionsArray.controls[index].value],

@@ -1,9 +1,9 @@
 declare const FB: any;
 import { AuthService } from '../../auth.service';
-import { CityVM } from 'src/app/core/models/CityVM';
+import { CountryVM } from 'src/app/core/models/CountryVM';
 import { environment } from 'src/environments/environment';
 import { UserRoleValue } from 'src/app/core/enums/UserRole';
-import { CityUserSignUpDto } from '../../model/CityUserSignUpDto';
+import { CountryUserSignUpDto } from '../../model/CountryUserSignUpDto';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToasterService } from 'src/app/core/services/toaster.service';
 import { AfterViewInit, ChangeDetectorRef, Component, input, OnInit, output, signal } from '@angular/core';
@@ -15,11 +15,11 @@ import { AfterViewInit, ChangeDetectorRef, Component, input, OnInit, output, sig
 })
 export class SignUpComponent implements OnInit, AfterViewInit {
   signupForm: FormGroup;
-  submitsignUpDetail = output<CityUserSignUpDto>();
+  submitsignUpDetail = output<CountryUserSignUpDto>();
   loading = input<boolean>(false);
   isSuccess = input<boolean>(false);
-  externalLogin = signal<CityUserSignUpDto | null>(null);
-  cities = signal<CityVM[]>([]);
+  externalLogin = signal<CountryUserSignUpDto | null>(null);
+  countries = signal<CountryVM[]>([]);
   captchaToken: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private toasterService: ToasterService,private cdr: ChangeDetectorRef) {
@@ -35,9 +35,9 @@ export class SignUpComponent implements OnInit, AfterViewInit {
 
   }
   ngOnInit(): void {
-    //this.getCities();
+    //this.getCountries();
   }
-  externalLoginForm(external: CityUserSignUpDto) {
+  externalLoginForm(external: CountryUserSignUpDto) {
     this.externalLogin.set(external);
     this.signupForm.patchValue({
         fullName:external.fullName,
@@ -62,11 +62,11 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     };
   }
 
-  getCities() {
-    this.authService.getAllCities().subscribe({
+  getCountries() {
+    this.authService.getAllCountries().subscribe({
       next: (res) => {
         if (res.succeeded && res.result) {
-          this.cities.set(res.result);
+          this.countries.set(res.result);
         }
         else {
           this.toasterService.showError("Please refresh page and try again");
@@ -82,12 +82,12 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     this.authService.initGoogleButton('googleBtn', (response) => {
       const user = JSON.parse(atob(response.credential.split('.')[1]));
       if (user?.name && user?.email) {
-        let payload: CityUserSignUpDto = {
+        let payload: CountryUserSignUpDto = {
           fullName: user.name,
           email: user.email,
           phone: '',
           password: '',
-          role: UserRoleValue.CityUser,
+          role: UserRoleValue.CountryUser,
           isConfrimed: true,
           is2FAEnabled :false
         };
@@ -113,12 +113,12 @@ export class SignUpComponent implements OnInit, AfterViewInit {
         if (response.authResponse) {
           FB.api('/me', { fields: 'name,email,picture' }, (user: any) => {
             if (user?.name && user?.email) {
-              let payload: CityUserSignUpDto = {
+              let payload: CountryUserSignUpDto = {
                 fullName: user.name,
                 email: user.email,
                 phone: '',
                 password: '',
-                role: UserRoleValue.CityUser,
+                role: UserRoleValue.CountryUser,
                 isConfrimed: true,
                 is2FAEnabled :false
               };
@@ -148,12 +148,12 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       return;
     }
     let f = this.signupForm.value;
-    let payload: CityUserSignUpDto = {
+    let payload: CountryUserSignUpDto = {
       fullName: f?.fullName,
       email: f?.email,
       phone: f?.phone,
       password: f?.password,
-      role: UserRoleValue.CityUser,
+      role: UserRoleValue.CountryUser,
       isConfrimed: this.externalLogin() !=null ,
       is2FAEnabled :f?.is2FAEnabled
     };
