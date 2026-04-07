@@ -48,7 +48,7 @@
     <div class="cross-pillar_outter">
         <div class="integrate_outter">
             <div class="cross-pillar">
-                <h5>Evidence Summary</h5>
+                <h5>Executive Summary</h5>
                 &nbsp;
                 <div *ngIf="country?.evidenceSummary">
                     <app-typing-text [text]="country!.evidenceSummary" [speed]="3" [numberOfWordAfterHideText]="40">
@@ -70,13 +70,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                     <tr>
-                        <td><span class="score_label_tab">Evidence Summary</span></td>
+                     <!-- <tr>
+                        <td><span class="score_label_tab">Executive Summary</span></td>
                         <td *ngIf="country?.evidenceSummary"> <app-typing-text [text]="country!.evidenceSummary!"
                                 [speed]="5" [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td><span class="score_label_tab">Structural Evidence</span></td>
                         <td *ngIf="country?.structuralEvidence"> <app-typing-text [text]="country!.structuralEvidence!"

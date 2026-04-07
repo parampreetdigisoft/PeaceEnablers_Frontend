@@ -1,10 +1,6 @@
 <div class="offcanvas-header">
   <h5 id="offcanvasLabel">AI Power Country Details</h5>
-  <button
-    type="button"
-    class="btn-close text-reset"
-    data-bs-dismiss="offcanvas"
-  ></button>
+  <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
 </div>
 
 <ng-container>
@@ -24,50 +20,43 @@
           <tbody>
             <tr class="last_data">
               <td>
-                <span
-                  class="confidence-badge"
-                  [ngClass]="(pillar?.confidenceLevel ?? 'low').toLowerCase()"
-                >
+                <span class="confidence-badge" [ngClass]="(pillar?.confidenceLevel ?? 'low').toLowerCase()">
                   {{ pillar?.confidenceLevel || "NA" }}
                 </span>
               </td>
               <td>
-                <app-circular-score
-                  [value]="pillar?.aiProgress ?? 0"
-                ></app-circular-score>
+                <app-circular-score [value]="pillar?.aiProgress ?? 0"></app-circular-score>
               </td>
               <td>
-                <app-circular-score
-                  [value]="pillar?.evaluatorScore ?? 0"
-                ></app-circular-score>
+                <app-circular-score [value]="pillar?.evaluatorScore ?? 0"></app-circular-score>
               </td>
               <td>
-                <app-sparkline-score
-                  [value]="pillar?.discrepancy ?? 0"
-                ></app-sparkline-score>
+                <app-sparkline-score [value]="pillar?.discrepancy ?? 0"></app-sparkline-score>
               </td>
               <td>
-                <app-circular-score
-                  [value]="
+                <app-circular-score [value]="
                     ((pillar?.aiProgress ?? 0) +
                       (pillar?.evaluatorScore ?? 0)) /
                     2
-                  "
-                ></app-circular-score>
+                  "></app-circular-score>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="cross-pillar">
+        <h5>Executive Summary</h5>
+        &nbsp;
+        <div *ngIf="pillar?.evidenceSummary">
+          <app-typing-text [text]="pillar!.evidenceSummary ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
+          </app-typing-text>
+        </div>
+      </div>
+      <div class="cross-pillar">
         <h5>Structural Evidence</h5>
         &nbsp;
         <div *ngIf="pillar?.structuralEvidence">
-          <app-typing-text
-            [text]="pillar!.structuralEvidence ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="20"
-          >
+          <app-typing-text [text]="pillar!.structuralEvidence ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
           </app-typing-text>
         </div>
       </div>
@@ -75,11 +64,7 @@
         <h5>Operational Evidence</h5>
         &nbsp;
         <div *ngIf="pillar?.operationalEvidence">
-          <app-typing-text
-            [text]="pillar!.operationalEvidence ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="20"
-          >
+          <app-typing-text [text]="pillar!.operationalEvidence ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
           </app-typing-text>
         </div>
       </div>
@@ -87,11 +72,7 @@
         <h5>Outcome Evidence</h5>
         &nbsp;
         <div *ngIf="pillar?.outcomeEvidence">
-          <app-typing-text
-            [text]="pillar!.outcomeEvidence ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="20"
-          >
+          <app-typing-text [text]="pillar!.outcomeEvidence ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
           </app-typing-text>
         </div>
       </div>
@@ -99,11 +80,7 @@
         <h5>Perception Evidence</h5>
         &nbsp;
         <div *ngIf="pillar?.perceptionEvidence">
-          <app-typing-text
-            [text]="pillar!.perceptionEvidence ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="20"
-          >
+          <app-typing-text [text]="pillar!.perceptionEvidence ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
           </app-typing-text>
         </div>
       </div>
@@ -111,11 +88,7 @@
         <h5>Temporal Scope</h5>
         &nbsp;
         <div *ngIf="pillar?.temporalScope">
-          <app-typing-text
-            [text]="pillar!.temporalScope ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.temporalScope ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -123,11 +96,7 @@
         <h5>Distortion Screening</h5>
         &nbsp;
         <div *ngIf="pillar?.distortionScreening">
-          <app-typing-text
-            [text]="pillar!.distortionScreening ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.distortionScreening ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -135,11 +104,7 @@
         <h5>Relational Integrity</h5>
         &nbsp;
         <div *ngIf="pillar?.relationalIntegrity">
-          <app-typing-text
-            [text]="pillar!.relationalIntegrity ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.relationalIntegrity ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -147,11 +112,7 @@
         <h5>Political Shock</h5>
         &nbsp;
         <div *ngIf="pillar?.stressPoliticalShock">
-          <app-typing-text
-            [text]="pillar!.stressPoliticalShock ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.stressPoliticalShock ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -159,11 +120,7 @@
         <h5>Economic Shock</h5>
         &nbsp;
         <div *ngIf="pillar?.stressEconomicShock">
-          <app-typing-text
-            [text]="pillar!.stressEconomicShock ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.stressEconomicShock ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -171,11 +128,7 @@
         <h5>Narrative Shock</h5>
         &nbsp;
         <div *ngIf="pillar?.stressNarrativeShock">
-          <app-typing-text
-            [text]="pillar!.stressNarrativeShock ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="15"
-          >
+          <app-typing-text [text]="pillar!.stressNarrativeShock ?? ''" [speed]="10" [numberOfWordAfterHideText]="15">
           </app-typing-text>
         </div>
       </div>
@@ -183,11 +136,7 @@
         <h5>Stress Overall Resilience</h5>
         &nbsp;
         <div *ngIf="pillar?.stressOverallResilience">
-          <app-typing-text
-            [text]="pillar!.stressOverallResilience ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.stressOverallResilience ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -195,11 +144,7 @@
         <h5>Stress Score Adjustment</h5>
         &nbsp;
         <div *ngIf="pillar?.stressScoreAdjustment">
-          <app-typing-text
-            [text]="pillar!.stressScoreAdjustment ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.stressScoreAdjustment ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -207,11 +152,7 @@
         <h5>Inequality Adjustment</h5>
         &nbsp;
         <div *ngIf="pillar?.inequalityAdjustment">
-          <app-typing-text
-            [text]="pillar!.inequalityAdjustment ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.inequalityAdjustment ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -219,11 +160,7 @@
         <h5>Opacity Risk</h5>
         &nbsp;
         <div *ngIf="pillar?.opacityRisk">
-          <app-typing-text
-            [text]="pillar!.opacityRisk ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.opacityRisk ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -231,23 +168,15 @@
         <h5>Non-Compensation Note</h5>
         &nbsp;
         <div *ngIf="pillar?.nonCompensationNote">
-          <app-typing-text
-            [text]="pillar!.nonCompensationNote ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.nonCompensationNote ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
       <div class="cross-pillar">
-        <h5>AI Evidence Summary</h5>
+        <h5>AI Executive Summary</h5>
         &nbsp;
         <div *ngIf="pillar?.evidenceSummary">
-          <app-typing-text
-            [text]="pillar!.evidenceSummary ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="50"
-          >
+          <app-typing-text [text]="pillar!.evidenceSummary ?? ''" [speed]="10" [numberOfWordAfterHideText]="50">
           </app-typing-text>
         </div>
       </div>
@@ -256,11 +185,7 @@
         <h5>Red Flags</h5>
         &nbsp;
         <div *ngIf="pillar?.redFlag">
-          <app-typing-text
-            [text]="pillar!.redFlag ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.redFlag ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -269,11 +194,7 @@
         <h5>Geographic Equity Note</h5>
         &nbsp;
         <div *ngIf="pillar?.geographicEquityNote">
-          <app-typing-text
-            [text]="pillar!.geographicEquityNote ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.geographicEquityNote ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -282,11 +203,7 @@
         <h5>Institutional Assessment</h5>
         &nbsp;
         <div *ngIf="pillar?.institutionalAssessment">
-          <app-typing-text
-            [text]="pillar!.institutionalAssessment ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.institutionalAssessment ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -295,11 +212,7 @@
         <h5>Data Gap Analysis</h5>
         &nbsp;
         <div *ngIf="pillar?.dataGapAnalysis">
-          <app-typing-text
-            [text]="pillar!.dataGapAnalysis ?? ''"
-            [speed]="10"
-            [numberOfWordAfterHideText]="10"
-          >
+          <app-typing-text [text]="pillar!.dataGapAnalysis ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
           </app-typing-text>
         </div>
       </div>
@@ -325,19 +238,14 @@
             <td>{{ s?.sourceType ?? "" }}</td>
             <td [matTooltip]="'Go to link'">
               <a [href]="s?.sourceURL" target="_blank">
-                {{ s?.sourceName ?? "" }} </a
-              >.
+                {{ s?.sourceName ?? "" }} </a>.
             </td>
             <td [matTooltip]="getLabelDesById(s?.trustLevel ?? 0)">
               {{ getLabelById(s?.trustLevel ?? 0) }}
             </td>
             <td>{{ s?.dataYear ?? "" }}</td>
             <td *ngIf="s?.dataExtract">
-              <app-typing-text
-                [text]="s!.dataExtract ?? ''"
-                [speed]="5"
-                [numberOfWordAfterHideText]="7"
-              >
+              <app-typing-text [text]="s!.dataExtract ?? ''" [speed]="5" [numberOfWordAfterHideText]="7">
               </app-typing-text>
             </td>
           </tr>
