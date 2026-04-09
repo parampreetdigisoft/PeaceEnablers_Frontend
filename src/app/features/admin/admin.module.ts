@@ -20,6 +20,8 @@ import { TransterAssessmentComponent } from './features/transter-assessment/tran
 import { KpiComparisionComponent } from './container/kpi-comparision/kpi-comparision.component';
 import { KpiLayersComponent } from './container/kpi-layers/kpi-layers.component';
 import { AddUpdateCountryComponent } from './features/add-update-country/add-update-country.component';
+import { CountryUserViewComponent } from './container/country-user-view/country-user-view.component';
+import { AddUpdateCountryUserComponent } from './features/add-update-country-user/add-update-country-user.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { AddUpdateCountryComponent } from './features/add-update-country/add-upd
     UpdatePillarComponent,
     AdminDashboardComponent,
     ComparisionComponent,
-    TransterAssessmentComponent
+    TransterAssessmentComponent,
+    CountryUserViewComponent,
+    AddUpdateCountryUserComponent
   ],
   imports: [
     CommonModule,

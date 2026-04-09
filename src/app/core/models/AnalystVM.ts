@@ -1,3 +1,4 @@
+import { TieredAccessPlanValue } from "../enums/TieredAccessPlan";
 
 export interface RegisterDto {
   fullName: string;
@@ -5,6 +6,8 @@ export interface RegisterDto {
   phone: string;
   password: string;
   role: number;
+  tier?:TieredAccessPlanValue | TieredAccessPlanValue.Pending;
+  pillars?:number[]|[];
 }
 
 export interface InviteUserDto extends RegisterDto {

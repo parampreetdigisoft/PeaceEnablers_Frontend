@@ -15,17 +15,19 @@ import {
 } from "../../../../core/models/AnalystVM";
 import { SortDirection } from "src/app/core/enums/SortDirection";
 import { ActivatedRoute } from "@angular/router";
+import { PillarsVM } from "src/app/core/models/PillersVM";
+import { CountryUserService } from "src/app/features/city-user/country-user.service";
 declare var bootstrap: any;
 @Component({
-  selector: "app-analyst-view",
-  templateUrl: "./analyst-view.component.html",
-  styleUrl: "./analyst-view.component.css",
+  selector: "app-country-user-view",
+  templateUrl: "./country-user-view.component.html",
+  styleUrl: "./country-user-view.component.css",
 })
-export class AnalystViewComponent implements OnInit, OnDestroy {
+export class CountryUserViewComponent implements OnInit, OnDestroy {
   isLoader: boolean = false;
-  selectedAnalyst: GetUserByRoleResponse | null = null;
+  selectedCountryUser: GetUserByRoleResponse | null = null;
   selectedCity: CountryVM | null = null;
-  analystResponse: PaginationResponse<GetUserByRoleResponse> | undefined;
+  countryUserResponse: PaginationResponse<GetUserByRoleResponse> | undefined;
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
@@ -39,12 +41,14 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
     { name: "Evaluator", role: UserRoleValue.Evaluator },
     { name: "CountryUser", role: UserRoleValue.CountryUser },
   ];
+   pillars: PillarsVM[] = [];
 
   constructor(
     private adminService: AdminService,
     private toaster: ToasterService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private countryUserService:CountryUserService
   ) {}
 
   ngOnInit(): void {
@@ -52,8 +56,16 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       this.roleId = params.get("roleID");
       this.selectedRoleID = this.roleId;
     });
-    this.getAnalyst();
+    this.getCountryUser();
     this.getAllCountriesByUserId();
+    this.getAllPillars()
+  }
+   getAllPillars() {
+    this.countryUserService.getAllPillars().subscribe({
+      next: (res) => {
+        this.pillars = res.result ?? [];
+      },
+    });
   }
 
   getAllCountriesByUserId() {
@@ -65,8 +77,8 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-  getAnalyst(currentPage: number = 1) {
-    this.analystResponse = undefined;
+  getCountryUser(currentPage: number = 1) {
+    this.countryUserResponse = undefined;
     this.isLoader = true;
     let payload: GetUserByRoleRequestDto = {
       sortDirection: SortDirection.DESC,
@@ -76,75 +88,78 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       userID: this.userService?.userInfo?.userID,
     };
     if (!this.roleId) {
-      payload.getUserRole = UserRoleValue.Analyst;
+      payload.getUserRole = UserRoleValue.CountryUser;
     }
-    this.adminService.getUserListByRole(payload).subscribe((anaylist) => {
-      this.analystResponse = anaylist;
-      this.totalRecords = anaylist.totalRecords;
+    this.adminService.getUserListByRole(payload).subscribe((countryUserList) => {
+      this.countryUserResponse = countryUserList;
+      this.totalRecords = countryUserList.totalRecords;
       this.currentPage = currentPage;
-      this.pageSize = anaylist.pageSize;
+      this.pageSize = countryUserList.pageSize;
       this.isLoader = false;
     });
   }
 
-  editAnalyst(analyst: GetUserByRoleResponse | null, isOpen: boolean = true) {
-    this.selectedAnalyst = analyst;  
+  editCountryUser(countryuser: GetUserByRoleResponse | null, isOpen: boolean = true) {
+    this.selectedCountryUser = countryuser;     
     if (isOpen) {
       this.opendialog();
     }
   }
-  deleteAnalyst() {
-    if (this.selectedAnalyst === null) {
-      this.toaster.showError("No analyst selected for deletion");
+  deleteCountryUser() {
+    if (this.selectedCountryUser === null) {
+      this.toaster.showError("No country user selected for deletion");
       return;
     }
-    this.adminService.deleteUser(this.selectedAnalyst.userID).subscribe({
+    this.adminService.deleteUser(this.selectedCountryUser.userID).subscribe({
       next: (res) => {
         if (res.succeeded) {
-          this.getAnalyst(this.currentPage);
+          this.getCountryUser(this.currentPage);
           this.toaster.showSuccess(res?.messages.join(", "));
         } else {
           this.toaster.showError(res?.errors.join(", "));
         }
       },
       error: () => {
-        this.toaster.showError("Failed to delete analyst");
+        this.toaster.showError("Failed to delete country user");
       },
     });
   }
 
-  ResendInvitaion(analyst: GetUserByRoleResponse, i :number) {
+  ResendInvitaion(countryuser: GetUserByRoleResponse, i :number) {
     this.selectedIndex =i;
     let payload: UpdateInviteUserDto = {
-      fullName: analyst.fullName,
-      email: analyst.email,
-      phone: analyst.phone ?? "",
+      fullName: countryuser.fullName,
+      email: countryuser.email,
+      phone: countryuser.phone ?? "",
       password: "",
       role: UserRoleValue.Analyst,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      countryID: analyst.countries.map((x) => x.countryID),
-      userID: analyst.userID,
+      countryID: countryuser.countries.map((x) => x.countryID),
+      userID: countryuser.userID,
+      pillars:countryuser.pillars,
     };
-    this.addUpdateAnalyst(payload);
+    this.addUpdateCountryUser(payload);
   }
 
-  addUpdateAnalyst(analyst: UpdateInviteUserDto | null) {
-    if (!analyst) {
+  addUpdateCountryUser(countryuser: UpdateInviteUserDto | null) {
+    if (!countryuser) {
       return;
-    }
+    }   
     this.loading = true;
     let payload: UpdateInviteUserDto = {
-      fullName: analyst.fullName,
-      email: analyst.email,
-      phone: analyst.phone,
-      password: analyst.password,
-      role: UserRoleValue.Analyst,
+      fullName: countryuser.fullName,
+      email: countryuser.email,
+      phone: countryuser.phone,
+      password: countryuser.password,
+      role: UserRoleValue.CountryUser,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      countryID: analyst.countryID,
-      userID: analyst.userID,
+      countryID: countryuser.countryID,
+      userID: countryuser.userID,
+      tier :countryuser.tier,
+      pillars:countryuser.pillars
     };
-
-    if (analyst.userID > 0) {
+    payload.tier = payload.tier ? Number(payload.tier) : 0;
+    if (countryuser.userID > 0) {
       this.adminService.editUser(payload).subscribe({
         next: (res) => {
           this.closeModal();
@@ -153,11 +168,11 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
           } else {
             this.toaster.showError(res?.errors.join(", "));
           }
-           this.getAnalyst(this.currentPage);
+           this.getCountryUser(this.currentPage);
         },
         error: () => {
           this.closeModal();
-          this.toaster.showError("Failed to edit analyst");
+          this.toaster.showError("Failed to edit country user");
         },
       });
     } else {
@@ -169,11 +184,11 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
           } else {            
             this.toaster.showError(res?.errors.join(", "));
           }
-          this.getAnalyst();
+          this.getCountryUser();
         },
         error: () => {
           this.closeModal();
-          this.toaster.showError("Failed to add analyst");
+          this.toaster.showError("Failed to add country user");
         },
       });
     }
@@ -203,21 +218,21 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
     const modalEl = document.getElementById("exampleModal");
     const modalInstance = bootstrap.Modal.getInstance(modalEl);
     if (modalInstance) modalInstance.hide();
-    this.isOpendialog = false;
+    this.isOpendialog = false;   
   }
   ngOnDestroy(): void {}
 
-  addBulkAnalyst(analysts: UpdateInviteUserDto[] | null) {
-    if (!analysts) return;
+  addBulkCountryUser(countryUsers: UpdateInviteUserDto[] | null) {
+    if (!countryUsers) return;
     let payload: InviteBulkUserDto = {
-      users: analysts,
+      users: countryUsers,
     };
     this.loading = true;
     this.adminService.addBulkAnalyst(payload).subscribe({
       next: (res) => {
         this.closeModal();
         if (res.succeeded) {
-          this.getAnalyst();
+          this.getCountryUser();
           this.toaster.showSuccess(res?.messages.join(", "));
         } else {
           this.toaster.showError(res?.errors.join(", "));
@@ -225,7 +240,7 @@ export class AnalystViewComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.closeModal();
-        this.toaster.showError("Failed to add analyst");
+        this.toaster.showError("Failed to add country user");
       },
     });
   }

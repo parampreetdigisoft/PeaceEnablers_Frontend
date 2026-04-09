@@ -85,7 +85,7 @@ export class AdminService {
     return this.http.ImportFile(`Country/exportCountries`,request);
   }
 
-  public getAnalyst(request: GetUserByRoleRequestDto) {
+  public getUserListByRole(request: GetUserByRoleRequestDto) {
     return this.http
       .getWithQueryParams(`User/GetUserByRoleWithAssignedCountry`, request)
       .pipe(map((x) => x as PaginationResponse<GetUserByRoleResponse>));
@@ -100,7 +100,7 @@ export class AdminService {
       .post(`Auth/InviteBulkUser`, data)
       .pipe(map((x) => x as ResultResponseDto<unknown>));
   }
-  public editAnalyst(data: UpdateInviteUserDto) {
+  public editUser(data: UpdateInviteUserDto) {
     return this.http
       .post(`Auth/UpdateInviteUser`, data)
       .pipe(map((x) => x as ResultResponseDto<unknown>));

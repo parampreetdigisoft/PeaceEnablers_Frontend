@@ -21,100 +21,118 @@ import { UserRoleValue } from "src/app/core/enums/UserRole";
 import { UserService } from "src/app/core/services/user.service";
 import { catchError, debounceTime, map, Observable, of, switchMap } from "rxjs";
 import { AdminService } from "../../admin.service";
+import { TieredAccessPlan, TieredAccessPlanValue } from "src/app/core/enums/TieredAccessPlan";
+import { PillarsVM } from "src/app/core/models/PillersVM";
 
 
 @Component({
-  selector: "app-add-update-analyst",
-  templateUrl: "./add-update-analyst.component.html",
-  styleUrl: "./add-update-analyst.component.css",
+  selector: "app-add-update-country-user",
+  templateUrl: "./add-update-country-user.component.html",
+  styleUrl: "./add-update-country-user.component.css",
 })
-export class AddUpdateAnalystComponent implements OnInit {
-  @Input() analyst: GetUserByRoleResponse | null = null;
+export class AddUpdateCountryUserComponent implements OnInit {
+  @Input() countryUser: GetUserByRoleResponse | null = null;
   @Input() countries: CountryVM[] | null = [];
-  @Output() analystChange = new EventEmitter<UpdateInviteUserDto | null>();
-  @Output() closeAnalystModel = new EventEmitter<boolean>();
+  @Output() countryUserChange = new EventEmitter<UpdateInviteUserDto | null>();
+  @Output() closeCountryUserModel = new EventEmitter<boolean>();
   @Output() bulkImportChange = new EventEmitter<UpdateInviteUserDto[] | null>();
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
   @Input() loading: boolean = false;
- 
+  @Input() pillars: PillarsVM[] = [];
+
   alertMsg = "";
   excelData: any;
   isSubmitted: boolean = false;
   requiredHeaders = ["FullName", "Email", "Phone", "CountryName"];
-  analystForm: FormGroup<any> = this.fb.group({});
+  countryUserForm: FormGroup<any> = this.fb.group({});
+  tierOptions = [
+    { label: 'Basic', value: TieredAccessPlanValue.Basic },
+    { label: 'Standard', value: TieredAccessPlanValue.Standard },
+    { label: 'Premium', value: TieredAccessPlanValue.Premium }
+  ];
+  tierLimits: any = {
+    1: { min: 5, max: 7, name: 'Basic' },
+    2: { min: 8, max: 12, name: 'Standard' },
+    3: { min: 13, max: 23, name: 'Premium' }
+  };
+  pillarLimitMsg: string = '';
+  limitMessages: { [key: string]: string } = {};
 
-  constructor(private fb: FormBuilder, private userService: UserService,private adminService: AdminService,) { 
+  constructor(private fb: FormBuilder, private userService: UserService, private adminService: AdminService,) {
   }
   ngOnInit(): void {
-    this.initializeForm();    
+    this.initializeForm();
   }
   initializeForm() {
-    this.analystForm = this.fb.group({
-      fullName: [this.analyst?.fullName, [Validators.required]],
-      email: [this.analyst?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
-      phone: [this.analyst?.phone, [Validators.required]],
+    this.countryUserForm = this.fb.group({
+      fullName: [this.countryUser?.fullName, [Validators.required]],
+      email: [this.countryUser?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
+      phone: [this.countryUser?.phone, [Validators.required]],
+      tier: [this.countryUser?.tier, [Validators.required]],
+      pillars: [this.countryUser?.pillars, [Validators.required]],
       country: [
-        this.analyst?.countries?.map((x) => x?.countryID) ?? [],
+        this.countryUser?.countries?.map((x) => x?.countryID) ?? [],
         [Validators.required],
       ],
     });
   }
-emailExistsValidator(): AsyncValidatorFn {
-  return (control: AbstractControl): Observable<ValidationErrors | null> => {
+  emailExistsValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
 
-    if (!control.value) {
-      return of(null);
-    }
+      if (!control.value) {
+        return of(null);
+      }
 
-    return of(control.value).pipe(
-      debounceTime(500),
-      switchMap(email =>
-        this.adminService.checkEmailExist({
-          email: email,
-          userId: this.analyst?.userID ?? 0
-        })
-      ),
-      map((exists: boolean) => {      
-        return exists ? { emailExists: true } : null;
-      }),
-      catchError(() => of(null))
-    );
-  };
-}
+      return of(control.value).pipe(
+        debounceTime(500),
+        switchMap(email =>
+          this.adminService.checkEmailExist({
+            email: email,
+            userId: this.countryUser?.userID ?? 0
+          })
+        ),
+        map((exists: boolean) => {
+          return exists ? { emailExists: true } : null;
+        }),
+        catchError(() => of(null))
+      );
+    };
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.alertMsg = "";
     this.isSubmitted = false;
-    if (this.analyst && this.analyst.countries) {
-    const selectedCountryIds = this.analyst.countries.map(c => c.countryID);
-    this.analystForm.patchValue({
-      country: selectedCountryIds
-    });
+    if (this.countryUser && this.countryUser.countries) {
+      const selectedCountryIds = this.countryUser.countries.map(c => c.countryID);
+      this.countryUserForm.patchValue({
+        country: selectedCountryIds
+      });
+    }
+    this.initializeForm();
   }
-    //this.initializeForm();
-  } 
 
 
   onSubmit() {
     this.isSubmitted = true;
-    if (this.analystForm.valid) {
+    if (this.countryUserForm.valid) {
       const countryData: UpdateInviteUserDto = {
-        ...this.analystForm.value,
-        userID: this.analyst?.userID ?? 0,
-        countryID: this.analystForm.value.country,
+        ...this.countryUserForm.value,
+        userID: this.countryUser?.userID ?? 0,
+        countryID: this.countryUserForm.value.country,
       };
-      this.analystChange.emit(countryData);
+      debugger;
+      this.countryUserChange.emit(countryData);
     }
   }
   downloadTemplate() {
     const headers = ["FullName", "Email", "Phone", "countryName"];
 
     const sampleRow = {
-      FullName: "FullName of Analyst",
-      Email: "Enter Email of Analyst",
-      Phone: "Enter Phone Number of Analyst",
+      FullName: "FullName of Country User",
+      Email: "Enter Email of Country User",
+      Phone: "Enter Phone Number of Country User",
       countryName:
-        "Enter country seprated by comma, like :- Chandigarh, Mohali, Swar",
+        "Enter country seprated by comma, like :- USA, Canada, Brazil",
     };
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], {
@@ -122,7 +140,7 @@ emailExistsValidator(): AsyncValidatorFn {
     });
     ws["!cols"] = headers.map(() => ({ wch: 20 }));
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "AnalystTemplate");
+    XLSX.utils.book_append_sheet(wb, ws, "CountryUserTemplate");
 
     const excelBuffer: any = XLSX.write(wb, {
       bookType: "xlsx",
@@ -203,9 +221,8 @@ emailExistsValidator(): AsyncValidatorFn {
         }
         // ✅ Phone validation
         if (!phoneRegex.test(phone)) {
-          this.alertMsg = `Row ${
-            i + 2
-          }: Invalid phone number format (${phone}).`;
+          this.alertMsg = `Row ${i + 2
+            }: Invalid phone number format (${phone}).`;
           this.fileInput.nativeElement.value = "";
           return;
         }
@@ -217,14 +234,13 @@ emailExistsValidator(): AsyncValidatorFn {
           email,
           phone,
           password: email,
-          role: UserRoleValue.Analyst,
+          role: UserRoleValue.CountryUser,
           countryID: this.getCountryByName(countryName),
         };
         excelData.push(dto);
       }
       this.excelData = excelData;
-      if (this.excelData.length == 0)
-      {
+      if (this.excelData.length == 0) {
         this.alertMsg = "The uploaded file does not contain any valid records.";
       }
     };
@@ -251,13 +267,49 @@ emailExistsValidator(): AsyncValidatorFn {
     if (this.fileInput?.nativeElement?.value)
       this.fileInput.nativeElement.value = "";
     this.alertMsg = "";
-    this.closeAnalystModel.emit(true);
+    this.closeCountryUserModel.emit(true);
   }
 
   numberOnly(event: KeyboardEvent): void {
-  const key = event.key;
-  if (!/^[0-9+]$/.test(key)) {
-    event.preventDefault();
+    const key = event.key;
+    if (!/^[0-9+]$/.test(key)) {
+      event.preventDefault();
+    }
   }
-}
+  checkSelectionLimit(controlName: string) {
+    const control = this.countryUserForm.get(controlName);
+    const selected = control?.value || [];
+    const tier = this.countryUserForm.get('tier')?.value;
+
+    let message = '';
+
+    if (!tier || !this.tierLimits[tier]) {
+      this.limitMessages[controlName] = 'Please select a tier first.';
+      return;
+    }
+
+    const { min, max, name } = this.tierLimits[tier];
+
+    // ✅ Only for multi-select
+    if (Array.isArray(selected)) {
+
+      // Enforce MAX limit
+      if (selected.length > max) {
+        control?.patchValue(selected.slice(0, max));
+        message = `${name} plan allows maximum ${max} selections.`;
+      }
+
+      // Enforce MIN validation (message only)
+      else if (selected.length < min) {
+        message = `${name} plan requires at least ${min} selections.`;
+      } else {
+        message = ''; // valid
+      }
+    }
+
+    this.limitMessages[controlName] = message;
+  }
+  trackByFn(item: any) {
+    return item.pillarID;
+  }
 }

@@ -59,7 +59,8 @@ export class UserService {
       createdAt: data.createdAt,
       isEmailConfirmed: data.isEmailConfirmed,
       isLoggedIn: data.isLoggedIn,
-      tier: user.tier      
+      tier: user.tier ,
+      pillars:user.pillars     
     };
     this.userInfo = currentData;
   }

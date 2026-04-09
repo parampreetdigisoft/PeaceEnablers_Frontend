@@ -11,6 +11,7 @@ import { AdminDashboardComponent } from "./container/admin-dashboard/admin-dashb
 import { ComparisionComponent } from "./container/comparision/comparision.component";
 import { KpiLayersComponent } from "./container/kpi-layers/kpi-layers.component";
 import { EvaluatoinResponseViewComponent } from "./container/evaluatoin-response-view/evaluatoin-response-view.component";
+import { CountryUserViewComponent } from "./container/country-user-view/country-user-view.component";
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
       { path: "dashboard", component: AdminDashboardComponent },
       { path: "country", component: CountryComponent },
       { path: "analyst", component: AnalystViewComponent },
+      { path: "countryuser", component: CountryUserViewComponent },
       { path: "pillar", component: PillarComponent },
       { path: "question", component: QuestionComponent },
       { path: "assesment", component: AssesmentComponent },
