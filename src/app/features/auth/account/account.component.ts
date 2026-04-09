@@ -68,7 +68,7 @@ export class AccountComponent implements OnInit {
           .subscribe({
             next: (res) => {
               this.loading = false;
-              if (res.succeeded) {
+              if (res.succeeded) {               
                 if (res.result?.userID) {
                   if ((this.roleName === 'clientPortalLogin' && res?.result?.role == 'CountryUser') || (this.roleName === 'login' && res?.result?.role != 'CountryUser')) {
                     this.toasterService.showSuccess('Login successful');
@@ -79,7 +79,7 @@ export class AccountComponent implements OnInit {
                     this.userService.logoutNotRedirect();
                   }
                 }
-                else if (this.roleName === 'clientPortalLogin') {
+                else if (this.roleName === 'clientPortalLogin' || this.roleName === 'login') {
                   localStorage.setItem(StorageKeyEnum.UserKey, event.value.email ?? '');
                   this.toasterService.showSuccess(res?.messages?.join(", "));
                   this.router.navigate(['/auth/2fa-verification']);
