@@ -107,8 +107,7 @@ export class KPIAnalysisComponent implements OnInit {
   }
 
   getAITrustLevels() {
-    this.aiComputationService.getAITrustLevels().subscribe((p) => {
-      console.log(p)
+    this.aiComputationService.getAITrustLevels().subscribe((p) => {      
       this.aiTrustLevels = p.result || [];
     });
   }
