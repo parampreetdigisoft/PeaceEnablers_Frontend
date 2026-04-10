@@ -271,65 +271,60 @@ isValidDate(date: any): boolean {
       "#003160"  // base (strong highlight)
     ];
   }
-  get radarColors() {
-    return [
-      {
-        primary: '#1b2b27',
-        light: '#4b615b',
-        gradient: 'rgba(20, 31, 28, 0.25)'
-      },
-
-      {
-        primary: '#04775a',
-        light: '#7fa39a',
-        gradient: 'rgba(74, 113, 103, 0.25)'
-      },
-      {
-        primary: '#649b8c',
-        light: '#94beb4',
-        gradient: 'rgba(100, 155, 140, 0.25)'
-      },
-      {
-        primary: '#2f4841',
-        light: '#637f78',
-        gradient: 'rgba(47, 72, 65, 0.25)'
-      },
-      {
-        primary: '#a2c3ba',
-        light: '#c7ddd7',
-        gradient: 'rgba(162, 195, 186, 0.25)'
-      },
-      {
-        primary: '#8eb5ab',
-        light: '#b6d1ca',
-        gradient: 'rgba(142, 181, 171, 0.25)'
-      },
-      {
-        primary: '#79a89b',
-        light: '#a6c8bf',
-        gradient: 'rgba(121, 168, 155, 0.25)'
-      },
-
-      {
-        primary: '#578679',
-        light: '#89b0a6',
-        gradient: 'rgba(87, 134, 121, 0.25)'
-      },
-
-      {
-        primary: '#3c5d54',
-        light: '#6f9188',
-        gradient: 'rgba(60, 93, 84, 0.25)'
-      },
-
-      {
-        primary: '#141f1c',
-        light: '#4b615b',
-        gradient: 'rgba(20, 31, 28, 0.25)'
-      }
-    ];
-  }
-
+ get radarColors() {
+  return [
+    {
+      primary: '#0f172a',   // very dark navy
+      light: '#475569',
+      gradient: 'rgba(15, 23, 42, 0.25)'
+    },
+    {
+      primary: '#1e3a8a',   // strong indigo
+      light: '#64748b',
+      gradient: 'rgba(30, 58, 138, 0.25)'
+    },
+    {
+      primary: '#2563eb',   // vivid blue (highlight)
+      light: '#93c5fd',
+      gradient: 'rgba(37, 99, 235, 0.25)'
+    },
+    {
+      primary: '#38bdf8',   // cyan-blue (break monotony)
+      light: '#bae6fd',
+      gradient: 'rgba(56, 189, 248, 0.25)'
+    },
+    {
+      primary: '#1d4ed8',   // bold royal blue
+      light: '#a5b4fc',
+      gradient: 'rgba(29, 78, 216, 0.25)'
+    },
+    {
+      primary: '#0ea5e9',   // sky blue
+      light: '#7dd3fc',
+      gradient: 'rgba(14, 165, 233, 0.25)'
+    },
+    {
+      primary: '#4338ca',   // bluish violet (important contrast)
+      light: '#c7d2fe',
+      gradient: 'rgba(67, 56, 202, 0.25)'
+    },
+    {
+      primary: '#0369a1',   // deep cyan
+      light: '#67e8f9',
+      gradient: 'rgba(3, 105, 161, 0.25)'
+    },
+    {
+      primary: '#1e40af',   // classic blue
+      light: '#93c5fd',
+      gradient: 'rgba(30, 64, 175, 0.25)'
+    },
+    {
+      primary: '#312e81',   // dark indigo (anchor)
+      light: '#818cf8',
+      gradient: 'rgba(49, 46, 129, 0.25)'
+    }
+  ];
+}
 
   get kpiColors() {
     return [
