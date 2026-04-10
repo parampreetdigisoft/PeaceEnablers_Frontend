@@ -53,7 +53,7 @@ export class AiCountryComparisonComponent implements OnInit {
   highestPillar?: PillarValueDto;
   lowestPillar?: PillarValueDto;
   avgScore?: number;
-
+  showLimitMessage:boolean= false;
   constructor(
     private analystService: AnalystService,
     private userService: UserService,
@@ -73,6 +73,13 @@ export class AiCountryComparisonComponent implements OnInit {
 
   pillarChanged() {
     this.$pillarChanged.next(true);
+    if (this.selectedCountries.length > 5) {
+      // Remove the last selected country to prevent selecting more than 6
+      this.selectedCountries = this.selectedCountries.slice(0, 6);
+      this.showLimitMessage = true;
+      return;
+    }
+    this.showLimitMessage = false;
   }
   getPillarName(pillarId: number): string {
     return this.pillars.find(p => p.pillarID === pillarId)?.pillarName ?? '';

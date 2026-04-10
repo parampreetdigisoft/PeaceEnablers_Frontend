@@ -48,6 +48,10 @@
                     </ng-select>
 
                 </div>
+                <div *ngIf="showLimitMessage" class="limit-exceed-message"
+				style="color: red; font-size: 14px; margin-top: 5px;">
+				You can only select up to 5 countries. Please remove some countries to add more.
+			</div>
             </div>
 
         </div>
