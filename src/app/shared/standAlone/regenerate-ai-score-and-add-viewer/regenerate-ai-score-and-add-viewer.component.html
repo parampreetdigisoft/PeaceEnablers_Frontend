@@ -19,7 +19,7 @@
 
         <div class="details_list" *ngFor="let opt of aiOptions">
           <span>{{ opt.label }}</span>
-          <span><small>Estimated {{ opt.time }} min</small></span>
+          <span><small>Estimated {{ opt.time }}</small></span>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" [formControlName]="opt.control" />
           </div>

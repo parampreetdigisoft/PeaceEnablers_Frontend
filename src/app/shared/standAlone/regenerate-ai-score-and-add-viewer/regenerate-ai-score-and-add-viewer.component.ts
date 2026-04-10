@@ -31,11 +31,11 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.aiOptions = [
-      { label: 'Pillar-level AI insights', control: 'pillarEnable', time: this.importPillar ? 2 : 15 },
-      { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 30 : 120 }
+      { label: 'Pillar-level AI insights', control: 'pillarEnable', time: this.importPillar ? 5 +' '+'min' : 30 +' '+ 'min' },
+      { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 1 +' '+ 'hour' : 4 +' '+'hours' }
     ];
     if (!this.importPillar) {
-      this.aiOptions.unshift({ label: 'Country-level AI insights', control: 'countryEnable', time: 5 });
+      this.aiOptions.unshift({ label: 'Country-level AI insights', control: 'countryEnable', time: 5 +' '+'min' });
     }
     this.ctx.detectChanges();
   }
