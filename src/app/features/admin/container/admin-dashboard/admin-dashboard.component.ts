@@ -679,21 +679,28 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     };
   }
 
-  PillarColorByScore(score: any): string {
-    //let score = pillar.aiValue;
-    const colors = [
-      "#a2c3ba", "#8eb5ab", "#79a89b", "#649b8c", "#578679",
-      "#4E8F2B",  "#3F7A24", "#2F651D", "#1F5016", "#003160"
-    ];
+PillarColorByScore(score: any): string {
+  const colors = [
+    "#E3ECF7", // very light blue
+    "#C9DBF0",
+    "#AFC9E9",
+    "#95B8E2",
+    "#7BA6DB",
+    "#6195D4",
+    "#4A7FC2",
+    "#345FA3",
+    "#1F3F7A",
+    "#0D2B4D"  // deep navy (highest)
+  ];
 
-    if (score === null || score === undefined || isNaN(score)) {
-      return "#d3d3d3";
-    }
-
-    const safeScore = Math.min(Math.max(score, 0), 100);
-    const index = Math.min(Math.floor(safeScore / 10), colors.length - 1);
-    return colors[index];
+  if (score === null || score === undefined || isNaN(score)) {
+    return "#E0E0E0"; // neutral grey
   }
+
+  const safeScore = Math.min(Math.max(score, 0), 100);
+  const index = Math.min(Math.floor(safeScore / 10), colors.length - 1);
+  return colors[index];
+}
 
   buildUniqueCategories(data: { pillarName: string }[]): string[] {
     const used = new Set<string>();

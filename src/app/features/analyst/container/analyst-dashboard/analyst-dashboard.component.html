@@ -47,7 +47,7 @@
 				</button>				
 			</div>
     </div>
-      <div id="chartPillar" *ngIf="chartPillarOptions && chartPillarOptions?.series" tyle="width:100%; height:500px;">
+      <div id="chartPillar" *ngIf="chartPillarOptions && chartPillarOptions.series" tyle="width:100%; height:500px;">
         <apx-chart class="cus_chart_right" [series]="chartPillarOptions.series!" [chart]="chartPillarOptions.chart!" [xaxis]="chartPillarOptions.xaxis!"
           [yaxis]="chartPillarOptions.yaxis!" [colors]="chartPillarOptions.colors!" [tooltip]="chartPillarOptions.tooltip!"
           [plotOptions]="chartPillarOptions.plotOptions!" [legend]="chartPillarOptions.legend!" [fill]="chartPillarOptions.fill!"
@@ -55,7 +55,7 @@
           [markers]="chartPillarOptions.markers!" [grid]="chartPillarOptions.grid!"></apx-chart>
       </div>
   </div>
-  <div class="apx_chart_new" *ngIf="chartOptions?.series">
+  <div class="apx_chart_new" *ngIf="chartOptions.series">
     <div class="card_heading">
       <h3>Country Overview</h3>
     </div>
@@ -64,7 +64,7 @@
     </apx-chart>
   </div>
   <div class="outer_graph">
-    <div id="apexchart" *ngIf="apexchartOptions && apexchartOptions?.series!">
+    <div id="apexchart" *ngIf="apexchartOptions && apexchartOptions.series!">
       <apx-chart [series]="apexchartOptions.series!" [chart]="apexchartOptions.chart!" [xaxis]="apexchartOptions.xaxis!"
         [stroke]="apexchartOptions.stroke!" [tooltip]="apexchartOptions.tooltip!"
         [dataLabels]="apexchartOptions.dataLabels!"></apx-chart>
