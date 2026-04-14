@@ -62,8 +62,8 @@ export class AiComputationService {
     let payload = { countryIDs: ids };
     return this.http.post(`AiComputation/getAICrossCountryPillars`, payload).pipe(map(x => x as ResultResponseDto<AiCrossCountryResponseDto>));;
   }
-  public changedAiCityEvaluationStatus(payload: ChangedAiCountryEvaluationStatusDto) {
-    return this.http.post(`AiComputation/changedAiCityEvaluationStatus`, payload).pipe(map(x => x as ResultResponseDto<boolean>));;
+  public changedAiCountryEvaluationStatus(payload: ChangedAiCountryEvaluationStatusDto) {
+    return this.http.post(`AiComputation/changedAiCountryEvaluationStatus`, payload).pipe(map(x => x as ResultResponseDto<boolean>));;
   }
   public regenerateAiSearch(payload: RegenerateAiSearchDto) {
     return this.http.post(`AiComputation/regenerateAiSearch`, payload).pipe(map(x => x as ResultResponseDto<boolean>));;

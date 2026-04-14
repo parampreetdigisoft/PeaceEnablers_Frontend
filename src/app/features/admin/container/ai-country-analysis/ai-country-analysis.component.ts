@@ -195,7 +195,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
         isVerified: !this.selectedCountry.isVerified,
       };
       this.aiComputationService
-        .changedAiCityEvaluationStatus(paylod)
+        .changedAiCountryEvaluationStatus(paylod)
         .subscribe({
           next: (res) => {
             this.selectedChangedStatusIndex = -1;
