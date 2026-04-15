@@ -197,7 +197,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       this.aiComputationService
         .changedAiCountryEvaluationStatus(paylod)
         .subscribe({
-          next: (res) => {
+          next: (res:any) => {
             this.selectedChangedStatusIndex = -1;
             if (res.succeeded) {
               this.getAICountries();

@@ -76,6 +76,13 @@ const routes: Routes = [
             (m) => m.KPIAnalysisComponent
           ),
       },
+      {
+        path: "ai-documents",
+        loadComponent: () =>
+          import("./container/ai-documents/ai-documents.component").then(
+            (m) => m.AiDocumentsComponent
+          ),
+      }
     ],
   },
 ];

@@ -8,3 +8,17 @@ export interface AiCountrySummeryRequestDto extends PaginationRequest {
 export interface AiPillarQuetionsRequestDto extends AiCountrySummeryRequestDto {
   pillarID?:number;
 }
+
+export interface AiCountryDocumentRequestDto extends PaginationRequest {
+  countryID?:number;
+}
+
+export interface AiCountryPillarDocumentRequestDto {
+  countryID: number;
+}
+
+export interface DeleteCountryDocumentRequestDto {
+  countryID: number;
+  countryDocumentID?: number;
+  isAll?: boolean;
+}
