@@ -25,10 +25,9 @@ import { AdminService } from '../../admin.service';
 import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 import { AiCountrySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestPdfDto';
 import { ActivatedRoute } from '@angular/router';
-import { ExportType } from 'src/app/core/enums/exportEnum';
 import { DocumentFormat } from 'src/app/core/enums/documentFormat';
 import { DownloadReportDto } from 'src/app/core/models/aiVm/DownloadReportDto';
-import { ViewCountryDetailComponent } from 'src/app/features/city-user/features/view-country-detail/view-country-detail.component';
+import { ViewCountryDetailComponent } from 'src/app/shared/standAlone/view-country-detail/view-country-detail.component';
 
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 @Component({
@@ -102,7 +101,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
     this.isLoader = true;
     let payload: AiCountrySummeryRequestDto = {
       sortDirection: SortDirection.DESC,
-      sortBy: "AIScore",
+      sortBy: "AIProgress",
       pageNumber: currentPage,
       pageSize: this.pageSize,
       year: this.selectedYear

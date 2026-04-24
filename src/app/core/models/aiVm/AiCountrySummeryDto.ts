@@ -40,6 +40,10 @@ export interface AiCountrySummeryDto {
   dataTransparencyNote: string | null;
   primarySource: string | null;
 
+  keyDevelopments: string | null;
+  criticalRisks: string | null;
+  gaps: string | null;
+
   updatedAt: Date;
   isVerified: boolean;
 

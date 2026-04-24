@@ -45,7 +45,7 @@
         </table>
       </div>
       <div class="cross-pillar">
-        <h5>Executive Summary</h5>
+        <h5>Evidence Summary</h5>
         &nbsp;
         <div *ngIf="pillar?.evidenceSummary">
           <app-typing-text [text]="pillar!.evidenceSummary ?? ''" [speed]="10" [numberOfWordAfterHideText]="20">
@@ -169,14 +169,6 @@
         &nbsp;
         <div *ngIf="pillar?.nonCompensationNote">
           <app-typing-text [text]="pillar!.nonCompensationNote ?? ''" [speed]="10" [numberOfWordAfterHideText]="10">
-          </app-typing-text>
-        </div>
-      </div>
-      <div class="cross-pillar">
-        <h5>AI Executive Summary</h5>
-        &nbsp;
-        <div *ngIf="pillar?.evidenceSummary">
-          <app-typing-text [text]="pillar!.evidenceSummary ?? ''" [speed]="10" [numberOfWordAfterHideText]="50">
           </app-typing-text>
         </div>
       </div>

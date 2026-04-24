@@ -70,13 +70,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                     <!-- <tr>
-                        <td><span class="score_label_tab">Executive Summary</span></td>
-                        <td *ngIf="country?.evidenceSummary"> <app-typing-text [text]="country!.evidenceSummary!"
-                                [speed]="5" [numberOfWordAfterHideText]="7">
+                     <tr *ngIf="country?.keyDevelopments">
+                        <td><span class="score_label_tab">Key Developments</span></td>
+                        <td>
+                            <app-typing-text 
+                                [text]="country!.keyDevelopments!" 
+                                [speed]="5" 
+                                [numberOfWordAfterHideText]="7">
                             </app-typing-text>
                         </td>
-                    </tr> -->
+                    </tr>
+
+                    <tr *ngIf="country?.criticalRisks">
+                        <td><span class="score_label_tab">Critical Risks</span></td>
+                        <td>
+                            <app-typing-text 
+                                [text]="country!.criticalRisks!" 
+                                [speed]="5" 
+                                [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="country?.gaps">
+                        <td><span class="score_label_tab">Gaps</span></td>
+                        <td>
+                            <app-typing-text 
+                                [text]="country!.gaps!" 
+                                [speed]="5" 
+                                [numberOfWordAfterHideText]="7">
+                            </app-typing-text>
+                        </td>
+                    </tr>
                     <tr>
                         <td><span class="score_label_tab">Structural Evidence</span></td>
                         <td *ngIf="country?.structuralEvidence"> <app-typing-text [text]="country!.structuralEvidence!"
@@ -140,13 +165,7 @@
                             </app-typing-text>
                         </td>
                     </tr>
-                     <tr>
-                        <td><span class="score_label_tab">Overall Stress Resilience</span></td>
-                        <td *ngIf="country?.overallStressResilience"> <app-typing-text [text]="country!.overallStressResilience!"
-                                [speed]="5" [numberOfWordAfterHideText]="7">
-                            </app-typing-text>
-                        </td>
-                    </tr>
+                     
                     <tr>
                         <td><span class="score_label_tab">Stress Score Adjustment</span></td>
                         <td *ngIf="country?.stressScoreAdjustment"> <app-typing-text [text]="country!.stressScoreAdjustment!"
