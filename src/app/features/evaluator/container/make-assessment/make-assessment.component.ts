@@ -320,29 +320,35 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
         }
       });
   }
+  
   autoSaveSingleAssessemnt(index: number) {
+
     if (this.questionsArray.controls[index].valid) {
       if (!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0) {
-        this.toaster.showWarning("Please select country first");
+        this.toaster.showWarning("Please select city first");
         return;
       }
-      const payload: AddAssessmentDto = {
-        userCountryMappingID: this.selectedUserCountryMappingID,
-        assessmentID: this.pillerQuestions?.assessmentID ?? 0,
-        pillarID: this.pillerQuestions?.pillarID ?? 0,
-        responses: [this.questionsArray.controls[index].value],
-        isAutoSave: true,
-        isFinalized: false
-      };
-      this.evaluatorService.saveAssessment(payload).subscribe({
-        next: (res) => {
-          if (res.succeeded) {
-          }
-        },
-        error: () => {
-          this.toaster.showError("Failed to save assessment. Try again.");
-        },
-      });
+      if (this.questionsArray.controls[index].valid && this.questionsArray.controls[index].dirty) {
+
+        const payload: AddAssessmentDto = {
+          userCountryMappingID: this.selectedUserCountryMappingID,
+          assessmentID: this.pillerQuestions?.assessmentID ?? 0,
+          pillarID: this.pillerQuestions?.pillarID ?? 0,
+          responses: [this.questionsArray.controls[index].value],
+          isAutoSave: true,
+          isFinalized: false
+        };
+        this.evaluatorService.saveAssessment(payload).subscribe({
+          next: (res) => {
+            if (res.succeeded) {
+              this.questionsArray.at(index).markAsPristine();
+            }
+          },
+          error: () => {
+            this.toaster.showError("Failed to save assessment. Try again.");
+          },
+        });
+      }
     }
   }
   decodeHtml(text: string | undefined): string {
