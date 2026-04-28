@@ -37,9 +37,10 @@
 				<tr>
 					<th>S.No.</th>
 					<th>Country</th>
+					<th>Files</th>
 					<th>Types</th>
 					<th>Size</th>
-					<th>Unique Users</th>
+					<th>Users</th>
 					<th class="action_th">Actions</th>
 				</tr>
 			</thead>
@@ -52,6 +53,13 @@
 						<div class="document_city document_td_data">
 							<p>
 								{{ document.countryName }}
+							</p>
+						</div>
+					</td>
+					<td>
+						<div class="document_layaer document_td_data">
+							<p>
+								{{document.noOfFiles}}
 							</p>
 						</div>
 					</td>
@@ -72,7 +80,7 @@
 					<td>
 						<div class="document_layaer document_td_data">
 							<p>
-								{{document.noOfFiles}}
+								{{document.noOfUsers}}
 							</p>
 						</div>
 					</td>

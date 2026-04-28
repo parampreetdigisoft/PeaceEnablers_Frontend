@@ -45,7 +45,7 @@
       <tr *ngFor="let assessment of assessmentsResponse?.data; let i = index">
         <td>{{((currentPage-1) * pageSize ) +(i+1)}}</td>
         <td>{{assessment.countryName}}</td>
-        <td><span class="bold_num">{{assessment.score ?? 0 }}</span></td>
+        <td><span class="bold_num">{{ assessment.score?.toFixed(2) }}%</span></td>
         <td>{{ assessment.assessmentPhase==5 ? 'Completed' :'InProgress' }}</td>
         <td>{{ assessment.totalUnknown }}</td>
         <td>{{ assessment.totalNA }}</td>
