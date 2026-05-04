@@ -404,7 +404,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
       yaxis: {
         title: {
-          text: 'Progress (%)',
+          text: 'Score',
           style: {
             fontSize: '13px',
             fontWeight: 600,

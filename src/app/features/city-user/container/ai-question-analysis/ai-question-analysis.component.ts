@@ -129,7 +129,7 @@ export class AiQuestionAnalysisComponent implements OnInit, OnChanges {
     this.isLoader = true;
     let payload: AiPillarQuetionsRequestDto = {
       sortDirection: SortDirection.DESC,
-      sortBy: 'AIScore',
+      sortBy: 'AIProgress',
       pageNumber: currentPage,
       pageSize: this.pageSize,
       year: this.selectedYear

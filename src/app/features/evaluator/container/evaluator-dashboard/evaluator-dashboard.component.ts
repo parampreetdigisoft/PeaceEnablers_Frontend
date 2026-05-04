@@ -201,7 +201,7 @@ export class EvaluatorDashboardComponent {
       xaxis: {
         categories: categories,
         title: {
-          text: 'Score Progress (%)',
+          text: 'Score ',
           style: {
             fontSize: '14px',
             fontWeight: 700,

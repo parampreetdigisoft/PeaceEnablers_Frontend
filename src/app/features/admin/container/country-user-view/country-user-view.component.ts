@@ -209,7 +209,7 @@ export class CountryUserViewComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
-     this.selectedIndex =undefined;
+    this.selectedIndex =undefined;
     this.loading = false;
     const homeTab = document.querySelector("#pills-home-tab") as HTMLElement;
     if (homeTab) {

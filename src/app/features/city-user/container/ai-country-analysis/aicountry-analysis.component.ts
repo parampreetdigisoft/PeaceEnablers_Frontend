@@ -82,7 +82,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
     this.isLoader = true;
     let payload: AiCountrySummeryRequestDto = {
       sortDirection: SortDirection.DESC,
-      sortBy: 'AIScore',
+      sortBy: 'AIProgress',
       pageNumber: currentPage,
       pageSize: this.pageSize,
       year:this.selectedYear

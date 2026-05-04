@@ -2,8 +2,7 @@
     <div class="modal-content">
 
         <div class="modal-body">
-            <button type="button" (click)="closeModel()" class="btn-close" data-bs-dismiss="modal"
-                aria-label="Close"></button>
+            <button type="button" (click)="closeModel()" class="btn-close" ></button>
             <h4 class="modal_head"> {{countryUser ?'Update':'Add' }} Country User</h4>
             <p class="modal_sub_head">Enter The details and marked</p>
             <div class="modal_tabs">
@@ -103,7 +102,7 @@
                                     *ngIf="countryUserForm.get('pillars')?.invalid && (isSubmitted || countryUserForm.get('pillars')?.touched)">
                                     Please select at least one pillar.
                                 </div>
-                                <div *ngIf="limitMessages['pillars']" class="text-danger small mt-1">
+                                <div *ngIf="limitMessages['pillars']" class="error-msg">
                                     {{ limitMessages['pillars'] }}
                                 </div>
                             </div>
@@ -130,7 +129,7 @@
                                     *ngIf="countryUserForm.get('country')?.invalid && (isSubmitted || countryUserForm.get('country')?.touched)">
                                     Please select at least one country.
                                 </div>
-                                <div *ngIf="limitMessages['country']" class="text-danger small mt-1">
+                                <div *ngIf="limitMessages['country']" class="error-msg">
                                     {{ limitMessages['country'] }}
                                 </div>
                             </div>

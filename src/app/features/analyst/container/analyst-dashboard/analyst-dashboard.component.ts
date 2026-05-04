@@ -518,7 +518,7 @@ export class AnalystDashboardComponent implements OnInit {
 
       yaxis: {
         title: {
-          text: 'Progress (%)',
+          text: 'Score',
           style: {
             fontSize: '13px',
             fontWeight: 600,

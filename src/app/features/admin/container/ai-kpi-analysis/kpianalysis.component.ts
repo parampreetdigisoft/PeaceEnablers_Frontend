@@ -266,7 +266,7 @@ export class KPIAnalysisComponent implements OnInit {
       },
 
       yaxis: {
-        title: { text: 'Progress (%)' },
+        title: { text: 'Score' },
         min: 0,
         max: 100, // Add padding at top so 100% labels don't get cut off
         tickAmount: 5,
