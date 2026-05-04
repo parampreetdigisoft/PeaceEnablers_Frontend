@@ -24,6 +24,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { UpdateProfileComponent } from "./update-profile/update-profile.component";
 import { ViewKpiLayerComponent } from "./view-kpi-layer/view-kpi-layer.component";
 import { NgApexchartsModule } from "ng-apexcharts";
+import { ChatContainerComponent } from "./chatbox/chat-container/chat-container.component";
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
     MatTooltipModule ,
     NgApexchartsModule,
     PaginationComponent,
-    PromptComponent
+    PromptComponent,
+    ChatContainerComponent
   ],
   exports: [
     HeaderComponent,
@@ -78,7 +80,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
     MatSortModule,
     MatTooltipModule,
     ViewKpiLayerComponent,
-    NgApexchartsModule
+    NgApexchartsModule,
+    ChatContainerComponent
   ],
 })
 export class SharedModule {}

@@ -81,8 +81,8 @@ export class AdminService {
       .get(`Country/getCountryHistory/` + updatedAt)
       .pipe(map((x) => x as ResultResponseDto<CountryHistoryDto>));
   }
-  public exportCountries(request:ExportCountryWithOptionDto) {
-    return this.http.ImportFile(`Country/exportCountries`,request);
+  public exportCountries(request: ExportCountryWithOptionDto) {
+    return this.http.ImportFile(`Country/exportCountries`, request);
   }
 
   public getUserListByRole(request: GetUserByRoleRequestDto) {
@@ -105,13 +105,13 @@ export class AdminService {
       .post(`Auth/UpdateInviteUser`, data)
       .pipe(map((x) => x as ResultResponseDto<unknown>));
   }
-  public checkEmailExist(data: EmailExistDto) {    
-  return this.http
-    .post<EmailExistDto, ResultResponseDto<any>>( 'Auth/CheckEmailExist', data)
-    .pipe(
-      map(res => res.isExist ?? false)
-    );
-}
+  public checkEmailExist(data: EmailExistDto) {
+    return this.http
+      .post<EmailExistDto, ResultResponseDto<any>>('Auth/CheckEmailExist', data)
+      .pipe(
+        map(res => res.isExist ?? false)
+      );
+  }
   public deleteUser(id: number) {
     return this.http
       .delete(`Auth/deleteUser/` + id)
@@ -122,7 +122,7 @@ export class AdminService {
   }
 
   public editAllPillars(id: number, data: FormData) {
-     const formData = new FormData();  
+    const formData = new FormData();
     return this.http
       .UploadFile(`Pillar/edit/${id}`, data)
       .pipe(map((x) => x as ResultResponseDto<boolean>));
@@ -230,10 +230,10 @@ export class AdminService {
   public getMutiplekpiLayerResults(payload: GetMutiplekpiLayerRequestDto) {
     return this.http.post(`Kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
   }
- public exportCompareCountries(params: any) {
-  return this.http.ImportFile(`Kpi/ExportCompareCountries`, params);
-}
- public exportCompareCountriesCountryUsers(params: any) {
-  return this.http.ImportFile(`CountryUser/ExportCompareCountries`, params);
-}
+  public exportCompareCountries(params: any) {
+    return this.http.ImportFile(`Kpi/ExportCompareCountries`, params);
+  }
+  public exportCompareCountriesCountryUsers(params: any) {
+    return this.http.ImportFile(`CountryUser/ExportCompareCountries`, params);
+  }
 }

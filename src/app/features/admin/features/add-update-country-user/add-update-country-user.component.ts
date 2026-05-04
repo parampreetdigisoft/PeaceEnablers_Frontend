@@ -120,7 +120,6 @@ export class AddUpdateCountryUserComponent implements OnInit {
         userID: this.countryUser?.userID ?? 0,
         countryID: this.countryUserForm.value.country,
       };
-      debugger;
       this.countryUserChange.emit(countryData);
     }
   }
@@ -131,8 +130,7 @@ export class AddUpdateCountryUserComponent implements OnInit {
       FullName: "FullName of Country User",
       Email: "Enter Email of Country User",
       Phone: "Enter Phone Number of Country User",
-      countryName:
-        "Enter country seprated by comma, like :- USA, Canada, Brazil",
+      countryName: "Enter country seprated by comma, like :- USA, Canada, Brazil",
     };
 
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], {
