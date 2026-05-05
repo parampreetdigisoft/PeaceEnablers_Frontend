@@ -270,7 +270,7 @@ export class KPIAnalysisComponent implements OnInit {
         labels: {
           formatter: (val) => {
             // Only show positive values
-            return val >= 0 ? `${Math.round(val)}%` : '';
+            return val >= 0 ? `${Math.round(val)}` : '';
           }
         }
       },
@@ -355,14 +355,14 @@ export class KPIAnalysisComponent implements OnInit {
                 <div style="display:flex; justify-content:space-between;">
                   <span style="color:#6b7280;">AI Progress</span>
                   <span style="font-weight:600; color:#2d5e56;">
-                    ${pillar.aiProgress?.toFixed(2) ?? '0.00'}%
+                    ${pillar.aiProgress?.toFixed(2) ?? '0.00'}
                   </span>
                 </div>
 
                 <div style="display:flex; justify-content:space-between;">
                   <span style="color:#6b7280;">Evaluator</span>
                   <span style="font-weight:600; color:#39539E;">
-                    ${pillar.evaluatorScore?.toFixed(2) ?? '0.00'}%
+                    ${pillar.evaluatorScore?.toFixed(2) ?? '0.00'}
                   </span>
                 </div>
 
@@ -378,7 +378,7 @@ export class KPIAnalysisComponent implements OnInit {
                     font-weight:600;
                     color:${(pillar.discrepancy ?? 0) > 0 ? '#003160' : '#77bd3e'};
                   ">
-                    ${pillar.discrepancy?.toFixed(2) ?? '0.00'}%
+                    ${pillar.discrepancy?.toFixed(2) ?? '0.00'}
                   </span>
                 </div>
 

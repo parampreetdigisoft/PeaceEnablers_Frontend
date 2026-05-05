@@ -188,7 +188,7 @@ export class CountryDetailsComponent implements OnInit {
               show: true,
               offsetY: 10,
               formatter: (opts: number) => {
-                return `${opts}%`;
+                return `${opts}`;
               }
             },
             total: {
@@ -198,7 +198,7 @@ export class CountryDetailsComponent implements OnInit {
                 const avg =
                   history.reduce((sum, item) => sum + item.scoreProgress, 0) /
                   history.length;
-                return `${avg.toFixed(1)}%`;
+                return `${avg.toFixed(1)}`;
               }
             }
           }

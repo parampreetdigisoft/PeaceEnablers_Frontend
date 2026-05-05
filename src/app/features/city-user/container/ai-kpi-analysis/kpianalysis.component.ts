@@ -255,7 +255,7 @@ export class KPIAnalysisComponent implements OnInit {
         formatter: (val: number, opts) => {
           const pillar = data[opts.dataPointIndex];
           if (!pillar.isAccess) return '';
-          return `${Math.round(val)}%`;
+          return `${Math.round(val)}`;
         },
         offsetY: -10,
         style: {
@@ -351,7 +351,7 @@ export class KPIAnalysisComponent implements OnInit {
         max: 100,
         tickAmount: 5,
         labels: {
-          formatter: (val) => val >= 0 ? `${Math.round(val)}%` : '',
+          formatter: (val) => val >= 0 ? `${Math.round(val)}` : '',
           style: {
             fontSize: '12px',
             colors: '#6b7280'
@@ -564,7 +564,7 @@ export class KPIAnalysisComponent implements OnInit {
                   line-height: 1;
                   margin-left:5px;
                 ">
-                  ${progressPercent.toFixed(0)}%
+                  ${progressPercent.toFixed(0)}
                 </div>
               </div>
 
@@ -581,7 +581,7 @@ export class KPIAnalysisComponent implements OnInit {
                   color: #6b7280;
                 ">
                   <span>Progress</span>
-                  <span>${progressPercent.toFixed(1)}%</span>
+                  <span>${progressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
                   width: 100%;
@@ -660,7 +660,7 @@ export class KPIAnalysisComponent implements OnInit {
                     font-weight: 700;
                     color: #111827;
                   ">
-                    ${progressPercent.toFixed(2)}%
+                    ${progressPercent.toFixed(2)}
                   </div>
                 </div>
               </div>

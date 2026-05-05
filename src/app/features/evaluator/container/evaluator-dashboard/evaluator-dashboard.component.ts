@@ -187,7 +187,7 @@ export class EvaluatorDashboardComponent {
         },
         formatter: (val: number, opts: any) => {
           const percentage = val.toFixed(val >= 100 ? 0 : 1);
-          return `${percentage}%`;
+          return `${percentage}`;
         },
         background: {
           enabled: false
@@ -215,7 +215,7 @@ export class EvaluatorDashboardComponent {
             fontWeight: 600,
             colors: '#718096'
           },
-          formatter: (value: number) => `${value}%`
+          formatter: (value: number) => `${value}`
         },
         axisBorder: {
           show: true,
@@ -321,7 +321,7 @@ export class EvaluatorDashboardComponent {
                   <span style="color: #718096; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Score</span>
                 </div>
                 <span style="color: ${barColor}; font-weight: 900; font-size: 24px; line-height: 1; text-shadow: 0 1px 2px ${barColor}40;">
-                  ${percentage}%
+                  ${percentage}
                 </span>
               </div>
 

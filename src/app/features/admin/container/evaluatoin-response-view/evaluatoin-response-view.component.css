@@ -26,3 +26,30 @@
 .user_name_active{
     color:#003160 !important;
 }
+
+
+.desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+}
+
+.desc.collapsed {
+  -webkit-line-clamp:2;
+}
+
+.desc:not(.collapsed) {
+  -webkit-line-clamp: unset;
+  overflow: hidden;
+}
+
+.read-more {
+  color: #12352f;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  display: inline-block;
+  margin-top: 6px;
+}

@@ -219,7 +219,7 @@ export class AnalystDashboardComponent implements OnInit {
 
           const country = d.countryName;
           const percent = val.toFixed(val >= 100 ? 0 : 1);
-          return `${country} ${percent}%`;
+          return `${country} ${percent}`;
         },
         style: {
           fontSize: "11px",
@@ -249,7 +249,7 @@ export class AnalystDashboardComponent implements OnInit {
         max: 100,
         decimalsInFloat: 0,
         title: {
-          text: "Submission % Progress",
+          text: "Submission  Progress",
           style: { fontSize: "13px", fontWeight: 600 }
         }
       },
@@ -270,12 +270,12 @@ export class AnalystDashboardComponent implements OnInit {
 
             <div style="display:flex; align-items:center; gap:6px;">
               <span style="width:8px; height:8px; background:${evaluationColor}; border-radius:50%;"></span>
-              Evaluation: <b>${(d.scoreProgress ?? 0).toFixed(1)}%</b>
+              Evaluation: <b>${(d.scoreProgress ?? 0).toFixed(1)}</b>
             </div>
 
             <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
               <span style="width:8px; height:8px; background:${aiColor}; border-radius:50%;"></span>
-              AI Score: <b>${(d.aiScore ?? 0).toFixed(1)}%</b>
+              AI Score: <b>${(d.aiScore ?? 0).toFixed(1)}</b>
             </div>
 
             
@@ -362,7 +362,7 @@ export class AnalystDashboardComponent implements OnInit {
       labels: [
         "Total",
         "Manual Active",
-        "Manual In Progress",
+        "Manual InProgress",
         "Manual Completed",
         "AI Finalized",
         "AI Pending Review"
@@ -630,7 +630,7 @@ export class AnalystDashboardComponent implements OnInit {
                   line-height: 1;
                   margin-left:5px;
                 ">
-                  ${avgScore.toFixed(0)}%
+                  ${avgScore.toFixed(0)}
                 </div>
               </div>
 
@@ -647,7 +647,7 @@ export class AnalystDashboardComponent implements OnInit {
                   color: #6b7280;
                 ">
                   <span>AI</span>
-                  <span>${progressPercent.toFixed(1)}%</span>
+                  <span>${progressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
                   width: 100%;
@@ -690,7 +690,7 @@ export class AnalystDashboardComponent implements OnInit {
                   color: #6b7280;
                 ">
                   <span>Evaluation</span>
-                  <span>${evaluatorProgressPercent.toFixed(1)}%</span>
+                  <span>${evaluatorProgressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
                   width: 100%;
@@ -748,7 +748,7 @@ export class AnalystDashboardComponent implements OnInit {
                     font-weight: 700;
                     color: ${evaluatorProgressColor};
                   ">
-                    ${Math.abs(progressPercent - evaluatorProgressPercent).toFixed(0)}%
+                    ${Math.abs(progressPercent - evaluatorProgressPercent).toFixed(0)}
                   </div>
                 </div>
                 <div style="
@@ -770,7 +770,7 @@ export class AnalystDashboardComponent implements OnInit {
                     font-weight: 700;
                     color: #111827;
                   ">
-                   ${avgScore.toFixed(0)}%
+                   ${avgScore.toFixed(0)}
                   </div>
                 </div>
               </div>

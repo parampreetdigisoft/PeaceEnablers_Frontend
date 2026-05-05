@@ -57,14 +57,14 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
   selectedChangedStatusIndex: number = -1;
   evaluatorList: PublicUserResponse[] = [];
   isOpenResearchBox: boolean = false;
-  isRecalcualteKpi:boolean =false;
+  isRecalcualteKpi: boolean = false;
   constructor(private aiComputationService: AiComputationService, private adminService: AdminService,
     private toaster: ToasterService, private userService: UserService, private cdr: ChangeDetectorRef,
-     public commonService: CommonService, private route: ActivatedRoute,) { }
+    public commonService: CommonService, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      if(params["countryID"]){
+      if (params["countryID"]) {
         this.filterCountry = +params["countryID"];
       }
     });
@@ -85,7 +85,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res.succeeded) {
-            this.countries = res.result;            
+            this.countries = res.result;
           } else {
             this.toaster.showError(res.errors.join(", "));
           }
@@ -111,7 +111,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
     }
     this.aiCountries = [];
     this.aiComputationService.getAICountries(payload).subscribe({
-      next: (res) => {        
+      next: (res) => {
         this.aiCountries = res.data;
         this.totalRecords = res.totalRecords;
         this.currentPage = currentPage;
@@ -142,7 +142,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
     offcanvas.show();
   }
 
-   aiCountryDetailsReport(country: AiCountrySummeryDto, selectedIndex: number, format: string,mode: 'ai' | 'manual')  {
+  aiCountryDetailsReport(country: AiCountrySummeryDto, selectedIndex: number, format: string, mode: 'ai' | 'manual') {
     this.selectedIndex = selectedIndex;
     if (this.selectedIndex == -1) return;
 
@@ -150,7 +150,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       countryID: country.countryID,
       year: this.selectedYear,
       format: format,
-      reportType : mode
+      reportType: mode
     };
 
     this.aiComputationService.aiCountryDetailsReport(payload).subscribe({
@@ -196,7 +196,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       this.aiComputationService
         .changedAiCountryEvaluationStatus(paylod)
         .subscribe({
-          next: (res:any) => {
+          next: (res: any) => {
             this.selectedChangedStatusIndex = -1;
             if (res.succeeded) {
               this.getAICountries();
@@ -288,8 +288,8 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       this.closeModal();
     }
   }
-  
-  aiAllCountryDetailsReport(format: string = 'pdf') {    
+
+  aiAllCountryDetailsReport(format: string = 'pdf') {
 
     this.isLoader = true;
 
@@ -300,7 +300,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
 
     this.aiComputationService.aiAllCountriesDetailReport(payload).subscribe({
       next: (blob) => {
-         this.isLoader = false;
+        this.isLoader = false;
         if (blob.size > 0) {
           const ext = format == DocumentFormat.Pdf ? 'pdf' : 'docx';
 
@@ -326,36 +326,35 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
     });
   }
 
-  customSearchFn(term: string, item: any) {    
+  customSearchFn(term: string, item: any) {
     term = term.toLowerCase();
     return (
       item.countryName?.toLowerCase().includes(term) ||
       item.countryAliasName?.toLowerCase().includes(term)
     );
-}
-refresh()
-{
+  }
+  refresh() {
     this.getAICountries(this.currentPage);
-}
-reCalculateKpis() {
-    this.isRecalcualteKpi =true;
+  }
+  reCalculateKpis() {
+    this.isRecalcualteKpi = true;
 
-      this.aiComputationService.reCalculateKpis().subscribe({
-        next: (res) => {
-          this.isRecalcualteKpi =false;
-          if (res.succeeded) {
-            this.toaster.showSuccess(res.messages.join(", "));
-          } else {
-            this.toaster.showError(res.errors.join(", "));
-          }
-          this.closeModal();
-        },
-        error: () => {
-          this.isRecalcualteKpi =false;
-          this.toaster.showError("There is an error occure please try again");
-          this.closeModal();
-        },
-      });
-    
+    this.aiComputationService.reCalculateKpis().subscribe({
+      next: (res) => {
+        this.isRecalcualteKpi = false;
+        if (res.succeeded) {
+          this.toaster.showSuccess(res.messages.join(", "));
+        } else {
+          this.toaster.showError(res.errors.join(", "));
+        }
+        this.closeModal();
+      },
+      error: () => {
+        this.isRecalcualteKpi = false;
+        this.toaster.showError("There is an error occure please try again");
+        this.closeModal();
+      },
+    });
+
   }
 }

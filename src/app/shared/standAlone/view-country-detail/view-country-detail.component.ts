@@ -121,7 +121,7 @@ export class ViewCountryDetailComponent implements OnChanges {
               show: true,
               label: "Avg Progress",
               formatter: (value: any) => {
-                return `${avgProgress.toFixed(2)}%`;
+                return `${avgProgress.toFixed(2)}`;
               },
             }
           }
@@ -140,7 +140,7 @@ export class ViewCountryDetailComponent implements OnChanges {
           useSeriesColors: true
         },
         formatter: function (seriesName: any, opts: any) {
-          return seriesName + ":  " + `${((opts.w.globals.series[opts.seriesIndex])).toFixed(2)}%`;
+          return seriesName + ":  " + `${((opts.w.globals.series[opts.seriesIndex])).toFixed(2)}`;
         },
         itemMargin: {
           horizontal: 3

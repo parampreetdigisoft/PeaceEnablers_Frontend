@@ -302,7 +302,7 @@ export class AiCountryComparisonComponent implements OnInit {
             fontSize: '11px',
             fontWeight: 500
           },
-          formatter: (val: number) => `${val.toFixed(0)}%`
+          formatter: (val: number) => `${val.toFixed(0)}`
         }
       },
       legend: {
@@ -335,7 +335,7 @@ export class AiCountryComparisonComponent implements OnInit {
         formatter: (seriesName: string, opts: any) => {
           const seriesIndex = opts.seriesIndex;
           const avgScore = series[seriesIndex].data.reduce((a: number, b: number) => a + b, 0) / series[seriesIndex].data.length;
-          return `${seriesName} <span style="color: #9ca3af; font-weight: 400; margin-left: 4px;">(Avg: ${avgScore.toFixed(1)}%)</span>`;
+          return `${seriesName} <span style="color: #9ca3af; font-weight: 400; margin-left: 4px;">(Avg: ${avgScore.toFixed(1)})</span>`;
         }
       },
       plotOptions: {
@@ -451,7 +451,7 @@ export class AiCountryComparisonComponent implements OnInit {
                   color: ${scoreColor};
                   min-width: 60px;
                   text-align: right;
-                ">${country.score.toFixed(1)}%</div>
+                ">${country.score.toFixed(1)}</div>
               </div>
               
               <!-- Score bar -->
@@ -492,17 +492,17 @@ export class AiCountryComparisonComponent implements OnInit {
           ">
             <div style="text-align: center;">
               <div style="font-weight: 600; color: #475569;">Avg</div>
-              <div style="font-weight: 700; color: #1e293b; margin-top: 2px;">${avgScore.toFixed(1)}%</div>
+              <div style="font-weight: 700; color: #1e293b; margin-top: 2px;">${avgScore.toFixed(1)}</div>
             </div>
             <div style="width: 1px; background: #e2e8f0;"></div>
             <div style="text-align: center;">
               <div style="font-weight: 600; color: #475569;">Range</div>
-              <div style="font-weight: 700; color: #1e293b; margin-top: 2px;">${spread.toFixed(1)}%</div>
+              <div style="font-weight: 700; color: #1e293b; margin-top: 2px;">${spread.toFixed(1)}</div>
             </div>
             <div style="width: 1px; background: #e2e8f0;"></div>
             <div style="text-align: center;">
               <div style="font-weight: 600; color: #475569;">Best</div>
-              <div style="font-weight: 700; color: #059669; margin-top: 2px;">${maxScore.toFixed(1)}%</div>
+              <div style="font-weight: 700; color: #059669; margin-top: 2px;">${maxScore.toFixed(1)}</div>
             </div>
           </div>
         `;
@@ -606,6 +606,6 @@ export class AiCountryComparisonComponent implements OnInit {
     if (pillarValues.length == 0) return 'NA';
     /* AVERAGE */
     let avg = pillarValues.reduce((a, b) => a + b.value, 0) / pillarValues.length;
-    return Math.round(avg * 100) / 100 + '%';
+    return Math.round(avg * 100) / 100 + '';
   }
 }

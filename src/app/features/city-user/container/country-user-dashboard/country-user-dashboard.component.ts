@@ -332,7 +332,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               fontFamily: 'inherit',
               formatter: (v: any) => {
                 const value = Number(v);
-                return isNaN(value) ? '0%' : value.toFixed(1) + '%';
+                return isNaN(value) ? '0' : value.toFixed(1) + '';
               }
             },
             total: {
@@ -341,7 +341,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               fontSize: '16px',
               fontWeight: 600,
               color: "#4a7167",
-              formatter: (w: any) => (w.globals.series[1] ?? 0).toFixed(1) + '%',
+              formatter: (w: any) => (w.globals.series[1] ?? 0).toFixed(1),
             },
           },
         },
@@ -401,7 +401,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
         },
         formatter: (seriesName: string, opts: any) => {
           const value = opts.w.globals.series[opts.seriesIndex] ?? 0;
-          return `<span style="color: #2e4740; font-weight: 600;">${seriesName}</span>: <span style="color: #4a7167; font-weight: 700;">${value.toFixed(2)}%</span>`;
+          return `<span style="color: #2e4740; font-weight: 600;">${seriesName}</span>: <span style="color: #4a7167; font-weight: 700;">${value.toFixed(2)}</span>`;
         },
       },
 
@@ -414,7 +414,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
           fontFamily: 'inherit'
         },
         y: {
-          formatter: (val: number) => val.toFixed(2) + '%'
+          formatter: (val: number) => val.toFixed(2) + ''
         },
         marker: {
           show: true,
@@ -476,7 +476,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               color: ${color};
               line-height: 1;
             ">
-              ${value.toFixed(1)}%
+              ${value.toFixed(1)}
             </div>
 
             <!-- Progress bar -->
@@ -507,7 +507,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               justify-content: space-between;
             ">
               <span>${this.countryInfo?.countryName}</span>
-              <strong>${countryScore.toFixed(2)}%</strong>
+              <strong>${countryScore.toFixed(2)}</strong>
             </div>
           </div>
         `;

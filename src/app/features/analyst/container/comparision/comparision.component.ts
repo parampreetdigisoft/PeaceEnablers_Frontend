@@ -309,7 +309,7 @@ export class ComparisionComponent implements OnInit {
       },
       yaxis: {
         title: {
-          text: 'Score (%)',
+          text: 'Score',
           style: {
             fontSize: '14px',
             fontWeight: 600,
@@ -318,7 +318,7 @@ export class ComparisionComponent implements OnInit {
         },
         labels: {
           formatter: function (val: number) {
-            return val.toFixed(0) + '%';
+            return val.toFixed(0) + '';
           },
           style: {
             fontSize: '12px',
@@ -340,9 +340,9 @@ export class ComparisionComponent implements OnInit {
             const evaluatorData = pillarData.evaluators[evaluatorName];
 
             if (evaluatorData) {
-              return `${val.toFixed(1)}% (${evaluatorData.ansQuestion}/${evaluatorData.totalQuestion} questions)`;
+              return `${val.toFixed(1)} (${evaluatorData.ansQuestion}/${evaluatorData.totalQuestion} questions)`;
             }
-            return val.toFixed(1) + '%';
+            return val.toFixed(1) + '';
           }
         },
         style: {

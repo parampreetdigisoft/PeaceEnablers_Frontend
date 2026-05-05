@@ -249,7 +249,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
       labels: [
         "Total",
         "Manual Active",
-        "Manual In Progress",
+        "Manual InProgress",
         "Manual Completed",
         "AI Finalized",
         "AI Pending Review"
@@ -318,7 +318,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
         formatter: (val: number, opts) => {
           const pillar = data[opts.dataPointIndex];
 
-          return `${Math.round(val)}%`;
+          return `${Math.round(val)}`;
         },
         offsetY: -10,
         style: {
@@ -415,7 +415,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
         max: 100,
         tickAmount: 5,
         labels: {
-          formatter: (val) => val >= 0 ? `${Math.round(val)}%` : '',
+          formatter: (val) => val >= 0 ? `${Math.round(val)}` : '',
           style: {
             fontSize: '12px',
             colors: '#6b7280'
@@ -516,7 +516,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   line-height: 1;
                   margin-left:5px;
                 ">
-                  ${avgScore.toFixed(0)}%
+                  ${avgScore.toFixed(0)}
                 </div>
               </div>
 
@@ -533,7 +533,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   color: #6b7280;
                 ">
                   <span>AI</span>
-                  <span>${progressPercent.toFixed(1)}%</span>
+                  <span>${progressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
                   width: 100%;
@@ -544,7 +544,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   position: relative;
                 ">
                   <div style="
-                    width: ${progressPercent}%;
+                    width: ${progressPercent};
                     height: 100%;
                     background: linear-gradient(90deg, ${progressColor} 0%, ${progressColor}cc 100%);
                     border-radius: 10px;
@@ -576,7 +576,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   color: #6b7280;
                 ">
                   <span>Evaluation</span>
-                  <span>${evaluatorProgressPercent.toFixed(1)}%</span>
+                  <span>${evaluatorProgressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
                   width: 100%;
@@ -587,7 +587,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   position: relative;
                 ">
                   <div style="
-                    width: ${evaluatorProgressPercent}%;
+                    width: ${evaluatorProgressPercent};
                     height: 100%;
                     background: linear-gradient(90deg, ${evaluatorProgressColor} 0%, ${evaluatorProgressColor}cc 100%);
                     border-radius: 10px;
@@ -634,7 +634,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                     font-weight: 700;
                     color: ${evaluatorProgressColor};
                   ">
-                    ${Math.abs(progressPercent - evaluatorProgressPercent).toFixed(0)}%
+                    ${Math.abs(progressPercent - evaluatorProgressPercent).toFixed(0)}
                   </div>
                 </div>
                 <div style="
@@ -656,7 +656,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                     font-weight: 700;
                     color: #111827;
                   ">
-                   ${avgScore.toFixed(0)}%
+                   ${avgScore.toFixed(0)}
                   </div>
                 </div>
               </div>

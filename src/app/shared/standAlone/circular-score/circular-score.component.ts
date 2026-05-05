@@ -17,6 +17,7 @@ export class CircularScoreComponent implements OnInit, OnChanges {
   @Input() tooltipText: string = '';
 
   formattedValue: string = '';
+  symbol: string = '';
   circumference: number = 2 * Math.PI * 20;
   dashOffset: number = 0;
 

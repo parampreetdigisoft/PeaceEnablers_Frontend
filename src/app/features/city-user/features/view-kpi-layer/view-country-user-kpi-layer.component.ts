@@ -150,7 +150,7 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
             },
             value: {
               formatter: function (val) {
-                return val.toString() + '%';
+                return val.toString();
               },
               color: "#111",
               fontSize: "36px",

@@ -123,12 +123,12 @@ export class ViewKpiLayerComponent implements OnInit, OnChanges {
               fontSize: "22px",
               fontWeight: 600,
               color: "#111",
-              formatter: (val: number) => `${val}%`
+              formatter: (val: number) => `${val}`
             },
             total: {
               show: true,
               label: "Manual vs AI",
-              formatter: () => `${manual}% / ${ai}%`
+              formatter: () => `${manual} / ${ai}`
             }
           }
         }
