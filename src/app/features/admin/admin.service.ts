@@ -6,7 +6,7 @@ import { HttpService } from 'src/app/core/http/http.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { ResultResponseDto } from 'src/app/core/models/ResultResponseDto';
 import { CountryPillerRequestDto } from 'src/app/core/models/QuestionRequest';
-import { PaginationUserRequest } from 'src/app/core/models/PaginationRequest';
+import { PaginationCountryRequest, PaginationUserRequest } from 'src/app/core/models/PaginationRequest';
 import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
 import { CompareCountryRequestDto } from 'src/app/core/models/CompareCountryRequestDto';
 import { CompareCountryResponseDto } from 'src/app/core/models/CompareCountryResponseDto';
@@ -43,7 +43,7 @@ export class AdminService {
     );
   }
 
-  public getCountries(request: PaginationUserRequest) {
+  public getCountries(request: PaginationCountryRequest) {
     return this.http
       .getWithQueryParams(`Country/countries`, request)
       .pipe(map((x) => x as PaginationResponse<CountryVM>));

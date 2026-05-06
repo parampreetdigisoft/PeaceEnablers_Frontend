@@ -31,6 +31,14 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
   imageError: string = '';
   imageFile: File | null = null;
   countryList: CountryVM[] = [];
+
+  categories: string[] = [
+    'Developed Countries',
+    'Economies in Transition',
+    'Developing Countries',
+    'Least Developed Countries (LDCs)'
+  ];
+
   constructor(private fb: FormBuilder, private commonService: CommonService, private cityuserService: CountryUserService,) { }
 
   ngOnInit(): void {
@@ -179,31 +187,29 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
 
   downloadTemplate() {
   const headers = [
-    "Country",
-    "countryName",
+    "CountryName",
+    "CountryAliasName",
     "Continent",
     "Region",
     "CountryCode",
     "Latitude",
     "Longitude",
-    "CountryAliasName",
     "Population",
     "Income",
     "DevelopmentCategory"
   ];
 
   const sampleRow = {
-    Country: "Enter Country Name",
     CountryName: "Enter Country Name",
+    CountryAliasName: "Enter Country Alias Name",
     Continent: "Enter Continent Name",
     Region: "Enter Region Name",
     CountryCode: "Enter Country Code",
     Latitude: "Enter Latitude",
     Longitude: "Enter Longitude",
-    CountryAliasName: "Enter Country Alias Name",
     Population: "Enter Population",
     Income: "Enter Income",
-    DevelopmentCategory: ""
+    DevelopmentCategory: "Enter one category - " + this.categories.join(", ")
   };
 
   const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([sampleRow], { header: headers });
@@ -252,20 +258,15 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
       })[0] as string[] || []).map(h => String(h).trim());
 
       const requiredHeaders = [
-        "Country",
         "CountryName",
         "Continent",
         "Region",
-        "PostalCode",
         "Latitude",
         "Longitude",
         "Population",
         "Income",
         "DevelopmentCategory"
       ];
-
-      // Optional column
-      const optionalHeaders = ["CountryAliasName"];
 
       // ✅ Check missing required headers
       const missingHeaders = requiredHeaders.filter(h => !sheetHeaders.includes(h));
@@ -296,6 +297,7 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
         const row = jsonData[i];
 
         const countryName = String(row["CountryName"] || "").trim();
+        const countryAliasName = String(row["CountryAliasName"] || "").trim(); // optional     
         const continent = String(row["Continent"] || "").trim();
         const region = String(row["Region"] || "").trim();
         const countryCode = String(row["CountryCode"] || "").trim();
@@ -304,7 +306,6 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
         const population = Number(row["Population"] || "");
         const income = Number(row["Income"] || "");
         const developmentCategory = String(row["DevelopmentCategory"] || "");
-        const countryAliasName = String(row["CountryAliasName"] || "").trim(); // optional     
         const isCompletelyBlank = !countryName && !continent && !region;
 
         if (isCompletelyBlank) continue;
@@ -316,7 +317,7 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
           return;
         }
 
-        if (!developmentCategory || !developmentCategory) {
+        if (!developmentCategory) {
           this.alertMsg = `Row ${i + 2}: Category is  required.`;
           this.fileInput.nativeElement.value = "";
           return;
@@ -334,7 +335,7 @@ export class AddUpdateCountryComponent implements OnChanges, OnInit {
           return;
         }
         // ✅ Construct DTO
-        const dto = { countryName, continent, region, countryCode, latitude, longitude, population, income, countryAliasName, developmentCategory } as CountryVM;
+        const dto = { countryName,countryAliasName, continent, region, countryCode, latitude, longitude, population, income,  developmentCategory } as CountryVM;
         excelData.push(dto);
       }
 

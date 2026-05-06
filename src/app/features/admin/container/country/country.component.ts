@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AdminService } from '../../admin.service';
-import { PaginationUserRequest } from 'src/app/core/models/PaginationRequest';
+import { PaginationCountryRequest, PaginationUserRequest } from 'src/app/core/models/PaginationRequest';
 import { BulkAddCountryDto, CountryVM } from '../../../../core/models/CountryVM';
 import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
 import { ToasterService } from 'src/app/core/services/toaster.service';
@@ -31,24 +31,31 @@ export class CountryComponent implements OnInit, OnDestroy {
   countries: CountryVM[] = [];
   selectedCountries: CountryVM[] = [];
   isReportExporting: boolean = false;
-   private selectedCountryIds = new Set<number>();
+  private selectedCountryIds = new Set<number>();
+  searchableCountries: CountryVM[] = [];
+  filterCountry!: number;
+
   constructor(private adminService: AdminService, private toaster: ToasterService, private userService: UserService,
     private aiComputationService: AiComputationService
   ) { }
 
   ngOnInit(): void {
     this.getCountries(1);
+    this.getCountryUserCountries();
   }
 
   getCountries(currentPage: number = 1) {
     this.countriesResponse = undefined;
     this.isLoader = true;
-    let payload: PaginationUserRequest = {
+    let payload: PaginationCountryRequest = {
       sortDirection: SortDirection.DESC,
       sortBy: 'score',
       pageNumber: currentPage,
-      pageSize: this.pageSize,
-      userId: this.userService?.userInfo?.userID
+      pageSize: this.pageSize
+    }
+
+    if (this.filterCountry > 0) {
+      payload.countryID = this.filterCountry;
     }
 
     this.adminService.getCountries(payload).subscribe(countries => {
@@ -64,6 +71,25 @@ export class CountryComponent implements OnInit, OnDestroy {
   editCountry(country: CountryVM | null) {
     this.selectedCountry = country;
   }
+  getCountryUserCountries() {
+    this.adminService
+      .getAllCountriesByUserId(this.userService.userInfo.userID ?? 0)
+      .subscribe({
+        next: (res) => {
+          if (res.succeeded) {
+            this.searchableCountries = res.result ?? [];
+          } else {
+            this.toaster.showError(res.errors.join(", "));
+          }
+        },
+        error: () => {
+          this.isLoader = false;
+          this.toaster.showError("There is an error occure please try again");
+        },
+      });
+  }
+
+
   deleteCountry() {
     if (this.selectedCountry === null) {
       this.toaster.showError('No country selected for deletion');
@@ -130,8 +156,8 @@ export class CountryComponent implements OnInit, OnDestroy {
       modalInstance.hide();
     this.isOpendialog = false;
   }
-  openCountryModal(country: CountryVM | null) {   
-    this.selectedCountry = country ?? null;    
+  openCountryModal(country: CountryVM | null) {
+    this.selectedCountry = country ?? null;
     this.opendialog();
   }
   ngOnDestroy(): void {
@@ -159,7 +185,7 @@ export class CountryComponent implements OnInit, OnDestroy {
     });
   }
 
-   exportCountries(isAllCountry?: boolean, isRanking?: boolean, isPillarLevel?: boolean) {
+  exportCountries(isAllCountry?: boolean, isRanking?: boolean, isPillarLevel?: boolean) {
 
     this.isExporting = true;
     let payload: ExportCountryWithOptionDto = {
@@ -194,7 +220,7 @@ export class CountryComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   aiAllCountryDetailsReport(format: string = 'pdf') {
 
     if (!this.selectedCountries.length) {
@@ -236,7 +262,7 @@ export class CountryComponent implements OnInit, OnDestroy {
       }
     });
   }
-   get isAllCurrentPageSelected(): boolean {
+  get isAllCurrentPageSelected(): boolean {
     const currentData = this.countriesResponse?.data ?? [];
     return (
       currentData.length > 0 &&
@@ -276,7 +302,7 @@ export class CountryComponent implements OnInit, OnDestroy {
       );
     }
   }
-   countrySelected(event: any, country: CountryVM) {
+  countrySelected(event: any, country: CountryVM) {
     const isChecked = event.target.checked;
     country.selected = isChecked;
 
@@ -291,5 +317,12 @@ export class CountryComponent implements OnInit, OnDestroy {
         c => c.countryID !== country.countryID
       );
     }
+  }
+  customSearchFn(term: string, item: any) {
+    term = term.toLowerCase();
+    return (
+      item.countryName?.toLowerCase().includes(term) ||
+      item.countryAliasName?.toLowerCase().includes(term)
+    );
   }
 }

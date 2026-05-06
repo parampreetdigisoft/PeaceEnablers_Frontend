@@ -95,12 +95,10 @@
                     <label>Select Category *</label>
 
                     <select formControlName="category" class="form-control">
-                      <option value=null>Select Category</option>
-                      <option value="Developed Countries">Developed Countries</option>
-                      <option value="Economies in Transition">Economies in Transition</option>
-                      <option value="Developing Countries">Developing Countries</option>
-                      <option value="Least Developed Countries (LDCs)">
-                        Least Developed Countries (LDCs)
+                      <option [ngValue]="null">Select Category</option>
+                      
+                      <option *ngFor="let category of categories" [value]="category">
+                        {{ category }}
                       </option>
                     </select>
 
