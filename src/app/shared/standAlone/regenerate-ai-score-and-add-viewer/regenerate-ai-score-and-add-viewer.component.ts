@@ -32,10 +32,11 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
   ngOnChanges(changes: SimpleChanges): void {
     this.aiOptions = [
       { label: 'Pillar-level AI insights', control: 'pillarEnable', time: this.importPillar ? 5 +' '+'min' : 30 +' '+ 'min' },
-      { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 1 +' '+ 'hour' : 4 +' '+'hours' }
+      { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 1 +' '+ 'hour' : 3 +' '+'hours' }
     ];
     if (!this.importPillar) {
       this.aiOptions.unshift({ label: 'Country-level AI insights', control: 'countryEnable', time: 5 +' '+'min' });
+      this.aiOptions.unshift({ label: 'Immediate Situation', control: 'immediateSummaryEnable', time: 2 +' '+'min' });
     }
     this.ctx.detectChanges();
   }
@@ -44,6 +45,7 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
     this.assesmentForm = this.fb.group({
       countryID: [this.country?.countryID],
       countryEnable: [!this.importPillar],
+      immediateSummaryEnable: [!this.importPillar],
       pillarEnable: [true],
       questionEnable: [false],
       viewerUserIDs: [[]]   // multiple viewers

@@ -120,6 +120,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   // ─── Send ─────────────────────────────────────────────────────────────────
   sendMessage(): void {
+    
     const text = this.inputText().trim();
     if (!text || this.isTyping()) return;
 
@@ -137,13 +138,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       });
   }
 
-  selectSuggestion(q: AIAssistantFAQDto): void {
-    this.inputText.set(q.questionText);
-    this.showSuggestions.set(false);
-    this.suggestions.set([]);
-    setTimeout(() => this.sendMessage(), 50);
-  }
-
   sendQuickQuestion(text: string): void {
     if (this.isTyping()) return;
     this.inputText.set('');
@@ -155,6 +149,13 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
         complete: () => this.cdr.markForCheck(),
         error:    () => this.cdr.markForCheck(),
       });
+  }
+
+  selectSuggestion(q: AIAssistantFAQDto): void {
+    this.inputText.set(q.questionText);
+    this.showSuggestions.set(false);
+    this.suggestions.set([]);
+    setTimeout(() => this.sendMessage(), 50);
   }
 
   // ─── Input events ─────────────────────────────────────────────────────────

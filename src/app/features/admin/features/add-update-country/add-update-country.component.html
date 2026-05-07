@@ -103,9 +103,9 @@
                     </select>
 
                     <div class="error-msg" *ngIf="
-      countryForm.get('category')?.invalid &&
-      (countryForm.get('category')?.touched || isSubmitted)
-    ">
+                      countryForm.get('category')?.invalid &&
+                      (countryForm.get('category')?.touched || isSubmitted)
+                    ">
                       Category is required.
                     </div>
                   </div>
@@ -177,37 +177,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <!-- <div class="col">
-                  <div class="input_field">
-                    <label>
-                      Enter PPP (Int'l $) *
-                      <span class="tooltip-icon"
-                        matTooltip="Purchasing Power Parity adjusted income in International Dollars">
-                        ⓘ
-                      </span>
-                    </label>
-
-                    <input type="text" appNumberOnly formControlName="pPP" placeholder="Enter PPP adjusted income"
-                      class="form-control" />
-
-                    <div class="error-msg"
-                      *ngIf="countryForm.get('pPP')?.invalid && (countryForm.get('pPP')?.touched || isSubmitted)">
-
-                      <span *ngIf="countryForm.get('pPP')?.errors?.['required']">
-                        PPP is required.
-                      </span>
-
-                      <span *ngIf="countryForm.get('pPP')?.errors?.['min']">
-                        PPP must be greater than 0.
-                      </span>
-                    </div>
-                    <div class="error-msg"
-                      *ngIf="countryForm.errors?.['invalidPPPRange'] && (isSubmitted || countryForm.touched)">
-                      PPP value looks unrealistic compared to income.
-                    </div>
-                  </div>
-                </div> -->
+              <div class="row">                
                 <div class="col">
                   <div class="input_field">
                     <label>Upload Image </label>

@@ -21,9 +21,9 @@ export interface SelectedFileModel {
   styleUrl: './ai-document-view-details.component.css'
 })
 
-
 export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
 
+  selectCountryDocuemnt?: number | string;
   totalFiles = computed(() => (this.selectedCountry()?.noOfFiles ?? 0) + this.selectedFiles().length);
   selectedCountry = input<GetCountryDocumentResponseDto | null | undefined>(null);
   documents = input<GetCountryPillarDocumentResponseDto[]>([]);
@@ -49,6 +49,7 @@ export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.selectedFiles.set([]);
+    this.selectCountryDocuemnt = this.selectedCountry()?.countryID
   }
   onImgError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/images/Frame 1321315029.png';
@@ -79,11 +80,9 @@ export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
           pillarID: this.selectedPillarID,
           pillarName: this.pillars().find(x => x.pillarID == this.selectedPillarID)?.pillarName,
           file: file
-
         }
 
         this.selectedFiles.update(files => [...files, f]);
-
         this.selectedPillarID = undefined;
       }
     }
@@ -101,19 +100,18 @@ export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
     return (size / 1024).toFixed(2) + ' KB';
   }
 
-
   uploadDocuments() {
     const formData = new FormData();
-
-    formData.append('CountryID', (this.selectedCountry()?.countryID ?? 0).toString());
-
+    if (this.selectCountryDocuemnt && this.selectCountryDocuemnt != undefined && this.selectCountryDocuemnt != "undefined") {
+      formData.append('CountryID', this.selectCountryDocuemnt.toString());
+    }
     this.selectedFiles().forEach((item, index) => {
-      formData.append('Files', item.file); // ✅ simple
+      formData.append('Files', item.file); 
       formData.append('PillarIDs', item.pillarID?.toString() ?? '0');
     });
-
     this.uploadedDocuments.emit(formData);
   }
+
   openUploadModal() {
     this.isUploadModalOpen = true;
   }
@@ -123,6 +121,7 @@ export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
     this.selectedFiles.set([]);
     this.selectedPillarID = undefined;
   }
+
   doneUploadModal() {
     this.isUploadModalOpen = false;
     this.selectedPillarID = undefined;
@@ -136,9 +135,9 @@ export class AiDocumentViewDetailsComponent implements OnInit, OnChanges {
     }
     this.deleteDocument.emit(payload);
   }
+
   download(doc: GetCountryPillarDocumentResponseDto) {
     this.downloadDocument.emit(doc);
-
   }
 }
 

@@ -223,7 +223,7 @@
 .context-panel {
   background: linear-gradient(135deg, #e8f5df 0%, #f2fae9 100%);
   border-bottom: 1px solid rgba(119, 189, 62, 0.22);
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
   max-height: 200px;
   transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);

@@ -1,24 +1,23 @@
-import { GetAnalyticalLayerResultDto, AnalyticalLayerResponseDto, GetAnalyticalLayerRequestDto } from 'src/app/core/models/GetAnalyticalLayerResultDto';
-import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
-import { ToasterService } from 'src/app/core/services/toaster.service';
-import { SortDirection } from 'src/app/core/enums/SortDirection';
-import { UserService } from 'src/app/core/services/user.service';
-import { environment } from 'src/environments/environment';
-import { CountryVM } from 'src/app/core/models/CountryVM';
-import { AdminService } from '../../admin.service';
+declare var bootstrap: any; 
 import { Component } from '@angular/core';
+import { debounceTime, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { AdminService } from '../../admin.service';
+import { CountryVM } from 'src/app/core/models/CountryVM';
+import { environment } from 'src/environments/environment';
 import { SharedModule } from 'src/app/shared/share.module';
+import { PillarsVM } from 'src/app/core/models/PillersVM';
+import { UserService } from 'src/app/core/services/user.service';
+import { SortDirection } from 'src/app/core/enums/SortDirection';
+import { CommonService } from 'src/app/core/services/common.service';
+import { ToasterService } from 'src/app/core/services/toaster.service';
+import { PaginationResponse } from 'src/app/core/models/PaginationResponse';
+import { AiComputationService } from 'src/app/core/services/ai-computation.service';
 import { CircularScoreComponent } from 'src/app/shared/standAlone/circular-score/circular-score.component';
 import { SparklineScoreComponent } from 'src/app/shared/standAlone/sparkline-score/sparkline-score.component';
-import { debounceTime, Subject } from 'rxjs';
-import { CommonService } from 'src/app/core/services/common.service';
 import { AiDocumentViewDetailsComponent } from 'src/app/shared/standAlone/ai-document-view-details/ai-document-view-details.component';
 import { GetCountryDocumentResponseDto, GetCountryPillarDocumentResponseDto } from 'src/app/core/models/aiVm/GetCountryDocumentResponseDto';
 import { AiCountryDocumentRequestDto, AiCountryPillarDocumentRequestDto, DeleteCountryDocumentRequestDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestDto';
-import { AiComputationService } from 'src/app/core/services/ai-computation.service';
-import { PillarsVM } from 'src/app/core/models/PillersVM';
-declare var bootstrap: any; 
 
 @Component({
   selector: 'app-ai-documents',
@@ -88,7 +87,6 @@ export class AiDocumentsComponent {
       payload.countryID = this.selectedCountryID;
     }
 
-
     this.aiComputationService.getAICountryDocuments(payload).subscribe(documentLayers => {
       this.documentLayersResponse = documentLayers;
       this.totalRecords = documentLayers.totalRecords;
@@ -102,7 +100,6 @@ export class AiDocumentsComponent {
 
   viewDetails(country: GetCountryDocumentResponseDto, index: number) {
     this.selectedCountry = country;
-    this.selectedCountryID = this.selectedCountry.countryID;
     this.sidebarLoader.index = index;
     this.sidebarLoader.loader = true;
     this.getAICountryPillarDocuments();
@@ -119,7 +116,7 @@ export class AiDocumentsComponent {
   }
   getAICountryPillarDocuments(isOpen = true) {
     let payload: AiCountryPillarDocumentRequestDto = {
-      countryID: this.selectedCountryID ?? 0
+      countryID: this.selectedCountry?.countryID ?? 0
     }
     this.aiComputationService.getAICountryPillarDocuments(payload).subscribe({
       next: (res) => {
@@ -132,11 +129,11 @@ export class AiDocumentsComponent {
             const offcanvas = new bootstrap.Offcanvas(sidebarEl);
             offcanvas.show();
           }
-
         }
       }
     });
   }
+
   uploadAiDocuments(event: any) {
     this.saveDocumentLoader = true;
     this.aiComputationService.uploadAiDocuments(event).subscribe({

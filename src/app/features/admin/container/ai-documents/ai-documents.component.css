@@ -41,7 +41,8 @@
 }
 
 ::ng-deep .document_sidebar app-ai-document-view-details .city_card_outter .city_card_inner .city_cards_h1 {
-    font-size: 24px;
+    font-size: 18px;
+    margin-right: auto;
 }
 
 ::ng-deep .document_sidebar .city_cards_disc {
@@ -174,4 +175,7 @@ p.btn_spinner {
     display: flex;
 }
 
-
+::ng-deep .document_sidebar .city_piller {
+    padding-right: 10px;
+    padding-left: 10px;
+}

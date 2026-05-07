@@ -15,10 +15,17 @@
     align-items: center;
     font-weight: 600;
     grid-gap: 3px;
+    font-size: 18px;
+    margin-right: auto;
 }
 
 .city_cards_p path {
     fill: rgb(48 74 67);
+}
+
+.city_cards_p svg {
+    height: 22px;
+    width: auto;
 }
 
 .city_card_outter img {
@@ -155,20 +162,31 @@ button.btn-close:focus-visible {
 }
 
 .upload-btn {
-  display: inline-block;
-  background: #007bff;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
   cursor: pointer;
+    white-space: nowrap;
+    border-radius: 5px !important;
+    background-color: #14416c !important;
+    color: #ffffff !important;
+    display: inline-block;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+        border: 0;
 }
 
 .save-btn {
   background: #28a745;
-  color: white;
+  color: #ffffff !important;
   border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: 20px;
 }
 
 .cancel-btn {
@@ -188,14 +206,18 @@ button.btn-close:focus-visible {
 }
 
 .remove-btn {
-  background: red;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 2px 8px;
-  cursor: pointer;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
 .close-btn {
   background: transparent;
   border: none;
@@ -204,4 +226,14 @@ button.btn-close:focus-visible {
   cursor: pointer;
 }
 
-
+button.save-btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.ai_doc_action_btn {
+    display: flex;
+    grid-gap: 5px;
+}
+td.file_size {
+    white-space: nowrap;
+}

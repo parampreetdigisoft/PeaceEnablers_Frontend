@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Observable, interval, Subject, takeUntil, BehaviorSubject, map } from 'rxjs';
+import { Observable, interval, Subject, takeUntil, BehaviorSubject, map, Subscription } from 'rxjs';
 import {
   ChatMessage,
   ChatResponseDto,
@@ -12,6 +12,7 @@ import { HttpService } from '../http/http.service';
 import { ToasterService } from './toaster.service';
 import { ResultResponseDto } from '../models/ResultResponseDto';
 import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
+
 @Injectable({ providedIn: 'root' })
 export class ChatService {
 
@@ -24,7 +25,27 @@ export class ChatService {
 
   countries = new BehaviorSubject<CountryVM[]>([]);
   pillars   = new BehaviorSubject<PillarsVM[]>([]);
-  faqs   = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+  faqs      = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+
+  // ─── Cancellation tokens ──────────────────────────────────────────────────
+  /**
+   * Emitting on cancelStream$ stops an active typewriter interval via takeUntil.
+   * A new Subject is created per sendMessage() call so old ones don't interfere.
+   */
+  private cancelStream$ = new Subject<void>();
+
+  /**
+   * Holds the active HTTP subscription so it can be aborted before the API
+   * responds (the "API in flight" path in the cancel flow).
+   */
+  private activeRequest$: Subscription | null = null;
+
+  /**
+   * Keeps the full text that the backend returned so that stopGeneration()
+   * can flush it instantly instead of discarding the answer.
+   */
+  private pendingFullText = '';
+  private pendingAssistantId = '';
 
   // ─── Welcome message ──────────────────────────────────────────────────────
   private readonly welcomeMessage: ChatMessage = {
@@ -55,27 +76,76 @@ export class ChatService {
 
   clearHistory(): void { this.messages.set([this.welcomeMessage]); }
 
+  /**
+   * Stop any active generation immediately.
+   *
+   * Two cases handled:
+   *  1. API still in flight → abort the HTTP request, show a cancelled notice.
+   *  2. Typewriter animation running → flush the full response text instantly.
+   */
+  stopGeneration(): void {
+    if (!this.isTyping()) return;
+
+    if (this.activeRequest$ && !this.activeRequest$.closed) {
+      // ── Case 1: API hasn't responded yet ──────────────────────────────────
+      this.activeRequest$.unsubscribe();
+      this.activeRequest$ = null;
+
+      this.updateAssistantMessage(
+        this.pendingAssistantId,
+        '_Stopped._',
+        false,
+      );
+      this.finalizeMessage(this.pendingAssistantId);
+      this.isTyping.set(false);
+    } else {
+      // ── Case 2: Typewriter animation is running ───────────────────────────
+      // Emit cancel so takeUntil inside typewriterStream() tears down the interval.
+      this.cancelStream$.next();
+
+      // Flush whatever text the backend returned (already stored in pendingFullText).
+      if (this.pendingAssistantId) {
+        this.updateAssistantMessage(this.pendingAssistantId, this.pendingFullText, false);
+        this.finalizeMessage(this.pendingAssistantId);
+      }
+      this.isTyping.set(false);
+    }
+
+    // Reset pending state
+    this.pendingFullText    = '';
+    this.pendingAssistantId = '';
+  }
+
   /** Return top-4 predefined question matches for a user query. */
   filterQuestions(query: string): AIAssistantFAQDto[] {
     if (!query || query.trim().length < 2) return [];
     const q = query.toLowerCase();
-    if(this.selectedCountry()){
+    if (this.selectedCountry()) {
       return this.faqs.value
-      .filter(pq => pq.questionText.toLowerCase().includes(q) && !pq.related.includes('global'))
-      .slice(0, 4);
-    }
-    else {
+        .filter(pq => pq.questionText.toLowerCase().includes(q) && !pq.related.includes('global'))
+        .slice(0, 4);
+    } else {
       return this.faqs.value
-      .filter(pq => pq.questionText.toLowerCase().includes(q) && pq.related.includes('global'))
-      .slice(0, 4);
+        .filter(pq => pq.questionText.toLowerCase().includes(q) && pq.related.includes('global'))
+        .slice(0, 4);
     }
   }
 
   /**
    * Send a user message and return an Observable that emits growing streamed text.
-   * Handles both the context-aware API path and a graceful no-context fallback.
+   *
+   * Calling this while a previous message is still generating will automatically
+   * call stopGeneration() first, so the UI never has two concurrent streams.
    */
   sendMessage(userText: string): Observable<string> {
+    // Auto-cancel any in-progress generation before starting a new one.
+    if (this.isTyping()) {
+      this.stopGeneration();
+    }
+
+    // New cancel token per message
+    this.cancelStream$ = new Subject<void>();
+
     const country = this.selectedCountry();
     const pillar  = this.selectedPillar();
 
@@ -91,6 +161,8 @@ export class ChatService {
 
     return new Observable<string>(observer => {
       const assistantId = this.uid();
+      this.pendingAssistantId = assistantId;
+
       const placeholder: ChatMessage = {
         id: assistantId,
         role: 'assistant',
@@ -101,28 +173,35 @@ export class ChatService {
       this.messages.update(msgs => [...msgs, placeholder]);
 
       if (country) {
-        // Context-aware path — call real backend
         const payload: CountryChatRequestDto = {
           countryID:    country.countryID,
           pillarID:     pillar?.pillarID ?? 0,
           questionText: userText,
-          fAQID:null,
-          historyText:null          
+          fAQID:        null,
+          historyText:  null,
         };
 
-        this.askAboutCountry(payload).subscribe({
+        this.activeRequest$ = this.askAboutCountry(payload).subscribe({
           next: res => {
+            this.activeRequest$ = null; // HTTP done; typewriter phase begins
+
             if (res.succeeded) {
-              this.typewriterStream(res.result?.responseText ?? '', assistantId, observer);
+              const fullText = res.result?.responseText ?? '';
+              this.pendingFullText = fullText;
+              this.typewriterStream(fullText, assistantId, observer);
             } else {
               this.handleError(assistantId, observer, res.errors?.join(', ') ?? 'Unknown error');
             }
           },
-          error: () => this.handleError(assistantId, observer, 'Request failed. Please try again.'),
+          error: () => {
+            this.activeRequest$ = null;
+            this.handleError(assistantId, observer, 'Request failed. Please try again.');
+          },
         });
       } else {
-        // No country selected — ask user to set context
+        // No country selected — show fallback immediately (no HTTP call)
         const fallback = 'Please select a **country** from the context panel above so I can provide accurate, data-backed insights for your query.';
+        this.pendingFullText = fallback;
         this.typewriterStream(fallback, assistantId, observer);
       }
     });
@@ -136,6 +215,7 @@ export class ChatService {
       next: res => this.faqs.next(res.result ?? []),
     });
   }
+
   getAllCountries(): void {
     if (this.countries.value.length > 0) return;
     this.getAllCountriesByUserId(this.userService?.userInfo?.userID).subscribe({
@@ -150,6 +230,8 @@ export class ChatService {
     });
   }
 
+  
+
   // ─── Private helpers ──────────────────────────────────────────────────────
 
   private typewriterStream(
@@ -158,24 +240,26 @@ export class ChatService {
     observer: { next(v: string): void; complete(): void },
   ): void {
     let i = 0;
-    const speed   = 8; // ms per character
-    const destroy$ = new Subject<void>();
+    const speed = 8; // ms per character
 
     interval(speed)
-      .pipe(takeUntil(destroy$))
-      .subscribe(() => {
-        i++;
-        const chunk = fullText.substring(0, i);
-        this.updateAssistantMessage(assistantId, chunk, true);
-        observer.next(chunk);
+      .pipe(takeUntil(this.cancelStream$)) // ← torn down by stopGeneration()
+      .subscribe({
+        next: () => {
+          i++;
+          const chunk = fullText.substring(0, i);
+          this.updateAssistantMessage(assistantId, chunk, true);
+          observer.next(chunk);
 
-        if (i >= fullText.length) {
-          destroy$.next();
-          destroy$.complete();
-          this.finalizeMessage(assistantId);
-          this.isTyping.set(false);
-          observer.complete();
-        }
+          if (i >= fullText.length) {
+            this.cancelStream$.next();   // self-complete
+            this.finalizeMessage(assistantId);
+            this.isTyping.set(false);
+            this.pendingFullText    = '';
+            this.pendingAssistantId = '';
+            observer.complete();
+          }
+        },
       });
   }
 
@@ -188,6 +272,8 @@ export class ChatService {
     this.updateAssistantMessage(assistantId, `⚠️ ${message}`, false);
     this.finalizeMessage(assistantId);
     this.isTyping.set(false);
+    this.pendingFullText    = '';
+    this.pendingAssistantId = '';
     observer.complete();
   }
 
@@ -206,6 +292,11 @@ export class ChatService {
   private uid(): string {
     return `msg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
   }
+
+
+
+
+
 
   // ─── HTTP ─────────────────────────────────────────────────────────────────
 
@@ -226,6 +317,7 @@ export class ChatService {
       .get('chat/getAssistantFAQDs')
       .pipe(map(x => x as ResultResponseDto<AIAssistantFAQDto[]>));
   }
+
   private askAboutCountry(request: CountryChatRequestDto) {
     return this.http
       .post('chat/askAboutCountry', request)
