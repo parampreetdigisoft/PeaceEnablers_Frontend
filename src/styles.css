@@ -689,6 +689,7 @@ padding-right: 40px;
 }
 .heading_area .input_field.input_flex {
     margin-bottom: 0;
+    min-width: 200px;
 }
 .modal_design .modal-body .ng-value {
     padding: 2px 5px !important;

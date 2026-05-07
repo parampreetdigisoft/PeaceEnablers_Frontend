@@ -108,3 +108,11 @@
     background-color: #003160 !important;
     color: #ffffff !important;
 }
+::ng-deep .analyst_multi_select .ng-clear-wrapper {
+    width: auto !important;
+    height: 100%;
+    order: 3;
+}
+::ng-deep .analyst_multi_select .ng-arrow-wrapper{
+    padding-right: 0 !important;
+}

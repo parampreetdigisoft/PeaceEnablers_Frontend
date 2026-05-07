@@ -86,8 +86,9 @@
   position: absolute;
   bottom: 76px;
   right: 0;
-  width: 400px;
-  max-height: 0;
+  width: min(400px, calc(100vw - 24px));
+  height: min(720px, calc(100vh - 110px));
+  max-height: calc(100vh - 110px);
   border-radius: 20px;
   background: var(--White-Color);
   box-shadow:
@@ -852,6 +853,7 @@
   align-items: center;
   padding-right: 6px;
   flex-shrink: 0;
+  width: auto;
 }
 
 ::ng-deep .analyst_multi_select .ng-arrow {
