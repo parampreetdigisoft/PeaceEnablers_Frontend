@@ -136,22 +136,23 @@ button.btn-close:focus-visible {
 
 .modal-box {
   background: #fff;
-  width: 400px;
+  width: 600px;
   border-radius: 10px;
   overflow: hidden;
   animation: fadeIn 0.3s ease;
 }
 
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: #007bff;
-  color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 40px 40px 30px;
+    background: transparent;
+    color: #fff;
+    position: relative;
 }
 
 .modal-body {
-  padding: 16px;
+  padding: 0 40px 0px;
 }
 
 .modal-footer {
@@ -177,23 +178,32 @@ button.btn-close:focus-visible {
 }
 
 .save-btn {
-  background: #28a745;
-  color: #ffffff !important;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 5px;
-  white-space: nowrap;
-  font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: 20px;
+    background: #28a745;
+    color: #ffffff !important;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    text-transform: capitalize;
 }
 
 .cancel-btn {
-  background: #ccc;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 5px !important;
+    background-color: #14416c !important;
+    color: #ffffff !important;
+    display: inline-block;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    border: 0;
 }
 
 .file-item {
@@ -218,12 +228,19 @@ line-height: 20px;
     align-items: center;
     justify-content: center;
 }
-.close-btn {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+.close-btn{
+    border: none;
+    font-size: 0;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%0A%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3E%3Cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 16px;
+    height: 16px;
+    padding: 4px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 button.save-btn[disabled] {
@@ -236,4 +253,38 @@ button.save-btn[disabled] {
 }
 td.file_size {
     white-space: nowrap;
+}
+::ng-deep .document_sidebar  .modal-box label {
+    margin-bottom: 10px !important;
+    font-weight: 500;
+    font-size: 13px;
+    font-style: normal;
+    line-height: normal;
+    display: block;
+    margin-left: 5px;
+}
+::ng-deep .document_sidebar  .modal-box select.form-control {
+    margin-bottom: 15px;
+    font-size: 13px;
+    font-style: normal;
+    line-height: normal;
+    height: auto;
+    min-height: 40px;
+    font-weight: 600;
+    padding-left: 16px;
+    border-radius: 50px;
+}
+.modal-header h3 {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: capitalize;
+    color: #2c2c2c;
+}
+/* .modal-box .upload-btn {
+    all: unset;
+} */
+.modal-box .input_field input.form-control {
+    line-height: 200%;
 }

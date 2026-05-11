@@ -133,11 +133,11 @@ Select a country or pillar above, or ask a question to begin.`,
     if (this.selectedCountry()) {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && !pq.related.includes('global'))
-        .slice(0, 4);
+        //.slice(0, 4);
     } else {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && pq.related.includes('global'))
-        .slice(0, 4);
+        //.slice(0, 4);
     }
   }
 

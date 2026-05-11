@@ -150,14 +150,19 @@
 					{{p.pillarName}}
 				</option>
 			</select>
-			<label class="upload-btn mt-2">
-				Choose Files
-				<input (change)="onFileSelected($event)"
-					type="file"
-					multiple
-					accept=".pdf,.doc,.docx"
-					hidden>
-			</label>
+
+			<div class="row">                
+                <div class="col">
+                  <div class="input_field">
+                    <label>Upload Image </label>
+                    <input #imageInput type="file" 
+					(change)="onFileSelected($event)" class="form-control"
+					 accept=".pdf,.doc,.docx"/>
+                    
+                  </div>
+                </div>
+              </div>
+
 			<!-- Selected Files -->
 			<div *ngIf="selectedFiles().length"
 				class="file-list">

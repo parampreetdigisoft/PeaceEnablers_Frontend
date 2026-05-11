@@ -107,6 +107,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     this.chatService.getAllCountries();
     this.chatService.getPillars();
     this.chatService.getFAQDs();
+    this.chatService.clearHistory();
   }
 
   ngOnDestroy(): void {

@@ -904,6 +904,12 @@
   color: var(--Text-Color) !important;
 }
 
+.suggestions-dropdown {
+    max-height: 250px;
+    height: auto;
+    overflow-y: auto;
+}
+
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 480px) {
   :host {
