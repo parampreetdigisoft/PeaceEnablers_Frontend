@@ -13,6 +13,7 @@ import { HttpService } from '../http/http.service';
 import { ToasterService } from './toaster.service';
 import { ResultResponseDto } from '../models/ResultResponseDto';
 import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
+import { UserRole } from '../enums/UserRole';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -345,14 +346,17 @@ Select a country or pillar above, or ask a question to begin.`,
   // ─── HTTP ─────────────────────────────────────────────────────────────────
 
   private getAllCountriesByUserId(userId: number) {
+    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/getCountryUserCountries'  : `Country/getAllCountryByUserId/${userId}`;
+
     return this.http
-      .get(`Country/getAllCountryByUserId/${userId}`)
+      .get(url)
       .pipe(map(x => x as ResultResponseDto<CountryVM[]>));
   }
 
   private getAllPillars() {
+     let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/Pillars'  :`Pillar/Pillars`;
     return this.http
-      .get('Pillar/Pillars')
+      .get(url)
       .pipe(map(x => x as PillarsVM[]));
   }
 
