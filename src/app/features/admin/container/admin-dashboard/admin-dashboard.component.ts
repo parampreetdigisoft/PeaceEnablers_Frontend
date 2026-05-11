@@ -544,7 +544,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   position: relative;
                 ">
                   <div style="
-                    width: ${progressPercent};
+                    width: ${progressPercent}%;
                     height: 100%;
                     background: linear-gradient(90deg, ${progressColor} 0%, ${progressColor}cc 100%);
                     border-radius: 10px;
@@ -587,7 +587,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                   position: relative;
                 ">
                   <div style="
-                    width: ${evaluatorProgressPercent};
+                    width: ${evaluatorProgressPercent}%;
                     height: 100%;
                     background: linear-gradient(90deg, ${evaluatorProgressColor} 0%, ${evaluatorProgressColor}cc 100%);
                     border-radius: 10px;

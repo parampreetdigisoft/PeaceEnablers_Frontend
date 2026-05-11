@@ -15,4 +15,9 @@
     </router-outlet>
   </div>
 </div>
-<app-chat-container></app-chat-container>
+
+// ai assisstant only available for admin, analyst or paid user only
+@if((currentUser()?.role !== evaluator && cityUser!==currentUser()?.role) || (cityUser===currentUser()?.role && pendingTier != currentUser()?.tier)){
+  <app-chat-container></app-chat-container>    
+}
+

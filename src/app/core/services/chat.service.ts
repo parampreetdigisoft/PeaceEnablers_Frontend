@@ -1,9 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { Observable, interval, Subject, takeUntil, BehaviorSubject, map, Subscription } from 'rxjs';
 import {
   ChatMessage,
   ChatResponseDto,
-  CountryChatRequestDto
+  CountryChatRequestDto,
+  GlobalChatRequestDto
 } from '../models/chat/ChatMessage';
 import { UserService } from './user.service';
 import { CountryVM } from '../models/CountryVM';
@@ -17,15 +18,18 @@ import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
 export class ChatService {
 
   // ─── State ────────────────────────────────────────────────────────────────
-  isOpen          = signal(false);
-  isTyping        = signal(false);
+  isOpen = signal(false);
+  isTyping = signal(false);
   selectedCountry = signal<CountryVM | null>(null);
-  selectedPillar  = signal<PillarsVM | null>(null);
-  messages        = signal<ChatMessage[]>([]);
+  selectedPillar = signal<PillarsVM | null>(null);
+  selectedfaq = signal<AIAssistantFAQDto | null>(null);
+  messages = signal<ChatMessage[]>([]);
 
   countries = new BehaviorSubject<CountryVM[]>([]);
-  pillars   = new BehaviorSubject<PillarsVM[]>([]);
-  faqs      = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+  pillars = new BehaviorSubject<PillarsVM[]>([]);
+  faqs = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+
+  quickQuestions = computed(() => this.selectedCountry() ? this.countryQuickQuestions : this.globalQuickQuestions)
 
   // ─── Cancellation tokens ──────────────────────────────────────────────────
   /**
@@ -47,11 +51,17 @@ export class ChatService {
   private pendingFullText = '';
   private pendingAssistantId = '';
 
-  // ─── Welcome message ──────────────────────────────────────────────────────
   private readonly welcomeMessage: ChatMessage = {
     id: 'welcome',
     role: 'assistant',
-    content: `## Welcome to PeaceMappers\n\nI'm your **Urban Intelligence Assistant**. I can help you analyze:\n\n- **Country peace scores** \n- **Pillar-level breakdowns** and risk factors\n- **Trends and recommendations**\n\nSelect a **country** and **pillar** above for focused insights, or ask me anything!`,
+    content: `## Welcome to PeaceMappers
+
+Get insights on:
+- Global peace and security
+- Country risk and stability
+- Trends, rankings, and recommendations
+
+Select a country or pillar above, or ask a question to begin.`,
     timestamp: new Date(),
   };
 
@@ -67,12 +77,12 @@ export class ChatService {
 
   openWithContext(country?: CountryVM, pillar?: PillarsVM): void {
     if (country) this.selectedCountry.set(country);
-    if (pillar)  this.selectedPillar.set(pillar);
+    if (pillar) this.selectedPillar.set(pillar);
     this.isOpen.set(true);
   }
 
   toggleOpen(): void { this.isOpen.update(v => !v); }
-  closeChat():  void { this.isOpen.set(false); }
+  closeChat(): void { this.isOpen.set(false); }
 
   clearHistory(): void { this.messages.set([this.welcomeMessage]); }
 
@@ -112,7 +122,7 @@ export class ChatService {
     }
 
     // Reset pending state
-    this.pendingFullText    = '';
+    this.pendingFullText = '';
     this.pendingAssistantId = '';
   }
 
@@ -147,7 +157,19 @@ export class ChatService {
     this.cancelStream$ = new Subject<void>();
 
     const country = this.selectedCountry();
-    const pillar  = this.selectedPillar();
+    const pillar = this.selectedPillar();
+
+    const histories = this.messages()
+      .slice(1)
+      .slice(-3)
+      .map(msg => {
+        const content =
+          msg.content.length > 200
+            ? msg.content.substring(0, 200) + '...'
+            : msg.content;
+
+        return `${msg.role}: ${content}`;
+      }).join('\n');
 
     // Add user message
     const userMsg: ChatMessage = {
@@ -170,15 +192,18 @@ export class ChatService {
         timestamp: new Date(),
         isStreaming: true,
       };
+
       this.messages.update(msgs => [...msgs, placeholder]);
+
+
 
       if (country) {
         const payload: CountryChatRequestDto = {
-          countryID:    country.countryID,
-          pillarID:     pillar?.pillarID ?? 0,
+          countryID: country.countryID,
+          pillarID: pillar?.pillarID ?? 0,
           questionText: userText,
-          fAQID:        null,
-          historyText:  null,
+          fAQID: this.selectedfaq()?.faqID,
+          historyText: histories,
         };
 
         this.activeRequest$ = this.askAboutCountry(payload).subscribe({
@@ -199,10 +224,29 @@ export class ChatService {
           },
         });
       } else {
-        // No country selected — show fallback immediately (no HTTP call)
-        const fallback = 'Please select a **country** from the context panel above so I can provide accurate, data-backed insights for your query.';
-        this.pendingFullText = fallback;
-        this.typewriterStream(fallback, assistantId, observer);
+        const payload: GlobalChatRequestDto = {
+          questionText: userText,
+          fAQID: this.selectedfaq()?.faqID,
+          historyText: histories,
+        };
+
+        this.activeRequest$ = this.askGlobalQuestion(payload).subscribe({
+          next: res => {
+            this.activeRequest$ = null; // HTTP done; typewriter phase begins
+
+            if (res.succeeded) {
+              const fullText = res.result?.responseText ?? '';
+              this.pendingFullText = fullText;
+              this.typewriterStream(fullText, assistantId, observer);
+            } else {
+              this.handleError(assistantId, observer, res.errors?.join(', ') ?? 'Unknown error');
+            }
+          },
+          error: () => {
+            this.activeRequest$ = null;
+            this.handleError(assistantId, observer, 'Request failed. Please try again.');
+          },
+        });
       }
     });
   }
@@ -230,7 +274,7 @@ export class ChatService {
     });
   }
 
-  
+
 
   // ─── Private helpers ──────────────────────────────────────────────────────
 
@@ -255,7 +299,7 @@ export class ChatService {
             this.cancelStream$.next();   // self-complete
             this.finalizeMessage(assistantId);
             this.isTyping.set(false);
-            this.pendingFullText    = '';
+            this.pendingFullText = '';
             this.pendingAssistantId = '';
             observer.complete();
           }
@@ -272,7 +316,7 @@ export class ChatService {
     this.updateAssistantMessage(assistantId, `⚠️ ${message}`, false);
     this.finalizeMessage(assistantId);
     this.isTyping.set(false);
-    this.pendingFullText    = '';
+    this.pendingFullText = '';
     this.pendingAssistantId = '';
     observer.complete();
   }
@@ -323,4 +367,77 @@ export class ChatService {
       .post('chat/askAboutCountry', request)
       .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
   }
+
+  private askGlobalQuestion(request: GlobalChatRequestDto) {
+    return this.http
+      .post('chat/askglobalQuestion', request)
+      .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
+  }
+
+
+
+  // Questions for a single country
+  countryQuickQuestions = [
+    {
+      label: 'Peace summary',
+      question: 'Summarize the recent peace progress and overall stability of this country.'
+    },
+    {
+      label: 'Peace initiatives',
+      question: 'What major peace initiatives or diplomatic efforts are currently taking place in this country?'
+    },
+    {
+      label: 'Security risks',
+      question: 'What are the major security risks or conflict concerns affecting this country?'
+    },
+    {
+      label: 'Recommendations',
+      question: 'What recommendations can improve peace, security, and stability in this country?'
+    },
+    {
+      label: 'Recent improvements',
+      question: 'What recent improvements have been observed in this country’s peace and stability indicators?'
+    },
+    {
+      label: 'Risk factors',
+      question: 'What are the biggest political, social, or economic risks impacting this country?'
+    },
+    {
+      label: 'Peace trends',
+      question: 'What are the latest peace trends and international cooperation efforts related to this country?'
+    }
+  ];
+
+
+  // Questions for all countries globally
+  globalQuickQuestions = [
+    {
+      label: 'Peace summary',
+      question: 'Summarize the peace progress across all countries in recent days.'
+    },
+    {
+      label: 'Peace leaders',
+      question: 'Which countries are showing the strongest peace initiatives recently?'
+    },
+    {
+      label: 'Security risks',
+      question: 'What are the major security risks affecting countries globally?'
+    },
+    {
+      label: 'Recommendations',
+      question: 'What recommendations can improve peace and stability across countries?'
+    },
+    {
+      label: 'Improved countries',
+      question: 'Which countries have improved their peace index the most recently?'
+    },
+    {
+      label: 'Risk countries',
+      question: 'Which countries are facing the highest conflict or instability risks?'
+    },
+    {
+      label: 'Peace trends',
+      question: 'What are the latest global peace trends and international cooperation efforts?'
+    }
+  ];
 }

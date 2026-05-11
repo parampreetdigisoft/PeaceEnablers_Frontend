@@ -148,23 +148,18 @@
   </div>
 
   <!-- ── Quick Questions ─────────────────────────────────────────── -->
-  <div *ngIf="messages().length <= 1" class="quick-questions">
-    <p class="quick-questions__label">Quick questions</p>
-    <div class="quick-questions__chips">
-      <button (click)="sendQuickQuestion('Summarize the overall country evaluation.')" class="chip">
-        Summarize evaluation
-      </button>
-      <button (click)="sendQuickQuestion('What is the current peace index score?')" class="chip">
-        Peace index score
-      </button>
-      <button (click)="sendQuickQuestion('What are the key risks to security in this region?')" class="chip">
-        Security risks
-      </button>
-      <button (click)="sendQuickQuestion('What recommendations improve the peace index?')" class="chip">
-        Recommendations
-      </button>
-    </div>
+<div *ngIf="messages().length <= 1" class="quick-questions">
+  <p class="quick-questions__label">Frequently Asked Questions</p>
+
+  <div class="quick-questions__chips">
+    <button
+      *ngFor="let item of chatService.quickQuestions()"
+      class="chip"
+      (click)="sendQuickQuestion(item.question)">
+      {{ item.label }}
+    </button>
   </div>
+</div>
 
   <!-- ── Messages ────────────────────────────────────────────────── -->
   <div #messagesContainer class="chat-messages">

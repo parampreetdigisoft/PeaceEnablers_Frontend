@@ -12,9 +12,12 @@ export interface ChatContext {
   pillar?: string;
 }
 
-export interface CountryChatRequestDto {
+export interface CountryChatRequestDto extends GlobalChatRequestDto {
   countryID: number;
   pillarID?: number | null;
+}
+
+export interface GlobalChatRequestDto {
   questionText: string;
   fAQID?: number | null;
   historyText: string | null;

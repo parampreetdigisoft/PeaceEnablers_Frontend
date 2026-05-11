@@ -153,6 +153,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   selectSuggestion(q: AIAssistantFAQDto): void {
     this.inputText.set(q.questionText);
+    this.chatService.selectedfaq.set(q);
+
     this.showSuggestions.set(false);
     this.suggestions.set([]);
     setTimeout(() => this.sendMessage(), 50);
@@ -162,7 +164,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   onInputChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.inputText.set(value);
-
+    this.chatService.selectedfaq.set(null);
     if (value.trim().length >= 2) {
       const filtered = this.chatService.filterQuestions(value);
       this.suggestions.set(filtered);
@@ -201,6 +203,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   clearContext(): void {
     this.chatService.selectedCountry.set(null);
     this.chatService.selectedPillar.set(null);
+    this.chatService.selectedfaq.set(null);
   }
 
   clearHistory(): void { this.chatService.clearHistory(); }
@@ -228,6 +231,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     return (
       item.countryName?.toLowerCase().includes(t)  ||
       item.countryAliasName?.toLowerCase().includes(t) ||
+      item.region?.toLowerCase().includes(t) ||
       item.pillarName?.toLowerCase().includes(t)   ||
       false
     );
