@@ -203,7 +203,7 @@ Select a country or pillar above, or ask a question to begin.`,
           countryID: country.countryID,
           pillarID: pillar?.pillarID ?? 0,
           questionText: userText,
-          fAQID: this.selectedfaq()?.faqID,
+          fAQID: this.selectedfaq()?.faqid,
           historyText: histories,
         };
 
@@ -227,7 +227,7 @@ Select a country or pillar above, or ask a question to begin.`,
       } else {
         const payload: GlobalChatRequestDto = {
           questionText: userText,
-          fAQID: this.selectedfaq()?.faqID,
+          fAQID: this.selectedfaq()?.faqid,
           historyText: histories,
         };
 
