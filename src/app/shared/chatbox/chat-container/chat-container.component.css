@@ -217,100 +217,6 @@
 
 .context-badge svg { flex-shrink: 0; }
 
-.context-badge {
-  position: relative;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-
-  max-width: 100%;
-  min-height: 38px;
-
-  padding: 0 14px;
-
-  border-radius: 999px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(119, 189, 62, 0.16),
-      rgba(119, 189, 62, 0.07)
-    );
-
-  border: 1px solid rgba(145, 224, 79, 0.24);
-
-  color: #d6ff9a;
-
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-
-  backdrop-filter: blur(10px);
-
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-
-  overflow: hidden;
-
-  transition:
-    transform 0.18s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-
-  animation: contextFade 0.25s ease;
-}
-
-/* Hover */
-.context-badge:hover {
-  transform: translateY(-1px);
-
-  border-color: rgba(145, 224, 79, 0.42);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(119, 189, 62, 0.2),
-      rgba(119, 189, 62, 0.1)
-    );
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.22),
-    0 0 18px rgba(119, 189, 62, 0.08);
-}
-
-/* Green indicator */
-.context-badge::before {
-  content: "";
-
-  width: 9px;
-  height: 9px;
-
-  border-radius: 50%;
-
-  background: #8de63e;
-
-  box-shadow:
-    0 0 10px rgba(141, 230, 62, 0.75),
-    0 0 20px rgba(141, 230, 62, 0.3);
-
-  flex-shrink: 0;
-}
-
-/* Text */
-.context-badge__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  max-width: 240px;
-
-  line-height: 1.2;
-}
-
-
 .context-badge__clear {
   margin-left: auto;
   background: none;
@@ -477,6 +383,28 @@
   align-items: center;
   gap: 6px;
 }
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__context-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(119, 189, 62, 0.1);
+  border: 1px solid rgba(119, 189, 62, 0.28);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3d7a1a;
+  animation: fadeIn 0.25s ease;
+}
+
+
 
 
 /* ── Status Dot ─────────────────────────────────────────────── */
