@@ -82,6 +82,13 @@ const routes: Routes = [
           import("./container/ai-documents/ai-documents.component").then(
             (m) => m.AiDocumentsComponent
           ),
+      },
+      {
+        path: "chat",
+        loadComponent: () =>
+          import("../../shared/chatbox/chat-container/chat-container.component").then(
+            (m) => m.ChatContainerComponent
+          ),
       }
     ],
   },
