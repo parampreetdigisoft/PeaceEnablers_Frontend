@@ -1,300 +1,319 @@
 <!-- ══════════════════════════════════════════════════════════════
-     PeaceMappers · Full-Page Chat  —  ChatGPT / Copilot Layout
+     PEM Aevum · Redesigned Chat — Single Panel, No Double Sidebar
      ══════════════════════════════════════════════════════════════ -->
-<div class="page-layout">
+<div class="pem-chat">
 
-  <!-- ── LEFT SIDEBAR ──────────────────────────────────────────── -->
-  <aside class="sidebar">
+  <!-- ══════════════════════════════════════════════════════════
+       COMMAND BAR  (brand + context selectors + status, all-in-one)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="command-bar">
 
-    <!-- Brand -->
-    <div class="sidebar__brand">
-      <div class="sidebar__logo">
-        <svg viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14" fill="#77BD3E" opacity="0.2"></circle>
-          <circle cx="16" cy="16" r="10" fill="#77BD3E" opacity="0.3"></circle>
-          <circle cx="16" cy="16" r="6"  fill="#77BD3E"></circle>
-          <path d="M10 16 Q13 10 16 16 Q19 22 22 16"
-            stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
-          <circle cx="16" cy="8"  r="1.5" fill="white"></circle>
-          <circle cx="16" cy="24" r="1.5" fill="white"></circle>
-          <circle cx="8"  cy="16" r="1.5" fill="white"></circle>
-          <circle cx="24" cy="16" r="1.5" fill="white"></circle>
+    <!-- Left: Identity -->
+    <div class="cb__identity">
+      <div class="cb__orb">
+        <div class="cb__orb-ring"></div>
+        <div class="cb__orb-ring" style="animation-delay:0.8s"></div>
+        <svg class="cb__orb-svg" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" fill="#77BD3E" opacity="0.12"/>
+          <circle cx="20" cy="20" r="13" fill="#77BD3E" opacity="0.18"/>
+          <circle cx="20" cy="20" r="8"  fill="#77BD3E" opacity="0.3"/>
+          <circle cx="20" cy="20" r="4"  fill="#77BD3E"/>
+          <path d="M12 20 Q16 12 20 20 Q24 28 28 20"
+            stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <circle cx="20" cy="9"  r="2" fill="white" opacity="0.8"/>
+          <circle cx="20" cy="31" r="2" fill="white" opacity="0.8"/>
+          <circle cx="9"  cy="20" r="2" fill="white" opacity="0.8"/>
+          <circle cx="31" cy="20" r="2" fill="white" opacity="0.8"/>
         </svg>
       </div>
-      <div class="sidebar__brand-text">
-        <span class="sidebar__brand-name">PEM Aevum</span>
-        <span class="sidebar__brand-tagline">Urban Intelligence Engine</span>
+      <div>
+        <div class="cb__name">PEM Aevum</div>
+        <div class="cb__tagline">Urban Intelligence Engine</div>
       </div>
     </div>
 
-    <!-- New Chat -->
-    <button (click)="clearHistory()" class="new-chat-btn">
-      <svg viewBox="0 0 20 20" fill="none">
-        <path d="M10 4v12M4 10h12"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    <!-- Centre: Context selectors -->
+    <div class="cb__selectors">
+
+      <!-- Country selector -->
+      <div class="cb__selector-group">
+        <div class="cb__selector-icon">
+          <svg viewBox="0 0 14 14" fill="none">
+            <path d="M7 1.5a5 5 0 100 11A5 5 0 007 1.5z"
+              stroke="currentColor" stroke-width="1.1"/>
+            <path d="M7 1.5v11M1.5 7h11"
+              stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+            <path d="M4 3Q5.5 5 7 7T10 11" stroke="currentColor" stroke-width="0.9"
+              fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="cb__selector-inner">
+          <ng-select
+            [items]="chatService.countries | async"
+            [searchable]="true"
+            [searchFn]="customSearchFn"
+            [clearable]="true"
+            [ngModel]="selectedCountry()"
+            (ngModelChange)="onCountryChange($event)"
+            class="analyst_multi_select"
+            placeholder="Select country…"
+            bindLabel="countryName"
+            notFoundText="No countries found">
+            <ng-template ng-label-tmp let-item="item">{{ item?.countryName }}</ng-template>
+            <ng-template ng-option-tmp let-item="item">
+              {{ item.countryName }}
+              <span class="option-sub">· {{ item.continent }}</span>
+            </ng-template>
+          </ng-select>
+        </div>
+      </div>
+
+      <!-- Pillar selector -->
+      <div class="cb__selector-group">
+        <div class="cb__selector-icon">
+          <svg viewBox="0 0 14 14" fill="none">
+            <rect x="1"   y="7"  width="3" height="5.5" rx="0.7" fill="currentColor" opacity="0.3"/>
+            <rect x="5.5" y="4"  width="3" height="8.5" rx="0.7" fill="currentColor" opacity="0.6"/>
+            <rect x="10"  y="1"  width="3" height="11.5" rx="0.7" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="cb__selector-inner">
+          <ng-select
+            [items]="chatService.pillars | async"
+            [searchable]="true"
+            [clearable]="true"
+            [ngModel]="selectedPillar()"
+            (ngModelChange)="onPillarChange($event)"
+            class="analyst_multi_select"
+            placeholder="Select pillar…"
+            bindLabel="pillarName"
+            notFoundText="No pillars found">
+            <ng-template ng-label-tmp let-item="item">{{ item?.pillarName }}</ng-template>
+            <ng-template ng-option-tmp let-item="item">{{ item.pillarName }}</ng-template>
+          </ng-select>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Status + actions -->
+    <div class="cb__status">
+
+      <!-- Active context pill -->
+      <div *ngIf="hasContext()" class="cb__context-pill">
+        <span class="cb__context-pill-dot"></span>
+        <span class="cb__context-pill-label">{{ contextLabel() }}</span>
+        <button (click)="clearContext()" class="cb__clear-btn" matTooltip="Clear context">✕</button>
+      </div>
+
+      <!-- Online / typing status -->
+      <div class="cb__status-indicator">
+        <span [class.cb__status-dot--typing]="isTyping()" class="cb__status-dot"></span>
+        <span class="cb__status-text">{{ isTyping() ? 'Analyzing…' : 'Online' }}</span>
+      </div>
+
+      <!-- New conversation button -->
+      <button (click)="clearHistory()" class="cb__new-chat-btn">
+        <svg viewBox="0 0 14 14" fill="none">
+          <path d="M7 2v10M2 7h10"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        New Chat
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SUGGESTIONS RAIL  (horizontal scrollable chips)
+       ══════════════════════════════════════════════════════════ -->
+  <div class="suggestions-rail">
+    <span class="rail__label">Try asking</span>
+    <button
+      *ngFor="let item of chatService.quickQuestions()"
+      (click)="sendQuickQuestion(item.question)"
+      class="rail__chip">
+      <svg viewBox="0 0 12 12" fill="none">
+        <path d="M1.5 6h9M7 2l4 4-4 4"
+          stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      New Conversation
+      {{ item.label }}
     </button>
+  </div>
 
-    <!-- ── Context Section ──────────────────────────────────────── -->
-    <div class="sidebar__section">
-      <span class="sidebar__section-label">
-        <svg viewBox="0 0 14 14" fill="none">
-          <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"></circle>
-          <path d="M4.5 7h5M7 4.5v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
+  <!-- ══════════════════════════════════════════════════════════
+       MESSAGES
+       ══════════════════════════════════════════════════════════ -->
+  <div #messagesContainer class="chat-messages">
+
+    <!-- Empty / welcome state -->
+    <div *ngIf="messages().length <= 1" class="welcome-state">
+
+      <div class="welcome__graphic">
+        <div class="welcome__rings"></div>
+        <div class="welcome__rings"></div>
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="29" fill="#77BD3E" opacity="0.08"/>
+          <circle cx="32" cy="32" r="21" fill="#77BD3E" opacity="0.14"/>
+          <circle cx="32" cy="32" r="13" fill="#77BD3E" opacity="0.22"/>
+          <circle cx="32" cy="32" r="6.5" fill="#77BD3E"/>
+          <path d="M18 32 Q25 18 32 32 Q39 46 46 32"
+            stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="32" cy="11" r="2.5" fill="white" opacity="0.85"/>
+          <circle cx="32" cy="53" r="2.5" fill="white" opacity="0.85"/>
+          <circle cx="11" cy="32" r="2.5" fill="white" opacity="0.85"/>
+          <circle cx="53" cy="32" r="2.5" fill="white" opacity="0.85"/>
         </svg>
-        Context
-      </span>
-
-      <!-- Country -->
-      <div class="context-field">
-        <label class="context-label">
-          <svg viewBox="0 0 14 14" fill="none">
-            <path d="M7 1.5a5 5 0 100 11A5 5 0 007 1.5zM7 1.5v11M1.5 7h11"
-              stroke="currentColor" stroke-width="1.1" stroke-linecap="round"></path>
-          </svg>
-          Country
-        </label>
-        <ng-select
-          [items]="chatService.countries | async"
-          [searchable]="true"
-          [searchFn]="customSearchFn"
-          [clearable]="true"
-          [ngModel]="selectedCountry()"
-          (ngModelChange)="onCountryChange($event)"
-          class="analyst_multi_select"
-          placeholder="Select country…"
-          bindLabel="countryName"
-          notFoundText="No countries found">
-          <ng-template ng-label-tmp let-item="item">{{ item?.countryName }}</ng-template>
-          <ng-template ng-option-tmp let-item="item">
-            {{ item.countryName }}
-            <span class="option-sub">· {{ item.continent }}</span>
-          </ng-template>
-        </ng-select>
       </div>
 
-      <!-- Pillar -->
-      <div class="context-field">
-        <label class="context-label">
-          <svg viewBox="0 0 14 14" fill="none">
-            <rect x="1" y="7"  width="3.5" height="5.5" rx="0.8" fill="currentColor" opacity="0.35"></rect>
-            <rect x="5" y="4"  width="3.5" height="8.5" rx="0.8" fill="currentColor" opacity="0.6"></rect>
-            <rect x="9" y="1"  width="3.5" height="11.5" rx="0.8" fill="currentColor"></rect>
-          </svg>
-          Pillar
-        </label>
-        <ng-select
-          [items]="chatService.pillars | async"
-          [searchable]="true"
-          [clearable]="true"
-          [ngModel]="selectedPillar()"
-          (ngModelChange)="onPillarChange($event)"
-          class="analyst_multi_select"
-          placeholder="Select pillar…"
-          bindLabel="pillarName"
-          notFoundText="No pillars found">
-          <ng-template ng-label-tmp let-item="item">{{ item?.pillarName }}</ng-template>
-          <ng-template ng-option-tmp let-item="item">{{ item.pillarName }}</ng-template>
-        </ng-select>
-      </div>
-
-      <!-- Active context badge -->
-      <!-- <div *ngIf="hasContext()" class="context-badge">
-        <svg viewBox="0 0 10 10" fill="none">
-          <circle cx="5" cy="5" r="3.5" fill="#77BD3E"></circle>
-        </svg>
-        {{ contextLabel() }}
-        <button (click)="clearContext()" class="context-badge__clear" matTooltip="Clear context">✕</button>
-      </div> -->
-    </div>
-
-    <!-- ── Suggested Questions ──────────────────────────────────── -->
-    <div class="sidebar__section sidebar__section--grow">
-      <span class="sidebar__section-label">
-        <svg viewBox="0 0 14 14" fill="none">
-          <path d="M7 1C3.68 1 1 3.68 1 7s2.68 6 6 6 6-2.68 6-6-2.68-6-6-6z"
-            stroke="currentColor" stroke-width="1.2"></path>
-          <path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
-        </svg>
-        Suggested
-      </span>
-      <div class="sidebar__questions-list">
-        <button
-          *ngFor="let item of chatService.quickQuestions()"
-          (click)="sendQuickQuestion(item.question)"
-          class="sidebar-question-item">
-          <svg viewBox="0 0 14 14" fill="none">
-            <path d="M2 7h10M8 3l4 4-4 4"
-              stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-          {{ item.label }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Sidebar footer -->
-    <div class="sidebar__footer">
-      <span class="sidebar__footer-text">Powered by Urban Intelligence Engine</span>
-    </div>
-
-  </aside>
-
-  <!-- ── MAIN CHAT AREA ─────────────────────────────────────────── -->
-  <main class="chat-main">
-
-    <!-- ── Top Bar ────────────────────────────────────────────────── -->
-    <div class="chat-topbar">
-      <div class="topbar__left">
-        <div class="topbar__avatar">
-          <svg viewBox="0 0 32 32" fill="none">
-            <circle cx="16" cy="16" r="10" fill="#77BD3E" opacity="0.2"></circle>
-            <circle cx="16" cy="16" r="6"  fill="#77BD3E" opacity="0.4"></circle>
-            <circle cx="16" cy="16" r="3"  fill="#77BD3E"></circle>
-          </svg>
-        </div>
-        <div class="topbar__info">
-          <span class="topbar__title">PEM Aevum</span>
-          <span class="topbar__status">
-            <span [class.status-dot--typing]="isTyping()" class="status-dot"></span>
-            {{ isTyping() ? 'Analyzing…' : 'Online · Urban Intelligence Engine' }}
-          </span>
-        </div>
-      </div>
-
-      <div class="topbar__right">
-        <div *ngIf="hasContext()" class="topbar__context-pill">
-          <svg viewBox="0 0 10 10" fill="none" width="8" height="8">
-            <circle cx="5" cy="5" r="3.5" fill="#77BD3E"></circle>
-          </svg>
-
-          {{ contextLabel() }}
-                  <button (click)="clearContext()" class="context-badge__clear" matTooltip="Clear context">✕</button>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Messages ──────────────────────────────────────────────── -->
-    <div #messagesContainer class="chat-messages">
-
-      <!-- Welcome / empty state -->
-      <div *ngIf="messages().length <= 1" class="welcome-state">
-        <div class="welcome-icon">
-          <svg viewBox="0 0 64 64" fill="none">
-            <circle cx="32" cy="32" r="30" fill="#77BD3E" opacity="0.1"></circle>
-            <circle cx="32" cy="32" r="22" fill="#77BD3E" opacity="0.15"></circle>
-            <circle cx="32" cy="32" r="14" fill="#77BD3E" opacity="0.25"></circle>
-            <circle cx="32" cy="32" r="7"  fill="#77BD3E"></circle>
-            <path d="M20 32 Q26 20 32 32 Q38 44 44 32"
-              stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
-            <circle cx="32" cy="14" r="2.5" fill="white"></circle>
-            <circle cx="32" cy="50" r="2.5" fill="white"></circle>
-            <circle cx="14" cy="32" r="2.5" fill="white"></circle>
-            <circle cx="50" cy="32" r="2.5" fill="white"></circle>
-          </svg>
-        </div>
-        <h2 class="welcome-title">How can I help you today?</h2>
-        <p class="welcome-subtitle">
-          Ask me anything about peace, stability, and urban intelligence data.
-          <br>Select a country and pillar for context-aware answers.
-        </p>
-      </div>
-
-      <!-- Message list -->
-      <div *ngFor="let msg of messages(); trackBy: trackById"
-        [class.message--user]="msg.role === 'user'"
-        [class.message--assistant]="msg.role === 'assistant'"
-        class="message">
-
-        <!-- Assistant avatar -->
-        <div *ngIf="msg.role === 'assistant'" class="message__avatar">
-          <svg viewBox="0 0 28 28" fill="none">
-            <circle cx="14" cy="14" r="12" fill="#77BD3E" opacity="0.12"></circle>
-            <circle cx="14" cy="14" r="7"  fill="#77BD3E" opacity="0.25"></circle>
-            <circle cx="14" cy="14" r="3.5" fill="#77BD3E"></circle>
-          </svg>
-        </div>
-
-        <!-- Bubble -->
-        <div class="message__bubble">
-          <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
-          <ng-container *ngIf="msg.role === 'assistant'">
-            <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
-            <span *ngIf="msg.isStreaming" class="stream-cursor"></span>
-          </ng-container>
-        </div>
-
-        <!-- Timestamp -->
-        <span *ngIf="!msg.isStreaming" class="message__time">
-          {{ formatTime(msg.timestamp) }}
-        </span>
-      </div>
-
-      <!-- Typing indicator -->
-      <div *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'"
-        class="typing-indicator">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>
-
-    </div>
-
-    <!-- ── Input Area ─────────────────────────────────────────────── -->
-    <div class="chat-input-area">
-
-      <!-- Suggestions dropdown -->
-      <div *ngIf="showSuggestions() && suggestions().length > 0"
-        class="suggestions-dropdown">
-        <div class="suggestions-header">Suggested questions</div>
-        <button
-          *ngFor="let s of suggestions()"
-          (mousedown)="selectSuggestion(s)"
-          class="suggestion-item">
-          <span class="suggestion-category">{{ s.category }}</span>
-          <span class="suggestion-text">{{ s.questionText }}</span>
-        </button>
-      </div>
-
-      <div class="input-shell">
-        <input
-          #inputField
-          [value]="inputText()"
-          [disabled]="isTyping()"
-          (input)="onInputChange($event)"
-          (keydown)="onKeyDown($event)"
-          (blur)="closeSuggestions()"
-          type="text"
-          class="chat-input"
-          placeholder="Ask anything about peace & stability…"
-          autocomplete="off"
-          spellcheck="false">
-
-        <button
-          [class.send-btn--active]="inputText().trim().length > 0"
-          [disabled]="!inputText().trim() && !isTyping()"
-          (click)="isTyping() ? chatService.stopGeneration() : sendMessage()"
-          class="send-btn"
-          aria-label="Send message">
-
-          <!-- Send arrow -->
-          <svg *ngIf="!isTyping()" viewBox="0 0 20 20" fill="none">
-            <path d="M3 10L17 10M17 10L11 4M17 10L11 16"
-              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-
-          <!-- Stop square -->
-          <svg *ngIf="isTyping()" viewBox="0 0 20 20" fill="blue">
-            <rect x="5" y="5" width="10" height="10" rx="2"></rect>
-          </svg>
-        </button>
-      </div>
-
-      <p class="input-disclaimer">
-        PEM Aevum may produce inaccurate information. Verify critical data independently.
+      <h2 class="welcome__title">How can I help you today?</h2>
+      <p class="welcome__subtitle">
+        Ask me anything about peace, stability, and urban intelligence data.<br>
+        Select a country and pillar above for context-aware answers.
       </p>
+
+      <div class="welcome__cards">
+        <div class="welcome__card">
+          <svg viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="#77bd3e" stroke-width="1.4"/>
+            <path d="M5 8a3 3 0 006 0" stroke="#77bd3e" stroke-width="1.3" stroke-linecap="round"/>
+            <line x1="8" y1="4" x2="8" y2="5.5" stroke="#77bd3e" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Global peace &amp; security
+        </div>
+        <div class="welcome__card">
+          <svg viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="10" width="3" height="4"   rx="0.8" fill="#77bd3e" opacity="0.4"/>
+            <rect x="6.5" y="7"  width="3" height="7"   rx="0.8" fill="#77bd3e" opacity="0.65"/>
+            <rect x="11" y="3"  width="3" height="11"  rx="0.8" fill="#77bd3e"/>
+          </svg>
+          Country risk &amp; stability
+        </div>
+        <div class="welcome__card">
+          <svg viewBox="0 0 16 16" fill="none">
+            <polyline points="2,12 5,7 8,9 11,4 14,5"
+              stroke="#77bd3e" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="14" cy="5" r="1.5" fill="#77bd3e"/>
+          </svg>
+          Trends &amp; rankings
+        </div>
+        <div class="welcome__card">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M8 2l1.5 3.5 3.8.4-2.8 2.5.8 3.8L8 10.5l-3.3 1.7.8-3.8-2.8-2.5 3.8-.4z"
+              stroke="#77bd3e" stroke-width="1.3" stroke-linejoin="round" fill="none"/>
+          </svg>
+          Recommendations
+        </div>
+      </div>
     </div>
 
-  </main>
+    <!-- Message list -->
+    <div
+      *ngFor="let msg of messages(); trackBy: trackById"
+      [class.message--user]="msg.role === 'user'"
+      [class.message--assistant]="msg.role === 'assistant'"
+      class="message">
+
+      <!-- Assistant avatar -->
+      <div *ngIf="msg.role === 'assistant'" class="message__avatar">
+        <svg viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="12" fill="#77BD3E" opacity="0.12"/>
+          <circle cx="14" cy="14" r="7"  fill="#77BD3E" opacity="0.25"/>
+          <circle cx="14" cy="14" r="3.5" fill="#77BD3E"/>
+        </svg>
+      </div>
+
+      <!-- User avatar -->
+      <div *ngIf="msg.role === 'user'" class="message__avatar">
+        <svg viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="11" r="4" fill="white" opacity="0.8"/>
+          <path d="M6 24c0-4.4 3.6-8 8-8s8 3.6 8 8"
+            stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Bubble -->
+      <div class="message__bubble">
+        <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
+        <ng-container *ngIf="msg.role === 'assistant'">
+          <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
+          <span *ngIf="msg.isStreaming" class="stream-cursor"></span>
+        </ng-container>
+      </div>
+
+      <!-- Timestamp -->
+      <span *ngIf="!msg.isStreaming" class="message__time">
+        {{ formatTime(msg.timestamp) }}
+      </span>
+    </div>
+
+    <!-- Typing indicator -->
+    <div
+      *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'"
+      class="typing-indicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       INPUT AREA
+       ══════════════════════════════════════════════════════════ -->
+  <div class="chat-input-area">
+
+    <!-- Autocomplete dropdown -->
+    <div
+      *ngIf="showSuggestions() && suggestions().length > 0"
+      class="suggestions-dropdown">
+      <div class="suggestions-header">Suggested questions</div>
+      <button
+        *ngFor="let s of suggestions()"
+        (mousedown)="selectSuggestion(s)"
+        class="suggestion-item">
+        <span class="suggestion-category">{{ s.category }}</span>
+        <span class="suggestion-text">{{ s.questionText }}</span>
+      </button>
+    </div>
+
+    <div class="input-shell">
+      <input
+        #inputField
+        [value]="inputText()"
+        [disabled]="isTyping()"
+        (input)="onInputChange($event)"
+        (keydown)="onKeyDown($event)"
+        (blur)="closeSuggestions()"
+        type="text"
+        class="chat-input"
+        placeholder="Ask anything about peace &amp; stability…"
+        autocomplete="off"
+        spellcheck="false">
+
+      <button
+        [class.send-btn--active]="inputText().trim().length > 0"
+        [disabled]="!inputText().trim() && !isTyping()"
+        (click)="isTyping() ? chatService.stopGeneration() : sendMessage()"
+        class="send-btn"
+        aria-label="Send message">
+
+        <!-- Send arrow -->
+        <svg *ngIf="!isTyping()" viewBox="0 0 20 20" fill="none">
+          <path d="M3 10h14M13 5l5 5-5 5"
+            stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <!-- Stop square -->
+        <svg *ngIf="isTyping()" viewBox="0 0 20 20" fill="currentColor">
+          <rect x="5" y="5" width="10" height="10" rx="2.5"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="input-disclaimer">
+      PEM Aevum may produce inaccurate information. Verify critical data independently.
+    </p>
+  </div>
+
 </div>
