@@ -28,7 +28,7 @@
     width: 272px;
     min-width: 272px;
     height: calc(100vh - 146px);
-    background: #0b4037;
+    background: #367e3b;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -323,7 +323,7 @@
   flex-direction: column;
   height: calc(100vh - 146px);
   overflow: hidden;
-  background: #e1f1ef;
+  background: #e1efe2;
   min-width: 0;
 }
 
@@ -556,7 +556,7 @@
 }
 
 .message--user .message__bubble {
-  background: #0b4037;
+  background: #367e3b;
   color: #fff;
   border-radius: 18px 18px 4px 18px;
   box-shadow:
