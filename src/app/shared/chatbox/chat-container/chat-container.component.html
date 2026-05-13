@@ -220,7 +220,7 @@
         <div class="message__bubble">
           <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
           <ng-container *ngIf="msg.role === 'assistant'">
-            <div [innerHTML]="msg.content | markdown" class="markdown-body"></div>
+            <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
             <span *ngIf="msg.isStreaming" class="stream-cursor"></span>
           </ng-container>
         </div>
