@@ -42,6 +42,13 @@ const routes: Routes = [
         path: 'ai/kpi-analysis',
         loadComponent: () => import('./container/ai-kpi-analysis/kpianalysis.component').then(m => m.KPIAnalysisComponent)
       },
+      {
+        path: "chat",
+        loadComponent: () =>
+          import("../../shared/chatbox/chat-container/chat-container.component").then(
+            (m) => m.ChatContainerComponent
+          ),
+      }
     ],
   },
   {
