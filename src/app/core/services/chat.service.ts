@@ -290,7 +290,6 @@ Select a country or pillar above, or ask a question to begin.`,
   }
 
   getContriesCrossComparision(){
-    debugger
 
     let userText ="Explain cross comparisons for these countries for each pillar with risk and opportunities."
    
@@ -345,7 +344,6 @@ Select a country or pillar above, or ask a question to begin.`,
 
         this.activeRequest$ = this.crossComparisionquestion(payload).subscribe({
           next: res => {
-            debugger
             this.activeRequest$ = null; // HTTP done; typewriter phase begins
 
             if (res.succeeded) {
