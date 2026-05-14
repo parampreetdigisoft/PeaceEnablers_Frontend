@@ -35,25 +35,25 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   // ─── DI ───────────────────────────────────────────────────────────────────
   protected chatService = inject(ChatService);
-  private cdr           = inject(ChangeDetectorRef);
+  private cdr = inject(ChangeDetectorRef);
 
   // ─── View refs ────────────────────────────────────────────────────────────
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
-  @ViewChild('inputField')        inputField!: ElementRef<HTMLInputElement>;
+  @ViewChild('inputField') inputField!: ElementRef<HTMLInputElement>;
 
   // ─── Local state ──────────────────────────────────────────────────────────
-  inputText       = signal('');
-  suggestions     = signal<AIAssistantFAQDto[]>([]);
+  inputText = signal('');
+  suggestions = signal<AIAssistantFAQDto[]>([]);
   showSuggestions = signal(false);
   showContextPanel = signal(true);
-  unreadCount     = signal(0);
+  unreadCount = signal(0);
 
   // ─── Service signal aliases ───────────────────────────────────────────────
-  protected isOpen          = this.chatService.isOpen;
-  protected isTyping        = this.chatService.isTyping;
-  protected messages        = this.chatService.messages;
+  protected isOpen = this.chatService.isOpen;
+  protected isTyping = this.chatService.isTyping;
+  protected messages = this.chatService.messages;
   protected selectedCountry = this.chatService.selectedCountry;
-  protected selectedPillar  = this.chatService.selectedPillar;
+  protected selectedPillar = this.chatService.selectedPillar;
 
   // ─── Computed ─────────────────────────────────────────────────────────────
   protected hasContext = computed(() =>
@@ -64,13 +64,19 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     const c = this.chatService.selectedCountry();
     const p = this.chatService.selectedPillar();
     if (c && p) return `${c.countryName} · ${p.pillarName}`;
-    if (c)      return c.countryName;
-    if (p)      return p.pillarName;
+    if (c) return c.countryName;
+    if (p) return p.pillarName;
     return null;
   });
 
   // ─── Cleanup ──────────────────────────────────────────────────────────────
   private destroy$ = new Subject<void>();
+
+
+  sliderItems: any[] = [];
+  currentSlide = 0;
+  animate = false;
+  intervalId: any;
 
   constructor() {
     // Auto-scroll whenever messages list grows
@@ -104,26 +110,116 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   // ─── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
-     this.clearHistory();
+    this.clearHistory();
     this.closeChat();
     this.clearContext();
     this.chatService.getAllCountries();
     this.chatService.getPillars();
-    this.chatService.getFAQDs();   
+    this.chatService.getFAQDs();
+    this.startSlider();
+    if (this.chatService.crossComparisionCountryIDs.value.length > 0) {
+      this.getContriesCrossComparision()
+    }
+  }
+
+  startSlider(): void {
+
+    clearInterval(this.intervalId);
+
+    this.intervalId = setInterval(() => {
+
+      // trigger flip
+      this.animate = false;
+
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+
+        // change slide
+        this.currentSlide =
+          (this.currentSlide + 1) % this.sliderItems.length;
+
+        // add animation once
+        this.animate = true;
+
+        this.cdr.detectChanges();
+
+      }, 50);
+
+    }, 8000);
+  }
+
+  onCountryChange(city: CountryVM | null): void {
+    this.sliderItems = [];
+    this.currentSlide = 0;
+    clearInterval(this.intervalId);
+    this.chatService.selectedCountry.set(city ?? null);
+
+    this.chatService.getCountrySlides(city?.countryID ?? 0).subscribe({
+      next: res => {
+
+        const data = res?.result?.result;
+
+        if (!data) return;
+
+        const earlyWarnings = Array.isArray(data.earlyWarnings)
+          ? data.earlyWarnings
+          : [];
+
+        const combinedRisks = Array.isArray(data.combinedRisks)
+          ? data.combinedRisks
+          : [];
+
+        this.sliderItems = [
+
+          {
+            title: `${data.countryName} Daily Performance`,
+            subtitle: data.dailyPerformance?.summary
+          },
+
+          {
+            title: `${data.countryName} Weekly Performance`,
+            subtitle: data.weeklyPerformance?.summary
+          },
+
+          {
+            title: `${data.countryName} Monthly Performance`,
+            subtitle: data.monthlyPerformance?.summary
+          },
+
+          ...earlyWarnings.map((x: any) => ({
+            title: x.title || 'Early Warning',
+            subtitle: x.description || x.summary
+          })),
+
+          ...combinedRisks.map((x: any) => ({
+            title: x.riskName || 'Risk',
+            subtitle: x.summary || x.description
+          }))
+        ];
+
+        this.currentSlide = 0;
+
+        this.startSlider();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   // ─── Toggle & Close ───────────────────────────────────────────────────────
   toggleChat(): void { this.chatService.toggleOpen(); }
-  closeChat():  void { this.chatService.closeChat(); }
+  closeChat(): void { this.chatService.closeChat(); }
 
   // ─── Send ─────────────────────────────────────────────────────────────────
   sendMessage(): void {
-    
+
     const text = this.inputText().trim();
     if (!text || this.isTyping()) return;
 
@@ -135,9 +231,26 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       .sendMessage(text)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:     () => { this.scrollToBottom(); this.cdr.markForCheck(); },
+        next: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
         complete: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
-        error:    () => this.cdr.markForCheck(),
+        error: () => this.cdr.markForCheck(),
+      });
+  }
+
+  // ─── Send ─────────────────────────────────────────────────────────────────
+  getContriesCrossComparision(): void {
+
+    this.inputText.set('');
+    this.showSuggestions.set(false);
+    this.suggestions.set([]);
+
+    this.chatService
+      .getContriesCrossComparision()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
+        complete: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
+        error: () => this.cdr.markForCheck(),
       });
   }
 
@@ -148,9 +261,9 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       .sendMessage(text)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:     () => { this.scrollToBottom(); this.cdr.markForCheck(); },
+        next: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
         complete: () => this.cdr.markForCheck(),
-        error:    () => this.cdr.markForCheck(),
+        error: () => this.cdr.markForCheck(),
       });
   }
 
@@ -195,9 +308,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   // ─── Context panel ────────────────────────────────────────────────────────
   toggleContextPanel(): void { this.showContextPanel.update(v => !v); }
 
-  onCountryChange(country: CountryVM | null): void {
-    this.chatService.selectedCountry.set(country ?? null);
-  }
 
   onPillarChange(pillar: PillarsVM | null): void {
     this.chatService.selectedPillar.set(pillar ?? null);
@@ -232,10 +342,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   customSearchFn(term: string, item: any): boolean {
     const t = term.toLowerCase();
     return (
-      item.countryName?.toLowerCase().includes(t)  ||
+      item.countryName?.toLowerCase().includes(t) ||
       item.countryAliasName?.toLowerCase().includes(t) ||
       item.region?.toLowerCase().includes(t) ||
-      item.pillarName?.toLowerCase().includes(t)   ||
+      item.pillarName?.toLowerCase().includes(t) ||
       false
     );
   }

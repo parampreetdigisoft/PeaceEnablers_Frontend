@@ -23,6 +23,12 @@ export interface GlobalChatRequestDto {
   historyText: string | null;
 }
 
+export interface CrossComparisionChatRequestDto {
+  questionText: string;
+  countryIDs: number[];
+  historyText: string | null;
+}
+
 export interface ChatResponseDto {
   countryID: number;
   pillarID?: number | null;

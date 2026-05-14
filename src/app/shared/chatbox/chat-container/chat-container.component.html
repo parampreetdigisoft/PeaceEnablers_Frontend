@@ -124,6 +124,23 @@
     </div>
   </div>
 
+
+  <div class="flip-hero" *ngIf="sliderItems.length > 0 && selectedCountry()">
+
+    <div class="flip-hero__card" [class.flip]="animate">
+
+      <h2 class="flip-hero__title">
+        {{ sliderItems[currentSlide]?.title }}
+      </h2>
+
+      <p class="flip-hero__subtitle">
+        {{ sliderItems[currentSlide]?.subtitle }}
+      </p>
+
+    </div>
+
+  </div>
+
   <!-- ══════════════════════════════════════════════════════════
        SUGGESTIONS RAIL  (horizontal scrollable chips)
        ══════════════════════════════════════════════════════════ -->

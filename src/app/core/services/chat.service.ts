@@ -4,6 +4,7 @@ import {
   ChatMessage,
   ChatResponseDto,
   CountryChatRequestDto,
+  CrossComparisionChatRequestDto,
   GlobalChatRequestDto
 } from '../models/chat/ChatMessage';
 import { UserService } from './user.service';
@@ -14,6 +15,7 @@ import { ToasterService } from './toaster.service';
 import { ResultResponseDto } from '../models/ResultResponseDto';
 import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
 import { UserRole } from '../enums/UserRole';
+import { ChatCountryExecutiveSlidesResponse } from '../models/chat/ChatCountryExecutiveSlidesResponse';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -29,6 +31,8 @@ export class ChatService {
   countries = new BehaviorSubject<CountryVM[]>([]);
   pillars = new BehaviorSubject<PillarsVM[]>([]);
   faqs = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+
+  crossComparisionCountryIDs = new BehaviorSubject<number[]>([]);
 
   quickQuestions = computed(() => this.selectedCountry() ? this.countryQuickQuestions : this.globalQuickQuestions)
 
@@ -275,6 +279,91 @@ Select a country or pillar above, or ask a question to begin.`,
     });
   }
 
+    getCountrySlides(
+    countryId: number
+  ): Observable<ResultResponseDto<ChatCountryExecutiveSlidesResponse>> {
+
+    return this.http.post<ResultResponseDto<ChatCountryExecutiveSlidesResponse>>(
+      `Chat/countrySlides`,
+      countryId as any
+    );
+  }
+
+  getContriesCrossComparision(){
+    debugger
+
+    let userText ="Explain cross comparisons for these countries for each pillar with risk and opportunities."
+   
+    if (this.isTyping()) {
+      this.stopGeneration();
+    }
+
+    this.cancelStream$ = new Subject<void>();
+
+    const histories = this.messages()
+      .slice(1)
+      .slice(-3)
+      .map(msg => {
+        const content =
+          msg.content.length > 200
+            ? msg.content.substring(0, 200) + '...'
+            : msg.content;
+
+        return `${msg.role}: ${content}`;
+      }).join('\n');
+
+    // Add user message
+    const userMsg: ChatMessage = {
+      id: this.uid(),
+      role: 'user',
+      content: userText,
+      timestamp: new Date(),
+    };
+    this.messages.update(msgs => [...msgs, userMsg]);
+    this.isTyping.set(true);
+
+    return new Observable<string>(observer => {
+      const assistantId = this.uid();
+      this.pendingAssistantId = assistantId;
+
+      const placeholder: ChatMessage = {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      this.messages.update(msgs => [...msgs, placeholder]);
+
+      if (this.crossComparisionCountryIDs.value.length > 0) {
+        const payload: CrossComparisionChatRequestDto = {
+          countryIDs: this.crossComparisionCountryIDs.value,
+          questionText: userText,
+          historyText: histories,
+        };
+
+        this.activeRequest$ = this.crossComparisionquestion(payload).subscribe({
+          next: res => {
+            debugger
+            this.activeRequest$ = null; // HTTP done; typewriter phase begins
+
+            if (res.succeeded) {
+              const fullText = res.result?.responseText ?? '';
+              this.pendingFullText = fullText;
+              this.typewriterStream(fullText, assistantId, observer);
+            } else {
+              this.handleError(assistantId, observer, res.errors?.join(', ') ?? 'Unknown error');
+            }
+          },
+          error: () => {
+            this.activeRequest$ = null;
+            this.handleError(assistantId, observer, 'Request failed. Please try again.');
+          },
+        });
+      } 
+    });
+  }
 
 
   // ─── Private helpers ──────────────────────────────────────────────────────
@@ -375,6 +464,11 @@ Select a country or pillar above, or ask a question to begin.`,
   private askGlobalQuestion(request: GlobalChatRequestDto) {
     return this.http
       .post('chat/askglobalQuestion', request)
+      .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
+  }
+  private crossComparisionquestion(request: CrossComparisionChatRequestDto) {
+    return this.http
+      .post('chat/crossComparision', request)
       .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
   }
 
