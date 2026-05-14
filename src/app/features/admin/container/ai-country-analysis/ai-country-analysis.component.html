@@ -24,7 +24,7 @@
           </ng-template>
         </ng-select>
 
-        <a style="cursor: pointer" [matTooltip]="'Recalculate Kpis'" data-bs-toggle="modal" data-bs-target="#RecalculatekpiModal"
+        <a style="cursor: pointer" [matTooltip]="'Recalculate Scores'" data-bs-toggle="modal" data-bs-target="#RecalculatekpiModal"
           >
           <span style="display: inline-block">
 
@@ -292,7 +292,7 @@
   </div>
 </ng-container>
 <ng-container *ngIf="!isRecalcualteKpi">
-  <app-prompt [title]="'Recalculate All kpis'" [uniqueId]="'RecalculatekpiModal'" [message]="
-      'Are you sure you want to recalculate kpis ?'
+  <app-prompt [title]="'Recalculate All Score'" [uniqueId]="'RecalculatekpiModal'" [message]="
+      'Are you sure you want to recalculate Scores?'
     " [confirmText]="'Yes'" [cancelText]="'No'" (confirm)="reCalculateKpis()"></app-prompt>
 </ng-container>

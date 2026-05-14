@@ -417,7 +417,7 @@ Select a country or pillar above, or ask a question to begin.`,
   globalQuickQuestions = [
     {
       label: 'Peace summary',
-      question: 'Summarize the peace progress across all countries in recent days.'
+      question: 'Summarize the peace across all countries in recent days.'
     },
     {
       label: 'Peace leaders',
@@ -429,11 +429,11 @@ Select a country or pillar above, or ask a question to begin.`,
     },
     {
       label: 'Recommendations',
-      question: 'What recommendations can improve peace and stability across countries?'
+      question: 'What are the key recommendations for enhancing global peace and stability?'
     },
     {
       label: 'Improved countries',
-      question: 'Which countries have improved their peace index the most recently?'
+      question: 'Which nations have experienced the most significant improvement in peace indicators recently?'
     },
     {
       label: 'Risk countries',
