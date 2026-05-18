@@ -320,7 +320,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               offsetY: -15,
               fontSize: '15px',
               fontWeight: 600,
-              color: '#3c5d54',
+              color: '#4793f7',
               fontFamily: 'inherit'
             },
             value: {
@@ -328,7 +328,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               offsetY: 8,
               fontSize: "28px",
               fontWeight: 700,
-              color: '#2f4841',
+              color: '#5688f5',
               fontFamily: 'inherit',
               formatter: (v: any) => {
                 const value = Number(v);
@@ -340,7 +340,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               label: "Pillar Score",
               fontSize: '16px',
               fontWeight: 600,
-              color: "#4a7167",
+              color: "#487ff5",
               formatter: (w: any) => (w.globals.series[1] ?? 0).toFixed(1),
             },
           },
@@ -354,7 +354,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
         "Minimum",
       ],
 
-      colors: ["#2f4841", "#4a7167", "#79a89b", "#a2c3ba"],
+      colors: ["#104cf0", "#256ca5", "#4076eb", "#8381fa"],
 
       stroke: {
         lineCap: "round",
@@ -366,7 +366,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
           shade: 'dark',
           type: 'horizontal',
           shadeIntensity: 0.5,
-          gradientToColors: ['#3c5d54', '#578679', '#8eb5ab', '#b8d4cc'],
+          gradientToColors: ["#0b708a", "#4697da", "#7097e9", "#c7c6f3"],
           inverseColors: false,
           opacityFrom: 1,
           opacityTo: 0.85,
@@ -385,7 +385,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
         fontWeight: 600,
         fontFamily: 'inherit',
         labels: {
-          colors: '#2f4841',
+          colors: '#3d77f5',
           useSeriesColors: false,
         },
         markers: {
@@ -401,7 +401,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
         },
         formatter: (seriesName: string, opts: any) => {
           const value = opts.w.globals.series[opts.seriesIndex] ?? 0;
-          return `<span style="color: #2e4740; font-weight: 600;">${seriesName}</span>: <span style="color: #4a7167; font-weight: 700;">${value.toFixed(2)}</span>`;
+          return `<span style="color: #2a74d4; font-weight: 600;">${seriesName}</span>: <span style="color: #679ae6; font-weight: 700;">${value.toFixed(2)}</span>`;
         },
       },
 
@@ -457,7 +457,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               margin-bottom: 10px;
               font-size: 13px;
               font-weight: 600;
-              color: #1f2937;
+              color: #31435c;
             ">
               <span style="
                 width: 10px;
@@ -490,7 +490,7 @@ export class CountryUserDashboardComponent implements OnInit, OnDestroy {
               <div style="
                 width: ${value}%;
                 height: 100%;
-                background: linear-gradient(90deg, ${color}, #a2c3ba);
+                background: linear-gradient(90deg, ${color}, #75a4fc);
                 border-radius: 4px;
               "></div>
             </div>
