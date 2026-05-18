@@ -138,11 +138,11 @@ Select a country or pillar above, or ask a question to begin.`,
     if (this.selectedCountry()) {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && !pq.related.includes('global'))
-        //.slice(0, 4);
+      //.slice(0, 4);
     } else {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && pq.related.includes('global'))
-        //.slice(0, 4);
+      //.slice(0, 4);
     }
   }
 
@@ -279,20 +279,9 @@ Select a country or pillar above, or ask a question to begin.`,
     });
   }
 
-    getCountrySlides(
-    countryId: number
-  ): Observable<ResultResponseDto<ChatCountryExecutiveSlidesResponse>> {
+  getContriesCrossComparision() {
+    let userText = "Explain cross comparisons for these countries for each pillar with risk and opportunities."
 
-    return this.http.post<ResultResponseDto<ChatCountryExecutiveSlidesResponse>>(
-      `Chat/countrySlides`,
-      countryId as any
-    );
-  }
-
-  getContriesCrossComparision(){
-
-    let userText ="Explain cross comparisons for these countries for each pillar with risk and opportunities."
-   
     if (this.isTyping()) {
       this.stopGeneration();
     }
@@ -359,7 +348,7 @@ Select a country or pillar above, or ask a question to begin.`,
             this.handleError(assistantId, observer, 'Request failed. Please try again.');
           },
         });
-      } 
+      }
     });
   }
 
@@ -426,14 +415,18 @@ Select a country or pillar above, or ask a question to begin.`,
   }
 
 
-
-
-
-
   // ─── HTTP ─────────────────────────────────────────────────────────────────
 
+  getCountrySlides(countryId: number): Observable<ResultResponseDto<ChatCountryExecutiveSlidesResponse>> {
+
+    return this.http.post<ResultResponseDto<ChatCountryExecutiveSlidesResponse>>(
+      `Chat/countrySlides`,
+      countryId as any
+    );
+  }
+
   private getAllCountriesByUserId(userId: number) {
-    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/getCountryUserCountries'  : `Country/getAllCountryByUserId/${userId}`;
+    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/getCountryUserCountries' : `Country/getAllCountryByUserId/${userId}`;
 
     return this.http
       .get(url)
@@ -441,7 +434,7 @@ Select a country or pillar above, or ask a question to begin.`,
   }
 
   private getAllPillars() {
-     let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/Pillars'  :`Pillar/Pillars`;
+    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/Pillars' : `Pillar/Pillars`;
     return this.http
       .get(url)
       .pipe(map(x => x as PillarsVM[]));
@@ -469,8 +462,6 @@ Select a country or pillar above, or ask a question to begin.`,
       .post('chat/crossComparision', request)
       .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
   }
-
-
 
   // Questions for a single country
   countryQuickQuestions = [
@@ -503,7 +494,6 @@ Select a country or pillar above, or ask a question to begin.`,
       question: 'What are the latest peace trends and international cooperation efforts related to this country?'
     }
   ];
-
 
   // Questions for all countries globally
   globalQuickQuestions = [

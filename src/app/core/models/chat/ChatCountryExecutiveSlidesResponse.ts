@@ -24,11 +24,7 @@ export interface CountryExecutiveSlidesResult {
   countryId: number;
   countryName: string;
 
-  dailyPerformance: PerformanceSummary;
-
-  weeklyPerformance: PerformanceSummary;
-
-  monthlyPerformance: PerformanceSummary;
+  recentPerformance: PerformanceSummary;
 
   combinedRisks: CombinedRiskItem[];
 

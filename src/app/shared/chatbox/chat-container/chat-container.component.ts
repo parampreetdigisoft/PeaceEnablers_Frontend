@@ -54,6 +54,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   protected messages = this.chatService.messages;
   protected selectedCountry = this.chatService.selectedCountry;
   protected selectedPillar = this.chatService.selectedPillar;
+  isExpanded = true;
 
   // ─── Computed ─────────────────────────────────────────────────────────────
   protected hasContext = computed(() =>
@@ -122,33 +123,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     }
   }
 
-  startSlider(): void {
-
-    clearInterval(this.intervalId);
-
-    this.intervalId = setInterval(() => {
-
-      // trigger flip
-      this.animate = false;
-
-      this.cdr.detectChanges();
-
-      setTimeout(() => {
-
-        // change slide
-        this.currentSlide =
-          (this.currentSlide + 1) % this.sliderItems.length;
-
-        // add animation once
-        this.animate = true;
-
-        this.cdr.detectChanges();
-
-      }, 50);
-
-    }, 8000);
-  }
-
   onCountryChange(city: CountryVM | null): void {
     this.sliderItems = [];
     this.currentSlide = 0;
@@ -171,22 +145,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
           : [];
 
         this.sliderItems = [
-
           {
-            title: `${data.countryName} Daily Performance`,
-            subtitle: data.dailyPerformance?.summary
+            title: `${data.countryName} Recent Performance`,
+            subtitle: data.recentPerformance?.summary
           },
-
-          {
-            title: `${data.countryName} Weekly Performance`,
-            subtitle: data.weeklyPerformance?.summary
-          },
-
-          {
-            title: `${data.countryName} Monthly Performance`,
-            subtitle: data.monthlyPerformance?.summary
-          },
-
           ...earlyWarnings.map((x: any) => ({
             title: x.title || 'Early Warning',
             subtitle: x.description || x.summary
@@ -349,4 +311,160 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       false
     );
   }
+
+
+  getTrendLabel(item: any): string {
+    return item?.trend;
+  }
+  getTrendClass(level?: string): string {
+
+    switch ((level || '').toLowerCase()) {
+
+      // Positive / neutral trends
+      case 'improving':
+        return 'badge--success';
+
+      case 'stable':
+        return 'badge--stable';
+
+      // Warning severity levels
+      case 'medium':
+        return 'badge--medium';
+
+      case 'high':
+        return 'badge--high-risk';
+
+      case 'worsening':
+        return 'badge--danger';
+
+      case 'severe':
+        return 'badge--severe';
+
+      case 'critical':
+        return 'badge--critical';
+
+      default:
+        return 'badge--default';
+    }
+  }
+
+  startSlider(): void {
+
+    clearInterval(this.intervalId);
+
+    this.intervalId = setInterval(() => {
+
+      // remove animation class
+      this.animate = false;
+
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+
+        // next slide
+        this.currentSlide =
+          (this.currentSlide + 1) % this.sliderItems.length;
+
+        // trigger slide animation
+        this.animate = true;
+
+        this.cdr.detectChanges();
+
+        // remove class again after animation
+        setTimeout(() => {
+          this.animate = false;
+          this.cdr.detectChanges();
+        }, 700);
+
+      }, 50);
+
+    }, 8000);
+  }
+
+  nextSlide(): void {
+
+    this.animate = false;
+
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+
+      this.currentSlide =
+        (this.currentSlide + 1) % this.sliderItems.length;
+
+      this.animate = true;
+
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.animate = false;
+        this.cdr.detectChanges();
+      }, 700);
+
+    }, 50);
+
+    this.startSlider();
+  }
+
+  prevSlide(): void {
+
+    this.animate = false;
+
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+
+      this.currentSlide =
+        (this.currentSlide - 1 + this.sliderItems.length)
+        % this.sliderItems.length;
+
+      this.animate = true;
+
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.animate = false;
+        this.cdr.detectChanges();
+      }, 700);
+
+    }, 50);
+
+    this.startSlider();
+  }
+
+  goToSlide(index: number): void {
+
+    if (index === this.currentSlide) {
+      return;
+    }
+
+    this.animate = false;
+
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+
+      this.currentSlide = index;
+
+      this.animate = true;
+
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+
+        this.animate = false;
+
+        this.cdr.detectChanges();
+
+      }, 700);
+
+    }, 50);
+
+    this.startSlider();
+  }
+  
+  toggleSlide(): void {
+    this.isExpanded = !this.isExpanded;
+  }
+
 }
