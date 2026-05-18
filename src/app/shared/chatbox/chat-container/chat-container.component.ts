@@ -146,17 +146,20 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
         this.sliderItems = [
           {
-            title: `${data.countryName} Recent Performance`,
-            subtitle: data.recentPerformance?.summary
+            title: `${data.countryName} recent performance`,
+            subtitle: data.recentPerformance?.summary,
+            trend: "Recent"
           },
           ...earlyWarnings.map((x: any) => ({
             title: x.title || 'Early Warning',
-            subtitle: x.description || x.summary
+            subtitle: x.description || x.summary,
+            trend: "Early Warning"
           })),
 
           ...combinedRisks.map((x: any) => ({
             title: x.riskName || 'Risk',
-            subtitle: x.summary || x.description
+            subtitle: x.summary || x.description,
+            trend: "Risk"
           }))
         ];
 
@@ -316,37 +319,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   getTrendLabel(item: any): string {
     return item?.trend;
   }
-  getTrendClass(level?: string): string {
 
-    switch ((level || '').toLowerCase()) {
-
-      // Positive / neutral trends
-      case 'improving':
-        return 'badge--success';
-
-      case 'stable':
-        return 'badge--stable';
-
-      // Warning severity levels
-      case 'medium':
-        return 'badge--medium';
-
-      case 'high':
-        return 'badge--high-risk';
-
-      case 'worsening':
-        return 'badge--danger';
-
-      case 'severe':
-        return 'badge--severe';
-
-      case 'critical':
-        return 'badge--critical';
-
-      default:
-        return 'badge--default';
-    }
-  }
 
   startSlider(): void {
 
@@ -462,7 +435,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
     this.startSlider();
   }
-  
+
   toggleSlide(): void {
     this.isExpanded = !this.isExpanded;
   }

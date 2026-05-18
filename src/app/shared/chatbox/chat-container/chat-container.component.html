@@ -126,9 +126,9 @@
               <div class="flip-hero__icon">
                 <button type="button" class="flip-hero__toggle">
 
-                {{ isExpanded ? '▲' : '▼' }}
+                  {{ isExpanded ? '▲' : '▼' }}
 
-              </button>
+                </button>
                 <!-- <i class="fas fa-chart-line"></i> -->
               </div>
 
@@ -147,16 +147,14 @@
             <div class="flip-hero__actions">
 
 
-              <span *ngIf="getTrendLabel(sliderItems[currentSlide])" class="trend-badge" [ngClass]="getTrendClass(
-                sliderItems[currentSlide]?.trend
-              )">
+              <span *ngIf="getTrendLabel(sliderItems[currentSlide])" class="trend-badge">
 
                 <span class="trend-dot"></span>
 
                 {{ getTrendLabel(sliderItems[currentSlide]) }}
 
               </span>
-              
+
 
             </div>
 
