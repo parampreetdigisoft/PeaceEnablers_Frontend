@@ -70,9 +70,35 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     return null;
   });
 
+  protected displayMessages = computed(() =>
+    this.messages().filter(m => m.id !== 'welcome' && m.content?.trim())
+  );
+
+  protected showWorkspaceEmpty = computed(() => this.displayMessages().length === 0);
+
+  readonly rotatingHeadlines = [
+    'Surface stability signals across regions',
+    'Interrogate country risk with pillar context',
+    'Compare indices and emerging pressure points',
+    'Brief on conflict trajectories and early warnings',
+  ];
+
+  readonly rotatingPlaceholders = [
+    'Frame a country intelligence question…',
+    'Which stability indicators matter for your decision?',
+    'Ask about governance, security, or humanitarian drivers…',
+    'Request a cross-country or regional assessment…',
+  ];
+
+  rotatingIndex = signal(0);
+  placeholderIndex = signal(0);
+  promptAnimating = signal(false);
+  placeholderAnimating = signal(false);
+
   // ─── Cleanup ──────────────────────────────────────────────────────────────
   private destroy$ = new Subject<void>();
-
+  private promptRotateId?: ReturnType<typeof setInterval>;
+  private placeholderRotateId?: ReturnType<typeof setInterval>;
 
   sliderItems: any[] = [];
   currentSlide = 0;
@@ -118,6 +144,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     this.chatService.getPillars();
     this.chatService.getFAQDs();
     this.startSlider();
+    this.startPromptRotation();
     if (this.chatService.crossComparisionCountryIDs.value.length > 0) {
       this.getContriesCrossComparision()
     }
@@ -176,6 +203,13 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
+    this.stopPromptRotation();
+  }
+
+  protected engineStatusLabel(): string {
+    if (this.isTyping()) return 'Processing analysis';
+    if (this.hasContext()) return 'Context locked';
+    return 'Engine ready';
   }
 
   // ─── Toggle & Close ───────────────────────────────────────────────────────
@@ -438,6 +472,39 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   toggleSlide(): void {
     this.isExpanded = !this.isExpanded;
+  }
+
+  private startPromptRotation(): void {
+    this.stopPromptRotation();
+    this.promptRotateId = setInterval(() => this.advanceRotatingText('headline'), 5200);
+    this.placeholderRotateId = setInterval(() => this.advanceRotatingText('placeholder'), 4800);
+  }
+
+  private stopPromptRotation(): void {
+    if (this.promptRotateId) clearInterval(this.promptRotateId);
+    if (this.placeholderRotateId) clearInterval(this.placeholderRotateId);
+    this.promptRotateId = undefined;
+    this.placeholderRotateId = undefined;
+  }
+
+  private advanceRotatingText(kind: 'headline' | 'placeholder'): void {
+    if (kind === 'headline') {
+      this.promptAnimating.set(true);
+      setTimeout(() => {
+        const next = (this.rotatingIndex() + 1) % this.rotatingHeadlines.length;
+        this.rotatingIndex.set(next);
+        this.promptAnimating.set(false);
+        this.cdr.markForCheck();
+      }, 320);
+    } else if (!this.inputText().trim()) {
+      this.placeholderAnimating.set(true);
+      setTimeout(() => {
+        const next = (this.placeholderIndex() + 1) % this.rotatingPlaceholders.length;
+        this.placeholderIndex.set(next);
+        this.placeholderAnimating.set(false);
+        this.cdr.markForCheck();
+      }, 280);
+    }
   }
 
 }

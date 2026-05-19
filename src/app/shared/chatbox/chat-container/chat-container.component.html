@@ -1,29 +1,23 @@
-<!-- ══════════════════════════════════════════════════════════════
-     PEM Aevum · Redesigned Chat — Single Panel, No Double Sidebar
-     ══════════════════════════════════════════════════════════════ -->
+<!-- PEM Aevum · Intelligence workspace -->
 <div class="pem-chat">
 
-  <!-- ══════════════════════════════════════════════════════════
-       COMMAND BAR  (brand + context selectors + status, all-in-one)
-       ══════════════════════════════════════════════════════════ -->
-  <div class="command-bar">
-
-    <!-- Left: Identity -->
+  <header class="command-bar">
     <div class="cb__identity">
-      <div class="cb__orb">
+      <div class="cb__orb" aria-hidden="true">
         <div class="cb__orb-ring"></div>
-        <div class="cb__orb-ring" style="animation-delay:0.8s"></div>
-        <svg class="cb__orb-svg" viewBox="0 0 40 40" fill="none">
-          <circle cx="20" cy="20" r="18" fill="#77BD3E" opacity="0.12" />
-          <circle cx="20" cy="20" r="13" fill="#77BD3E" opacity="0.18" />
-          <circle cx="20" cy="20" r="8" fill="#77BD3E" opacity="0.3" />
-          <circle cx="20" cy="20" r="4" fill="#77BD3E" />
-          <path d="M12 20 Q16 12 20 20 Q24 28 28 20" stroke="white" stroke-width="1.8" fill="none"
+        <div class="cb__orb-ring cb__orb-ring--delay"></div>
+        <svg class="cb__orb-svg" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="18" fill="#77BD3E" opacity="0.28" />
+          <circle cx="20" cy="20" r="13" fill="#77BD3E" opacity="0.42" />
+          <circle cx="20" cy="20" r="8" fill="#77BD3E" opacity="0.65" />
+          <circle cx="20" cy="20" r="4.5" fill="#5a9e30" />
+          <circle cx="20" cy="20" r="2" fill="#ffffff" opacity="0.95" />
+          <path d="M12 20 Q16 12 20 20 Q24 28 28 20" stroke="#ffffff" stroke-width="2.2" fill="none"
             stroke-linecap="round" />
-          <circle cx="20" cy="9" r="2" fill="white" opacity="0.8" />
-          <circle cx="20" cy="31" r="2" fill="white" opacity="0.8" />
-          <circle cx="9" cy="20" r="2" fill="white" opacity="0.8" />
-          <circle cx="31" cy="20" r="2" fill="white" opacity="0.8" />
+          <circle cx="20" cy="8" r="2" fill="#ffffff" opacity="0.9" />
+          <circle cx="20" cy="32" r="2" fill="#ffffff" opacity="0.9" />
+          <circle cx="8" cy="20" r="2" fill="#ffffff" opacity="0.9" />
+          <circle cx="32" cy="20" r="2" fill="#ffffff" opacity="0.9" />
         </svg>
       </div>
       <div>
@@ -32,36 +26,35 @@
       </div>
     </div>
 
-    <!-- Centre: Context selectors -->
     <div class="cb__selectors">
-
-      <!-- Country selector -->
-      <div class="cb__selector-group">
-        <div class="cb__selector-icon">
+      <div class="cb__selector-field">
+        <span class="cb__selector-label">Country</span>
+        <div class="cb__selector-group" [class.cb__selector-group--filled]="!!selectedCountry()">
+          <div class="cb__selector-icon" aria-hidden="true">
           <svg viewBox="0 0 14 14" fill="none">
             <path d="M7 1.5a5 5 0 100 11A5 5 0 007 1.5z" stroke="currentColor" stroke-width="1.1" />
             <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
-            <path d="M4 3Q5.5 5 7 7T10 11" stroke="currentColor" stroke-width="0.9" fill="none"
-              stroke-linecap="round" />
           </svg>
         </div>
         <div class="cb__selector-inner">
           <ng-select [items]="chatService.countries | async" [searchable]="true" [searchFn]="customSearchFn"
-            [clearable]="true" [ngModel]="selectedCountry()" (ngModelChange)="onCountryChange($event)"
-            class="analyst_multi_select" placeholder="Select country…" bindLabel="countryName"
-            notFoundText="No countries found">
+            [clearable]="true" appendTo="body" [ngModel]="selectedCountry()" (ngModelChange)="onCountryChange($event)"
+            class="analyst_multi_select pem-context-select" placeholder="Select country" bindLabel="countryName"
+            notFoundText="No countries match your search" typeToSearchText="Type to search countries">
             <ng-template ng-label-tmp let-item="item">{{ item?.countryName }}</ng-template>
             <ng-template ng-option-tmp let-item="item">
-              {{ item.countryName }}
-              <span class="option-sub">· {{ item.continent }}</span>
+              <span class="option-main">{{ item.countryName }}</span>
+              <span class="option-sub">{{ item.continent }}</span>
             </ng-template>
           </ng-select>
         </div>
+        </div>
       </div>
 
-      <!-- Pillar selector -->
-      <div class="cb__selector-group">
-        <div class="cb__selector-icon">
+      <div class="cb__selector-field cb__selector-field--pillar">
+        <span class="cb__selector-label">Pillar</span>
+        <div class="cb__selector-group" [class.cb__selector-group--filled]="!!selectedPillar()">
+        <div class="cb__selector-icon" aria-hidden="true">
           <svg viewBox="0 0 14 14" fill="none">
             <rect x="1" y="7" width="3" height="5.5" rx="0.7" fill="currentColor" opacity="0.3" />
             <rect x="5.5" y="4" width="3" height="8.5" rx="0.7" fill="currentColor" opacity="0.6" />
@@ -69,330 +62,190 @@
           </svg>
         </div>
         <div class="cb__selector-inner">
-          <ng-select [items]="chatService.pillars | async" [searchable]="true" [clearable]="true"
-            [ngModel]="selectedPillar()" (ngModelChange)="onPillarChange($event)" class="analyst_multi_select"
-            placeholder="Select pillar…" bindLabel="pillarName" notFoundText="No pillars found">
+          <ng-select [items]="chatService.pillars | async" [searchable]="true" [clearable]="true" appendTo="body"
+            [ngModel]="selectedPillar()" (ngModelChange)="onPillarChange($event)" class="analyst_multi_select pem-context-select"
+            placeholder="Select pillar" bindLabel="pillarName"
+            notFoundText="No pillars match your search" typeToSearchText="Type to search pillars">
             <ng-template ng-label-tmp let-item="item">{{ item?.pillarName }}</ng-template>
-            <ng-template ng-option-tmp let-item="item">{{ item.pillarName }}</ng-template>
+            <ng-template ng-option-tmp let-item="item">
+              <span class="option-main">{{ item.pillarName }}</span>
+            </ng-template>
           </ng-select>
         </div>
-      </div>
-
-    </div>
-
-    <!-- Right: Status + actions -->
-    <div class="cb__status">
-
-      <!-- Active context pill -->
-      <div *ngIf="hasContext()" class="cb__context-pill">
-        <span class="cb__context-pill-dot"></span>
-        <span class="cb__context-pill-label">{{ contextLabel() }}</span>
-        <button (click)="clearContext()" class="cb__clear-btn" matTooltip="Clear context">✕</button>
-      </div>
-
-      <!-- Online / typing status -->
-      <div class="cb__status-indicator">
-        <span [class.cb__status-dot--typing]="isTyping()" class="cb__status-dot"></span>
-        <span class="cb__status-text">{{ isTyping() ? 'Analyzing…' : 'Online' }}</span>
-      </div>
-
-      <!-- New conversation button -->
-      <button (click)="clearHistory()" class="cb__new-chat-btn">
-        <svg viewBox="0 0 14 14" fill="none">
-          <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-        </svg>
-        New Chat
-      </button>
-
-    </div>
-  </div>
-
-
-  <div class="flip-hero" *ngIf="sliderItems.length > 0 && selectedCountry()">
-
-    <div class="flip-hero__viewport">
-
-      <!-- LEFT -->
-
-      <div class="flip-hero__slider" [class.slide]="animate">
-
-        <div class="flip-hero__card">
-
-          <!-- HEADER -->
-          <div class="flip-hero__header flip-hero__header--clickable" (click)="toggleSlide()">
-
-            <div class="flip-hero__title-wrapper">
-
-              <div class="flip-hero__icon">
-                <button type="button" class="flip-hero__toggle">
-
-                  {{ isExpanded ? '▲' : '▼' }}
-
-                </button>
-                <!-- <i class="fas fa-chart-line"></i> -->
-              </div>
-
-              <div class="flip-hero__title-content">
-
-                <h2 class="flip-hero__title">
-                  {{ sliderItems[currentSlide]?.title }}
-                </h2>
-
-
-              </div>
-
-            </div>
-
-            <!-- RIGHT ACTIONS -->
-            <div class="flip-hero__actions">
-
-
-              <span *ngIf="getTrendLabel(sliderItems[currentSlide])" class="trend-badge">
-
-                <span class="trend-dot"></span>
-
-                {{ getTrendLabel(sliderItems[currentSlide]) }}
-
-              </span>
-
-
-            </div>
-
-          </div>
-
-          <!-- SCROLLABLE CONTENT -->
-          <div class="flip-hero__content" *ngIf="isExpanded">
-
-            <!-- PERFORMANCE VIEW -->
-            <div *ngIf="sliderItems[currentSlide]?.performance; else normalSlide">
-
-              <div class="performance-block">
-
-                <h4>Daily</h4>
-
-                <p>
-                  {{ sliderItems[currentSlide]?.performance?.daily }}
-                </p>
-
-              </div>
-
-              <div class="performance-block">
-
-                <h4>Weekly</h4>
-
-                <p>
-                  {{ sliderItems[currentSlide]?.performance?.weekly }}
-                </p>
-
-              </div>
-
-              <div class="performance-block">
-
-                <h4>Monthly</h4>
-
-                <p>
-                  {{ sliderItems[currentSlide]?.performance?.monthly }}
-                </p>
-
-              </div>
-
-            </div>
-
-            <!-- NORMAL VIEW -->
-            <ng-template #normalSlide>
-
-              <p class="flip-hero__subtitle">
-                {{ sliderItems[currentSlide]?.subtitle }}
-              </p>
-
-            </ng-template>
-
-          </div>
-
         </div>
-
-
-      </div>
-
-      <!-- DOTS -->
-
-      <div class="flip-hero__dots">
-
-        <button *ngFor="let item of sliderItems; let i = index" class="flip-hero__dot"
-          [class.active]="i === currentSlide" (click)="goToSlide(i)">
-        </button>
-
       </div>
     </div>
 
+    <div class="cb__status">
+      <div class="cb__engine-state" [class.cb__engine-state--active]="isTyping()">
+        <span class="cb__engine-bar" aria-hidden="true"><span class="cb__engine-bar-fill"></span></span>
+        <span class="cb__engine-label">{{ engineStatusLabel() }}</span>
+      </div>
 
-  </div>
+      <button type="button" (click)="clearHistory()" class="cb__session-btn" matTooltip="Start a new analysis session">
+        <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2.5 7h9M7 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        New session
+      </button>
+    </div>
+  </header>
 
-  <!-- ══════════════════════════════════════════════════════════
-       SUGGESTIONS RAIL  (horizontal scrollable chips)
-       ══════════════════════════════════════════════════════════ -->
-  <div class="suggestions-rail">
-    <span class="rail__label">Try asking</span>
-    <button *ngFor="let item of chatService.quickQuestions()" (click)="sendQuickQuestion(item.question)"
-      class="rail__chip">
-      <svg viewBox="0 0 12 12" fill="none">
-        <path d="M1.5 6h9M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
+  <section class="flip-hero" *ngIf="sliderItems.length > 0 && selectedCountry()" aria-label="Country intelligence highlights">
+    <div class="flip-hero__viewport">
+      <div class="flip-hero__slider" [class.slide]="animate">
+        <article class="flip-hero__card">
+          <header class="flip-hero__header flip-hero__header--clickable" (click)="toggleSlide()">
+            <div class="flip-hero__title-wrapper">
+              <div class="flip-hero__icon">
+                <button type="button" class="flip-hero__toggle" [attr.aria-expanded]="isExpanded">
+                  <svg viewBox="0 0 12 12" fill="none" [class.flip-hero__chevron--up]="isExpanded">
+                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  </svg>
+                </button>
+              </div>
+              <div class="flip-hero__title-content">
+                <h2 class="flip-hero__title">{{ sliderItems[currentSlide]?.title }}</h2>
+              </div>
+            </div>
+            <div class="flip-hero__actions" *ngIf="getTrendLabel(sliderItems[currentSlide])">
+              <span class="trend-badge">
+                <span class="trend-dot"></span>
+                {{ getTrendLabel(sliderItems[currentSlide]) }}
+              </span>
+            </div>
+          </header>
+          <div class="flip-hero__content" *ngIf="isExpanded">
+            <ng-container *ngIf="sliderItems[currentSlide]?.performance; else normalSlide">
+              <div class="performance-block">
+                <h4>Daily</h4>
+                <p>{{ sliderItems[currentSlide]?.performance?.daily }}</p>
+              </div>
+              <div class="performance-block">
+                <h4>Weekly</h4>
+                <p>{{ sliderItems[currentSlide]?.performance?.weekly }}</p>
+              </div>
+              <div class="performance-block">
+                <h4>Monthly</h4>
+                <p>{{ sliderItems[currentSlide]?.performance?.monthly }}</p>
+              </div>
+            </ng-container>
+            <ng-template #normalSlide>
+              <p class="flip-hero__subtitle">{{ sliderItems[currentSlide]?.subtitle }}</p>
+            </ng-template>
+          </div>
+        </article>
+      </div>
+      <div class="flip-hero__dots" role="tablist">
+        <button *ngFor="let item of sliderItems; let i = index" type="button" class="flip-hero__dot"
+          [class.active]="i === currentSlide" (click)="goToSlide(i)"
+          [attr.aria-label]="'Insight slide ' + (i + 1)"></button>
+      </div>
+    </div>
+  </section>
+
+  <nav class="suggestions-rail" aria-label="Suggested inquiries">
+    <span class="rail__label">Inquiry paths</span>
+    <button *ngFor="let item of chatService.quickQuestions()" type="button"
+      (click)="sendQuickQuestion(item.question)" class="rail__chip">
       {{ item.label }}
     </button>
-  </div>
+  </nav>
 
-  <!-- ══════════════════════════════════════════════════════════
-       MESSAGES
-       ══════════════════════════════════════════════════════════ -->
-  <div #messagesContainer class="chat-messages">
+  <div #messagesContainer class="chat-messages" role="log" aria-live="polite">
 
-    <!-- Empty / welcome state -->
-    <div *ngIf="messages().length <= 1" class="welcome-state">
-
-      <div class="welcome__graphic">
-        <div class="welcome__rings"></div>
-        <div class="welcome__rings"></div>
-        <svg viewBox="0 0 64 64" fill="none">
-          <circle cx="32" cy="32" r="29" fill="#77BD3E" opacity="0.08" />
-          <circle cx="32" cy="32" r="21" fill="#77BD3E" opacity="0.14" />
-          <circle cx="32" cy="32" r="13" fill="#77BD3E" opacity="0.22" />
-          <circle cx="32" cy="32" r="6.5" fill="#77BD3E" />
-          <path d="M18 32 Q25 18 32 32 Q39 46 46 32" stroke="white" stroke-width="2.5" fill="none"
-            stroke-linecap="round" />
-          <circle cx="32" cy="11" r="2.5" fill="white" opacity="0.85" />
-          <circle cx="32" cy="53" r="2.5" fill="white" opacity="0.85" />
-          <circle cx="11" cy="32" r="2.5" fill="white" opacity="0.85" />
-          <circle cx="53" cy="32" r="2.5" fill="white" opacity="0.85" />
+    <section *ngIf="showWorkspaceEmpty()" class="workspace-empty">
+      <div class="workspace-empty__visual" aria-hidden="true">
+        <span class="workspace-empty__ring"></span>
+        <span class="workspace-empty__ring workspace-empty__ring--delayed"></span>
+        <svg viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="36" stroke="#77BD3E" stroke-width="0.6" opacity="0.2" />
+          <circle cx="40" cy="40" r="24" fill="#77BD3E" opacity="0.08" />
+          <circle cx="40" cy="40" r="6" fill="#77BD3E" />
+          <path d="M22 40 Q32 22 40 40 Q48 58 58 40" stroke="#003160" stroke-width="1.5" fill="none" opacity="0.35" />
         </svg>
       </div>
 
-      <h2 class="welcome__title">How can I help you today?</h2>
-      <p class="welcome__subtitle">
-        Ask me anything about peace, stability, and urban intelligence data.<br>
-        Select a country and pillar above for context-aware answers.
+      <p class="workspace-empty__eyebrow">Intelligence workspace</p>
+
+      <h2 class="workspace-empty__headline rotator" [class.rotator--out]="promptAnimating()">
+        <span class="rotator__text">{{ rotatingHeadlines[rotatingIndex()] }}</span>
+      </h2>
+
+      <p class="workspace-empty__lede">
+        Select country and pillar above, then submit an analytical question.
+        PEM Aevum returns concise, source-aware country intelligence.
       </p>
 
-      <div class="welcome__cards">
-        <div class="welcome__card">
-          <svg viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="6" stroke="#77bd3e" stroke-width="1.4" />
-            <path d="M5 8a3 3 0 006 0" stroke="#77bd3e" stroke-width="1.3" stroke-linecap="round" />
-            <line x1="8" y1="4" x2="8" y2="5.5" stroke="#77bd3e" stroke-width="1.3" stroke-linecap="round" />
-          </svg>
-          Global peace &amp; security
-        </div>
-        <div class="welcome__card">
-          <svg viewBox="0 0 16 16" fill="none">
-            <rect x="2" y="10" width="3" height="4" rx="0.8" fill="#77bd3e" opacity="0.4" />
-            <rect x="6.5" y="7" width="3" height="7" rx="0.8" fill="#77bd3e" opacity="0.65" />
-            <rect x="11" y="3" width="3" height="11" rx="0.8" fill="#77bd3e" />
-          </svg>
-          Country risk &amp; stability
-        </div>
-        <div class="welcome__card">
-          <svg viewBox="0 0 16 16" fill="none">
-            <polyline points="2,12 5,7 8,9 11,4 14,5" stroke="#77bd3e" stroke-width="1.4" fill="none"
-              stroke-linecap="round" stroke-linejoin="round" />
-            <circle cx="14" cy="5" r="1.5" fill="#77bd3e" />
-          </svg>
-          Trends &amp; rankings
-        </div>
-        <div class="welcome__card">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M8 2l1.5 3.5 3.8.4-2.8 2.5.8 3.8L8 10.5l-3.3 1.7.8-3.8-2.8-2.5 3.8-.4z" stroke="#77bd3e"
-              stroke-width="1.3" stroke-linejoin="round" fill="none" />
-          </svg>
-          Recommendations
-        </div>
-      </div>
-    </div>
+      <ul class="workspace-empty__domains">
+        <li><span class="domain-dot"></span>Stability &amp; conflict dynamics</li>
+        <li><span class="domain-dot"></span>Governance &amp; institutional risk</li>
+        <li><span class="domain-dot"></span>Humanitarian &amp; security pressure</li>
+        <li><span class="domain-dot"></span>Cross-country comparison</li>
+      </ul>
+    </section>
 
-    <!-- Message list -->
-    <div *ngFor="let msg of messages(); trackBy: trackById" [class.message--user]="msg.role === 'user'"
-      [class.message--assistant]="msg.role === 'assistant'" class="message">
+    <article *ngFor="let msg of displayMessages(); trackBy: trackById"
+      [class.brief--query]="msg.role === 'user'"
+      [class.brief--intel]="msg.role === 'assistant'"
+      class="brief">
 
-      <!-- Assistant avatar -->
-      <div *ngIf="msg.role === 'assistant'" class="message__avatar">
-        <svg viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="14" r="12" fill="#77BD3E" opacity="0.12" />
-          <circle cx="14" cy="14" r="7" fill="#77BD3E" opacity="0.25" />
-          <circle cx="14" cy="14" r="3.5" fill="#77BD3E" />
-        </svg>
-      </div>
+      <header class="brief__meta">
+        <span class="brief__role">{{ msg.role === 'user' ? 'Analyst inquiry' : 'PEM Aevum brief' }}</span>
+        <time *ngIf="!msg.isStreaming" class="brief__time">{{ formatTime(msg.timestamp) }}</time>
+      </header>
 
-      <!-- User avatar -->
-      <div *ngIf="msg.role === 'user'" class="message__avatar">
-        <svg viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="11" r="4" fill="white" opacity="0.8" />
-          <path d="M6 24c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="white" stroke-width="1.8" fill="none"
-            stroke-linecap="round" />
-        </svg>
-      </div>
-
-      <!-- Bubble -->
-      <div class="message__bubble">
+      <div class="brief__body">
         <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
         <ng-container *ngIf="msg.role === 'assistant'">
           <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
-          <span *ngIf="msg.isStreaming" class="stream-cursor"></span>
+          <span *ngIf="msg.isStreaming" class="stream-cursor" aria-hidden="true"></span>
         </ng-container>
       </div>
+    </article>
 
-      <!-- Timestamp -->
-      <span *ngIf="!msg.isStreaming" class="message__time">
-        {{ formatTime(msg.timestamp) }}
-      </span>
+    <div *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'" class="synthesis-panel">
+      <span class="synthesis-panel__label">Synthesizing intelligence</span>
+      <span class="synthesis-panel__track" aria-hidden="true"><span class="synthesis-panel__fill"></span></span>
     </div>
-
-    <!-- Typing indicator -->
-    <div *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'" class="typing-indicator">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       INPUT AREA
-       ══════════════════════════════════════════════════════════ -->
-  <div class="chat-input-area">
-
-    <!-- Autocomplete dropdown -->
+  <footer class="chat-input-area">
     <div *ngIf="showSuggestions() && suggestions().length > 0" class="suggestions-dropdown">
-      <div class="suggestions-header">Suggested questions</div>
-      <button *ngFor="let s of suggestions()" (mousedown)="selectSuggestion(s)" class="suggestion-item">
+      <div class="suggestions-header">Matching inquiries</div>
+      <button *ngFor="let s of suggestions()" type="button" (mousedown)="selectSuggestion(s)" class="suggestion-item">
         <span class="suggestion-category">{{ s.category }}</span>
         <span class="suggestion-text">{{ s.questionText }}</span>
       </button>
     </div>
 
-    <div class="input-shell">
-      <input #inputField [value]="inputText()" [disabled]="isTyping()" (input)="onInputChange($event)"
-        (keydown)="onKeyDown($event)" (blur)="closeSuggestions()" type="text" class="chat-input"
-        placeholder="Ask anything about peace &amp; stability…" autocomplete="off" spellcheck="false">
-
-      <button [class.send-btn--active]="inputText().trim().length > 0" [disabled]="!inputText().trim() && !isTyping()"
-        (click)="isTyping() ? chatService.stopGeneration() : sendMessage()" class="send-btn" aria-label="Send message">
-
-        <!-- Send arrow -->
-        <svg *ngIf="!isTyping()" viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h14M13 5l5 5-5 5" stroke="white" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
+    <div class="input-shell" [class.input-shell--focused]="inputText().length > 0">
+      <label class="input-shell__label" for="pem-aevum-input">Submit analytical question</label>
+      <div class="input-shell__field">
+        <input #inputField id="pem-aevum-input" [value]="inputText()" [disabled]="isTyping()"
+          (input)="onInputChange($event)" (keydown)="onKeyDown($event)" (blur)="closeSuggestions()"
+          type="text" class="chat-input" placeholder=" " autocomplete="off" spellcheck="false">
+        <span *ngIf="!inputText().trim()" class="input-rotator" [class.input-rotator--out]="placeholderAnimating()"
+          aria-hidden="true">
+          {{ rotatingPlaceholders[placeholderIndex()] }}
+        </span>
+      </div>
+      <button type="button" [class.send-btn--active]="inputText().trim().length > 0"
+        [disabled]="!inputText().trim() && !isTyping()"
+        (click)="isTyping() ? chatService.stopGeneration() : sendMessage()"
+        class="send-btn"
+        [attr.aria-label]="isTyping() ? 'Stop synthesis' : 'Submit question'">
+        <svg *ngIf="!isTyping()" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
-
-        <!-- Stop square -->
-        <svg *ngIf="isTyping()" viewBox="0 0 20 20" fill="currentColor">
-          <rect x="5" y="5" width="10" height="10" rx="2.5" />
+        <svg *ngIf="isTyping()" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <rect x="5" y="5" width="10" height="10" rx="2" />
         </svg>
       </button>
     </div>
 
     <p class="input-disclaimer">
-      PEM Aevum may produce inaccurate information. Verify critical data independently.
+      Outputs support analysis; validate critical judgments against primary sources.
     </p>
-  </div>
-
+  </footer>
 </div>

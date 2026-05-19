@@ -59,14 +59,7 @@ export class ChatService {
   private readonly welcomeMessage: ChatMessage = {
     id: 'welcome',
     role: 'assistant',
-    content: `## Welcome to PeaceMappers
-
-Get insights on:
-- Global peace and security
-- Country risk and stability
-- Trends, rankings, and recommendations
-
-Select a country or pillar above, or ask a question to begin.`,
+    content: '',
     timestamp: new Date(),
   };
 
