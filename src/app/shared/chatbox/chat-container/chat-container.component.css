@@ -56,10 +56,10 @@
   box-shadow: 0 4px 24px rgba(0, 49, 96, 0.05);
   padding: 0 32px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
-  min-height: 68px;
+  gap: 16px 20px;
+  min-height: 76px;
 }
 
 /* ── Identity block ─────────────────────────────────────────── */
@@ -150,29 +150,41 @@
   line-height: 1.2;
 }
 
-/* ── Context selectors (side by side) ─────────────────────────── */
+/* ── Context selectors — always side-by-side on small PC+ ─────── */
 .cb__selectors {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: flex-end;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .cb__selector-field {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  min-width: 200px;
-  max-width: 240px;
-  flex: 0 1 240px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+  width: auto;
 }
 
 .cb__selector-field .cb__selector-group {
   width: 100%;
   max-width: none;
   min-width: 0;
+}
+
+/* Large screens: cap dropdown width */
+@media (min-width: 1401px) {
+  .cb__selector-field {
+    flex: 0 1 220px;
+    max-width: 220px;
+  }
 }
 
 .cb__selector-label {
@@ -1581,59 +1593,68 @@
   }
 }
 
-/* ── 1300px: compact command bar ────────────────────────────── */
-@media (max-width: 1300px) {
+/* ── 1280px: small laptop — keep dropdowns on one row ───────── */
+@media (max-width: 1280px) {
   .command-bar {
-    padding: 0 10px;
-    gap: 10px;
+    padding: 8px 16px;
+    gap: 10px 12px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .cb__orb {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cb__orb-svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cb__name {
+    font-size: 16px;
+  }
+
+  .cb__tagline {
+    font-size: 11px;
+  }
+
+  .cb__selectors {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: stretch;
   }
 
   .cb__selector-field {
-    min-width: 160px;
-    max-width: 200px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
   }
 
   ::ng-deep .cb__selector-inner .ng-select .ng-select-container .ng-value-container .ng-value,
   .cb__selector-inner .ng-select .ng-select-container .ng-value-container .ng-input>input {
-    font-size: 11px !important;
+    font-size: 11.5px !important;
   }
 
   .cb__selector-icon {
-    width: 30px;
-    height: 30px;
-  }
-
-  .cb__selector-field {
-    min-width: 170px;
-    max-width: 220px;
-  }
-
-  .cb__selector-field .cb__selector-group {
-    min-width: 0;
-    max-width: none;
-    width: 100%;
-    padding-right: 0;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
   }
 
   .cb__engine-label {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .cb__engine-state {
-    min-width: 120px;
+    min-width: 0;
     padding: 5px 8px;
   }
 
-  .cb__name {
-    font-size: 18px;
-  }
-
-  .cb__tagline {
-    font-size: 12px;
-  }
-
-  .flip-hero__title {
-    font-size: 13px;
+  .cb__session-btn {
+    padding: 0 12px;
+    font-size: 11px;
   }
 
   .flip-hero {
@@ -1641,24 +1662,12 @@
   }
 }
 
-/* ── 1200px: slight selector width adjustment ───────────────── */
-@media (max-width: 1200px) {
-  .cb__selector-field {
-    min-width: 150px;
-    max-width: 200px;
-  }
-
-  .cb__selector-field .cb__selector-group {
-    max-width: none;
-    width: 100%;
-  }
-}
-
-/* ── 1024px: tighten command bar padding ────────────────────── */
+/* ── 1024px: compact header, dropdowns still parallel ─────────── */
 @media (max-width: 1024px) {
   .command-bar {
-    padding: 0 20px;
-    gap: 14px;
+    padding: 8px 14px;
+    gap: 8px 10px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
 
   .cb__name {
@@ -1669,14 +1678,23 @@
     display: none;
   }
 
-  .cb__selector-field {
-    min-width: 140px;
-    max-width: 180px;
+  .cb__identity {
+    gap: 10px;
   }
 
-  .cb__selector-field .cb__selector-group {
+  .cb__selectors {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .cb__selector-field {
+    flex: 1 1 0;
+    min-width: 0;
     max-width: none;
-    width: 100%;
+  }
+
+  .cb__selector-label {
+    font-size: 9px;
   }
 
   .chat-input-area {
@@ -1705,45 +1723,57 @@
   }
 }
 
-/* ── 860px: 2-row command bar ────────────────────────────────── */
-@media (max-width: 860px) {
+/* ── 900px: 2-row command bar; dropdowns stay on one line ─────── */
+@media (max-width: 900px) {
   .command-bar {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
-    padding: 10px 16px;
-    gap: 8px 12px;
+    padding: 10px 14px;
+    gap: 8px 10px;
     min-height: auto;
+    align-items: center;
   }
 
   .cb__identity {
     grid-column: 1;
     grid-row: 1;
+    min-width: 0;
   }
 
   .cb__status {
     grid-column: 2;
     grid-row: 1;
     justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   .cb__selectors {
     grid-column: 1 / -1;
     grid-row: 2;
-    justify-content: flex-start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    justify-content: stretch;
     gap: 8px;
+    width: 100%;
+    min-width: 0;
     padding-bottom: 2px;
   }
 
-  .cb__selector-group {
-    flex: 1;
+  .cb__selector-field {
+    flex: 1 1 0;
     min-width: 0;
     max-width: none;
+    width: auto;
   }
 
-  .cb__selector-field {
-    flex: 1;
-    min-width: 0;
-    max-width: none;
+  .cb__selector-field .cb__selector-group {
+    width: 100%;
+  }
+
+  .cb__engine-state {
+    display: none;
   }
 
   .message {
@@ -1867,17 +1897,20 @@
   }
 
   .cb__selectors {
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 6px;
   }
 
-  .cb__selector-group {
-    flex: 1;
+  .cb__selector-field {
+    flex: 1 1 0;
     min-width: 0;
   }
 
   .cb__selector-icon {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
   }
 
   .suggestions-rail {
@@ -1946,13 +1979,18 @@
   }
 }
 
-/* ── 400px: very small screens ──────────────────────────────── */
-@media (max-width: 400px) {
+/* ── 520px: stack dropdowns only on very narrow screens ───────── */
+@media (max-width: 520px) {
   .cb__selectors {
     flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
   }
 
-  .cb__selector-group {
+  .cb__selector-field {
+    flex: 1 1 auto;
+    width: 100%;
     max-width: 100%;
   }
 
