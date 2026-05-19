@@ -170,7 +170,7 @@ Select a country or pillar above, or ask a question to begin.`,
       .map(msg => {
         const content =
           msg.content.length > 200
-            ? msg.content.substring(0, 200) + '...'
+            ? msg.content.substring(0, 150) + '...'
             : msg.content;
 
         return `${msg.role}: ${content}`;
@@ -197,10 +197,7 @@ Select a country or pillar above, or ask a question to begin.`,
         timestamp: new Date(),
         isStreaming: true,
       };
-
       this.messages.update(msgs => [...msgs, placeholder]);
-
-
 
       if (country) {
         const payload: CountryChatRequestDto = {
