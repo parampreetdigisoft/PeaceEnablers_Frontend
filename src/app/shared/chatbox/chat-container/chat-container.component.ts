@@ -33,6 +33,11 @@ import { AIAssistantFAQDto } from 'src/app/core/models/chat/AIAssistantFAQDto';
 })
 export class ChatContainerComponent implements OnInit, OnDestroy {
 
+  // ─── Sidebar Data ──────────────────────────────────────────────────────
+  countryStats: { peaceScore?: number; globalRank?: number } | null = null;
+  keyPillars: Array<{ name: string; score: number; iconClass?: string }> = [];
+  latestIntelligence: Array<{ text: string; time: string }> = [];
+
   // ─── DI ───────────────────────────────────────────────────────────────────
   protected chatService = inject(ChatService);
   private cdr = inject(ChangeDetectorRef);
