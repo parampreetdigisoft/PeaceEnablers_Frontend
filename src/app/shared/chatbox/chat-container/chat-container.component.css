@@ -161,6 +161,7 @@
 .pem-chat-inner--has-hero.pem-chat-inner--has-chat .chat-messages__inner {
   min-height: 0;
   justify-content: flex-start;
+  overflow: auto;
 }
 
 .pem-chat-inner--has-hero.pem-chat-inner--has-chat .chat-messages__anchor {
@@ -1556,6 +1557,7 @@
   gap: 14px;
   /* min-height: 100%; */
   box-sizing: border-box;
+  margin-bottom: auto;
 }
 
 .chat-messages__anchor {
@@ -2134,7 +2136,7 @@
   background: transparent;
   max-width: 100%;
   width: 100%;
-  margin-top:auto;
+  /* margin-top:auto; */
   box-sizing: border-box;
 }
 

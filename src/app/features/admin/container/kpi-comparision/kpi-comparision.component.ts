@@ -38,7 +38,7 @@ export type ChartOptions = {
   selector: 'app-kpi-comparision',
   templateUrl: './kpi-comparision.component.html',
   styleUrl: './kpi-comparision.component.css',
-  imports: [CommonModule, SharedModule, CircularScoreComponent,AiButtonComponent,CompareCountryKpiDetailComponent]
+  imports: [CommonModule, SharedModule, CircularScoreComponent, AiButtonComponent, CompareCountryKpiDetailComponent]
 
 })
 export class KpiComparisionComponent implements OnInit {
@@ -105,7 +105,7 @@ export class KpiComparisionComponent implements OnInit {
       }
     });
   }
-  getMutiplekpiLayerResults(layerID: number, viewDetailIndex:number) {
+  getMutiplekpiLayerResults(layerID: number, viewDetailIndex: number) {
 
     if (this.selectedCountries.length < 1) {
       this.compareCountryResponseDto = null;
@@ -125,7 +125,7 @@ export class KpiComparisionComponent implements OnInit {
       next: (res) => {
         this.viewDetailIndex = -1;
         if (res.succeeded) {
-          this.mutipleCountrykpiLayerResults = res.result || null;          
+          this.mutipleCountrykpiLayerResults = res.result || null;
           const sidebarEl = document.getElementById('kpiLayerSidebar');
           const offcanvas = new bootstrap.Offcanvas(sidebarEl);
           offcanvas.show();
@@ -188,7 +188,7 @@ export class KpiComparisionComponent implements OnInit {
     );
 
     const colorPalette = this.commonService.kpiColors;
-    
+
     let series: any[] = [];
     let strokeDashArray: number[] = [];
 
@@ -224,7 +224,7 @@ export class KpiComparisionComponent implements OnInit {
     let option: Partial<ChartOptions> = {
       series: series,
       chart: {
-       height: 400,
+        height: 400,
         type: "line",
         zoom: {
           enabled: false,
@@ -486,38 +486,37 @@ export class KpiComparisionComponent implements OnInit {
     );
   }
 
-exportData() { 
-  if (!this.selectedCountries.length) {
-    this.toaster.showWarning("Please select countries");
-    return;
+  exportData() {
+    if (!this.selectedCountries.length) {
+      this.toaster.showWarning("Please select countries");
+      return;
+    }
+    const params = {
+      countries: this.selectedCountries.join(','),
+      kpis: null,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.adminService.exportCompareCountries(params)
+      .subscribe({
+        next: (res: Blob) => {
+          this.isLoader = false;
+          const url = window.URL.createObjectURL(res);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "Country_Comparison.xlsx";
+          a.click();
+          window.URL.revokeObjectURL(url); // good practice
+        },
+
+        error: (err) => {
+          console.error("Export failed:", err);
+          this.isLoader = false;
+          // Show user-friendly message
+          this.toaster.showError(
+            err?.error?.message || "Failed to export data. Please try again."
+          );
+        }
+      });
   }
-  this.isLoader = true;
-  const params = {
-    countries: this.selectedCountries.join(','),
-    kpis: null,
-    updatedAt: new Date().toISOString()
-  };
-
-  this.adminService.exportCompareCountries(params)
-    .subscribe({
-      next: (res: Blob) => {
-        this.isLoader = false;
-        const url = window.URL.createObjectURL(res);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Country_Comparison.xlsx";
-        a.click();
-        window.URL.revokeObjectURL(url); // good practice
-      },
-
-      error: (err) => {
-        console.error("Export failed:", err);
-        this.isLoader = false;
-        // Show user-friendly message
-        this.toaster.showError(
-          err?.error?.message || "Failed to export data. Please try again."
-        );
-      }
-    });
-}
 }
