@@ -33,7 +33,7 @@
   min-height: 0;
   overflow: hidden;
   position: relative;
-  grid-gap: 20px;
+  grid-gap: 15px;
 }
 
 .pem-chat-inner {
@@ -42,7 +42,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 15px;
   position: relative;
   overflow: hidden;
 }
@@ -61,6 +61,7 @@
   flex-direction: column;
   overflow: hidden;
   gap: 0;
+  height: 100%;
 }
 
 .pem-chat-inner--has-hero .per-chat-slides {
@@ -172,7 +173,7 @@
 /* Desktop: stable min-heights so hero does not vanish when chat grows */
 @media (min-width: 1024px) {
   .flip-hero__slider {
-    min-height: 48px;
+    /* min-height: 48px; */
   }
 
   .pem-chat-inner--has-hero .flip-hero__slider {
@@ -924,14 +925,14 @@
     background: #f5ffee;
     border-radius: 14px;
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
     border: 1px solid #e9e9e9;
     min-height: 0;
 }
 
 .flip-hero__slider {
   width: 100%;
-  min-height: 44px;
+  /* min-height: 44px; */
   flex: 0 0 auto;
   flex-shrink: 0;
 }
@@ -1490,15 +1491,7 @@
    ══════════════════════════════════════════════════════════════ */
 /* Main chat scroll area — thin scrollbar like AT A GLANCE / sidebar */
 .chat-messages {
-    flex: 1 1 auto;    
-    padding: 16px 14px 12px 20px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 49, 96, 0.12) transparent;
-    scrollbar-gutter: stable;
-    position: relative;
+    /* position: relative;
     z-index: 1;
     flex: 1;
     padding: 20px 20px 0;
@@ -1509,20 +1502,30 @@
     scroll-behavior: smooth;
     background: #ffffff;
     border-radius: 14px;
+    overflow: auto;
     margin-bottom: 0px;
     border: 1px solid #e9e9e9;
-    justify-content: flex-end;
-  
-}
+    justify-content: flex-end; */
 
-.pem-chat-inner--has-hero .chat-messages {
-  min-height: 120px;
-}
-
-.pem-chat-inner:not(.pem-chat-inner--has-hero) .chat-messages {
-  flex: 1 1 0;
+    position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  padding: 20px 20px 0;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e9e9e9;
+  margin-bottom: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 49, 96, 0.12) transparent;
+  scrollbar-gutter: stable;
+  display: flex;
+    flex-direction: column;
+        justify-content: flex-end;
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -1551,7 +1554,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  min-height: 100%;
+  /* min-height: 100%; */
   box-sizing: border-box;
 }
 
@@ -1726,8 +1729,8 @@
 .brief {
   max-width: 860px;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 32px 0 18px;
+  margin: 0 auto 20px;
+  padding: 0 32px;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr);
@@ -2127,11 +2130,11 @@
   z-index: 5;
   flex: 0 0 auto;
   flex-shrink: 0;
-  padding: 0 20px 4px;
+  padding: 0 0px 4px;
   background: transparent;
   max-width: 100%;
   width: 100%;
-  margin: 0 auto;
+  margin-top:auto;
   box-sizing: border-box;
 }
 
@@ -2455,9 +2458,8 @@
 
 /* ── Sidebar (AT A GLANCE, KEY PILLARS) ─────────────────────── */
 aside.pem-sidebar {
-  flex: 0 0 clamp(280px, 28vw, 440px);
-  max-width: clamp(280px, 28vw, 440px);
-  width: clamp(280px, 28vw, 440px);
+  max-width: 440px;
+  width: 100%;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -2474,7 +2476,7 @@ aside.pem-sidebar {
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 2px 10px 12px 2px;
+  padding: 2px 10px 0px 2px;
   margin-right: 2px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -2908,14 +2910,36 @@ aside.pem-sidebar {
 }
 .analyst_chat {
     overflow: auto;
+    flex:1;
 }
-
+.sidebar-card:last-child {
+    padding-bottom: 0;
+}
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════════ */
 
-/* ── 1400px: slightly tighter chips (keep readable) ─────────── */
+@media only screen and (max-width: 1780px) {
+  aside.pem-sidebar {
+    max-width: 380px;
+  }
+   .stats-card .stat-row .chart {
+      width: 120px;
+  }
+  .stats-card .stat-row .trend , .stats-card .stat-row .score-line .score, .stats-card .stat-row .score-line .score{
+      font-size: 24px;
+  }
+  .key-pillars .name {
+      font-size: 14px;
+  }
+  .workspace-empty__headline {
+      margin: 0 0 10px;
+      font-size: 24px;
+  }
+}
+
+
 @media (max-width: 1400px) {
   .suggestions-rail .rail__chip {
     padding: 6px 12px;
@@ -2925,6 +2949,10 @@ aside.pem-sidebar {
   .suggestions-rail .rail__label {
     font-size: 10px;
   }
+ 
+
+
+
 }
 
 /* ── 1280px: small laptop — keep dropdowns on one row ───────── */
