@@ -31,7 +31,6 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
     this.initializeForm();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    debugger
     
     this.showRegenerateMissingQuestionsOption = this.country.aiCompletionRate > 0 || this.country.score > 0;
 
