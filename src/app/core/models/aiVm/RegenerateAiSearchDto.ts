@@ -4,6 +4,7 @@ export class RegenerateAiSearchDto {
   pillarEnable = false;
   questionEnable = false;
   viewerUserIDs: number[] = [];
+  regenerateMissingQuestionsEnable = false;
 }
 export class RegeneratePilalrAiSearchDto  extends RegenerateAiSearchDto{
   pillarID!: number;

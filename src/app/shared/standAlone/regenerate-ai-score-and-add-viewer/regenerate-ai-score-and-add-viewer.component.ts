@@ -20,6 +20,7 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
   @Output() regenerate = new EventEmitter<any>();
   @Output() closeModal = new EventEmitter<boolean>();
   @Input() importPillar = false;
+  showRegenerateMissingQuestionsOption = false;
   assesmentForm!: FormGroup;
 
   /** AI options config (easy to extend later) */
@@ -30,14 +31,32 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
     this.initializeForm();
   }
   ngOnChanges(changes: SimpleChanges): void {
+    debugger
+    
+    this.showRegenerateMissingQuestionsOption = this.country.aiCompletionRate > 0 || this.country.score > 0;
+
     this.aiOptions = [
       { label: 'Pillar-level AI insights', control: 'pillarEnable', time: this.importPillar ? 5 +' '+'min' : 30 +' '+ 'min' },
       { label: 'Question-level AI insights', control: 'questionEnable', time: this.importPillar ? 1 +' '+ 'hour' : 3 +' '+'hours' }
     ];
+
     if (!this.importPillar) {
       this.aiOptions.unshift({ label: 'Country-level AI insights', control: 'countryEnable', time: 5 +' '+'min' });
       this.aiOptions.unshift({ label: 'Immediate Situation', control: 'immediateSummaryEnable', time: 2 +' '+'min' });
     }
+    if (this.showRegenerateMissingQuestionsOption)
+    {
+      const completionRate = Math.round(this.country?.aiCompletionRate ?? 0);
+
+      this.aiOptions.push({
+        label: 'Import Missing Questions',
+        control: 'regenerateMissingQuestionsEnable',
+        time: this.importPillar
+          ? 1 +' '+ 'hour'
+          : Math.max(1, 120 - completionRate) +' '+ 'min'
+      });
+    }
+
     this.ctx.detectChanges();
   }
 
@@ -46,6 +65,7 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
       countryID: [this.country?.countryID],
       countryEnable: [!this.importPillar],
       immediateSummaryEnable: [!this.importPillar],
+      regenerateMissingQuestionsEnable: [false],
       pillarEnable: [true],
       questionEnable: [false],
       viewerUserIDs: [[]]   // multiple viewers

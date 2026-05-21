@@ -65,6 +65,10 @@
     </div>
 
     <div class="cb__status">
+      <div class="cb__engine-state" [class.cb__engine-state--active]="isTyping()">
+        <span class="cb__engine-bar" aria-hidden="true"><span class="cb__engine-bar-fill"></span></span>
+        <span class="cb__engine-label">{{ engineStatusLabel() }}</span>
+      </div>
       <button type="button" (click)="clearHistory()" class="cb__session-btn" matTooltip="Start a new analysis session">
         <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M2.5 7h9M7 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -98,26 +102,11 @@
                   </div>
                 </header>
                 <div class="flip-hero__content" *ngIf="isExpanded">
-                  <ng-container *ngIf="sliderItems[currentSlide]?.performance; else normalSlide">
-                    <div class="performance-block">
-                      <h4>Daily</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.daily }}</p>
-                    </div>
-                    <div class="performance-block">
-                      <h4>Weekly</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.weekly }}</p>
-                    </div>
-                    <div class="performance-block">
-                      <h4>Monthly</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.monthly }}</p>
-                    </div>
-                  </ng-container>
-                  <ng-template #normalSlide>
-                    <div class="flip-hero__subtitle_outer">
+                  <div class="flip-hero__subtitle_outer">
                         <p class="flip-hero__subtitle">{{ sliderItems[currentSlide]?.subtitle }}</p>
                         <button class="view-all">View Full Analysis</button>
                     </div>
-                  </ng-template>
+ 
 
                   <div class="flip-hero__svg">
                     <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -324,9 +313,9 @@
           <p class="label">Peace Score</p>
 
           <div class="score-line">
-            <span class="score">1.736</span>
+            <span class="score">{{contrySlide?.country?.countryAIScore}}</span>
             <span>/</span>
-            <span class="max"> 5.000</span>
+            <span class="max">100</span>
           </div>
 
           <p class="sub-text">Very High Peace</p>
@@ -353,11 +342,11 @@
           <p class="label">Global Rank</p>
 
           <div class="rank-line">
-            <span class="rank">1</span>
+            <span class="rank">{{contrySlide?.country?.countryRank}}</span>
             <sup>st</sup>
           </div>
 
-          <p class="sub-text">Out of 163 countries</p>
+          <p class="sub-text">Out of {{contrySlide?.country?.totalCountry}} countries</p>
         </div>
 
         <div class="chart purple">
@@ -380,7 +369,7 @@
         <div class="left">
           <p class="label">Trend</p>
 
-          <div class="trend">Improving</div>
+          <div class="trend">{{contrySlide?.recentPerformance?.trend}}</div>
 
           <p class="sub-text">vs last year</p>
         </div>
@@ -416,20 +405,30 @@
         </div>
 
         <!-- Item 1 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon blue"></div>
-            <div class="info">
-              <div class="name">Safety & Security</div>
+         <ng-container *ngFor="let p of contrySlide?.country?.pillars">
+
+          <img class="city_img" 
+              style="width: 50px; border-radius:5px; height: 50px; object-fit: contain;"
+                [src]="urlBase + '/' +p?.imagePath"
+                [alt]="'No Image'"
+              />
+            <div class="pillar-item">
+              <div class="pillar-left">
+                <div class="icon blue"></div>
+                <div class="info">
+                  <div class="name">{{p.pillarName}}</div>
+                </div>
+              </div>
+              <div class="pillar-right">
+                <div class="value">{{p?.pillarScore?.toFixed(2)}}</div>
+                <div class="bar">
+                  <div class="fill blue" style="width: 65%"></div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="pillar-right">
-            <div class="value">1.342</div>
-            <div class="bar">
-              <div class="fill blue" style="width: 65%"></div>
-            </div>
-          </div>
-        </div>
+
+         </ng-container>
+        
 
         <!-- Item 2 -->
         <div class="pillar-item">
@@ -497,7 +496,7 @@
       </div>
     </section>
 
-    <section class="sidebar-card latest-intel">      
+    <!-- <section class="sidebar-card latest-intel">      
       <div class="stats-card">
         <div class="pillars-header">
           <div class="title-wd-btn">
@@ -521,6 +520,6 @@
         </div>
 
       </div>      
-    </section>
+    </section> -->
   </aside>
 </div>

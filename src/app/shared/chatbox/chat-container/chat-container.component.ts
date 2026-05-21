@@ -22,6 +22,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { CountryVM } from 'src/app/core/models/CountryVM';
 import { AIAssistantFAQDto } from 'src/app/core/models/chat/AIAssistantFAQDto';
+import { CountryExecutiveSlidesResult } from 'src/app/core/models/chat/ChatCountryExecutiveSlidesResponse';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-chat-container',
@@ -32,11 +34,6 @@ import { AIAssistantFAQDto } from 'src/app/core/models/chat/AIAssistantFAQDto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatContainerComponent implements OnInit, OnDestroy {
-
-  // ─── Sidebar Data ──────────────────────────────────────────────────────
-  countryStats: { peaceScore?: number; globalRank?: number } | null = null;
-  keyPillars: Array<{ name: string; score: number; iconClass?: string }> = [];
-  latestIntelligence: Array<{ text: string; time: string }> = [];
 
   // ─── DI ───────────────────────────────────────────────────────────────────
   protected chatService = inject(ChatService);
@@ -52,6 +49,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   showSuggestions = signal(false);
   showContextPanel = signal(true);
   unreadCount = signal(0);
+  contrySlide :CountryExecutiveSlidesResult|null = null;
+  urlBase = environment.apiUrl;
 
   // ─── Service signal aliases ───────────────────────────────────────────────
   protected isOpen = this.chatService.isOpen;
@@ -156,15 +155,19 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   onCountryChange(city: CountryVM | null): void {
+    
     this.sliderItems = [];
     this.currentSlide = 0;
     clearInterval(this.intervalId);
     this.chatService.selectedCountry.set(city ?? null);
 
+    if(!city?.countryID) return
+
     this.chatService.getCountrySlides(city?.countryID ?? 0).subscribe({
       next: res => {
 
         const data = res?.result?.result;
+        this.contrySlide = res.result?.result || null;
 
         if (!data) return;
 
@@ -178,7 +181,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
         this.sliderItems = [
           {
-            title: `${data.countryName} recent performance`,
+            title: `${data.country.countryName} recent performance`,
             subtitle: data.recentPerformance?.summary,
             trend: "Recent"
           },
@@ -212,7 +215,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   protected engineStatusLabel(): string {
-    if (this.isTyping()) return 'Processing analysis';
+    if (this.isTyping()) return 'Processing Intelligence';
     if (this.hasContext()) return 'Context locked';
     return 'Engine ready';
   }
