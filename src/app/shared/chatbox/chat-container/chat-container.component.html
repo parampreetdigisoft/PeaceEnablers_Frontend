@@ -65,6 +65,10 @@
     </div>
 
     <div class="cb__status">
+      <div class="cb__engine-state" [class.cb__engine-state--active]="isTyping()">
+        <span class="cb__engine-bar" aria-hidden="true"><span class="cb__engine-bar-fill"></span></span>
+        <span class="cb__engine-label">{{ engineStatusLabel() }}</span>
+      </div>
       <button type="button" (click)="clearHistory()" class="cb__session-btn" matTooltip="Start a new analysis session">
         <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M2.5 7h9M7 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -78,12 +82,18 @@
 
 
 <div class="pem-chat">
-<div class="pem-chat-inner">
-    <div class="per-chat-slides">
-        <section class="flip-hero" *ngIf="sliderItems.length > 0 && selectedCountry()" aria-label="Country intelligence highlights">
+<div class="pem-chat-inner"
+  [class.pem-chat-inner--has-hero]="sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--hero-expanded]="isExpanded && sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--hero-collapsed]="!isExpanded && sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--has-chat]="displayMessages().length > 0 || isTyping()">
+    <div class="per-chat-slides"
+      [class.per-chat-slides--expanded]="isExpanded && sliderItems.length > 0 && selectedCountry()"
+      [class.per-chat-slides--collapsed]="!isExpanded && sliderItems.length > 0 && selectedCountry()">
+        <section class="flip-hero"  aria-label="Country intelligence highlights">
           <div class="flip-hero__viewport">
             <div class="flip-hero__slider" [class.slide]="animate">
-              <article class="flip-hero__card">
+              <article class="flip-hero__card" *ngIf="sliderItems.length > 0 && selectedCountry()">
                 <header class="flip-hero__header flip-hero__header--clickable" (click)="toggleSlide()">
                   <div class="flip-hero__title-wrapper">
                     <div class="flip-hero__title-content">
@@ -98,26 +108,18 @@
                   </div>
                 </header>
                 <div class="flip-hero__content" *ngIf="isExpanded">
-                  <ng-container *ngIf="sliderItems[currentSlide]?.performance; else normalSlide">
-                    <div class="performance-block">
-                      <h4>Daily</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.daily }}</p>
-                    </div>
-                    <div class="performance-block">
-                      <h4>Weekly</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.weekly }}</p>
-                    </div>
-                    <div class="performance-block">
-                      <h4>Monthly</h4>
-                      <p>{{ sliderItems[currentSlide]?.performance?.monthly }}</p>
-                    </div>
-                  </ng-container>
-                  <ng-template #normalSlide>
-                    <div class="flip-hero__subtitle_outer">
+                  <div class="flip-hero__subtitle_outer">
                         <p class="flip-hero__subtitle">{{ sliderItems[currentSlide]?.subtitle }}</p>
-                        <button class="view-all">View Full Analysis</button>
+                        <button type="button" class="view-all view-all--analysis"
+                          *ngIf="sliderItems[currentSlide]?.subtitle"
+                          (click)="openFullAnalysis($event)">
+                          <span>View Full Analysis</span>
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                            <path d="M5.5 8.5H11M8 5.5L11 8.5 8 11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
                     </div>
-                  </ng-template>
+ 
 
                   <div class="flip-hero__svg">
                     <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -157,17 +159,34 @@
                         </defs>
                     </svg>
                   </div>
+                  
 
                 </div>
               </article>
-              <nav class="suggestions-rail" aria-label="Suggested inquiries">
-                <span class="rail__label">TRY ASKING</span>
-                <button *ngFor="let item of chatService.quickQuestions()" type="button"
-                  (click)="sendQuickQuestion(item.question)" class="rail__chip">
-                  {{ item.label }}
-                </button>
-              </nav>
             </div>
+            <nav class="suggestions-rail" aria-label="Suggested inquiries">
+              <span class="rail__label">TRY ASKING</span>
+              <div class="suggestions-rail__viewport">
+                <div class="suggestions-rail__marquee"
+                  [style.--rail-marquee-duration]="railMarqueeDuration() + 's'"
+                  role="list">
+                  <div class="suggestions-rail__sequence">
+                    <button *ngFor="let item of chatService.quickQuestions(); trackBy: trackQuickQuestion"
+                      type="button" role="listitem"
+                      (click)="sendQuickQuestion(item.question)" class="rail__chip">
+                      {{ item.label }}
+                    </button>
+                  </div>
+                  <div class="suggestions-rail__sequence suggestions-rail__sequence--clone" aria-hidden="true">
+                    <button *ngFor="let item of chatService.quickQuestions(); trackBy: trackQuickQuestion"
+                      type="button" tabindex="-1"
+                      (click)="sendQuickQuestion(item.question)" class="rail__chip">
+                      {{ item.label }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </nav>
             <!-- <div class="flip-hero__dots" role="tablist">
               <button *ngFor="let item of sliderItems; let i = index" type="button" class="flip-hero__dot"
                 [class.active]="i === currentSlide" (click)="goToSlide(i)"
@@ -179,8 +198,10 @@
         </section>
         
     </div>
-
+  <div class="pem-chat-body">
   <div #messagesContainer class="chat-messages" role="log" aria-live="polite">
+    <div class="chat-messages__inner">
+    <div class="chat-messages__anchor" *ngIf="displayMessages().length > 0 || isTyping()"></div>
 
     <section *ngIf="showWorkspaceEmpty()" class="workspace-empty">
 
@@ -208,6 +229,7 @@
       </li>
         <li>
             <span class="domain-icons">
+
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3.5 11.667L14 4.66699L24.5 11.667" stroke="#77BD3E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M5.83325 11.667V21.0003" stroke="#77BD3E" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -240,16 +262,51 @@
       </ul>
     </section>
 
-    <div class="analyst_chat">
-        <article *ngFor="let msg of displayMessages(); trackBy: trackById"
-          [class.brief--query]="msg.role === 'user'"
-          [class.brief--intel]="msg.role === 'assistant'"
-          class="brief">
+    <ng-container *ngFor="let msg of displayMessages(); trackBy: trackById; let i = index; let last = last">
+      <!-- <div *ngIf="i > 0 && displayMessages()[i - 1].role !== msg.role" class="brief-exchange" aria-hidden="true">
+        <span class="brief-exchange__line"></span>
+        <span class="brief-exchange__icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M6 4.5L12 9 6 13.5" stroke="#77BD3E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 9h9" stroke="#003160" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.35"/>
+          </svg>
+        </span>
+        <span class="brief-exchange__line"></span>
+      </div> -->
 
-          <header class="brief__meta">
+      <article
+        [class.brief--query]="msg.role === 'user'"
+        [class.brief--intel]="msg.role === 'assistant'"
+        [class.brief--streaming]="msg.isStreaming"
+        class="brief">
+
+        <div class="brief__rail" [class.brief__rail--last]="last && !isTyping()">
+          <div class="brief__icon" [class.brief__icon--user]="msg.role === 'user'"
+            [class.brief__icon--intel]="msg.role === 'assistant'">
+            <!-- <svg  viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg> -->
+            <ng-container *ngIf="msg.role === 'user'">
+                 <img src="assets/images/pemaevumai.svg" alt="Logo">
+            </ng-container>
+            <ng-container *ngIf="msg.role === 'assistant'">
+                 <img src="assets/images/pemaevumchat.svg" alt="Logo">
+            </ng-container>
+
+            <!-- <svg *ngIf="msg.role === 'assistant'" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.4" opacity="0.35"/>
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg> -->
+          </div>
+        </div>
+
+        <div class="brief__main">
+          <!-- <header class="brief__meta">
             <span class="brief__role">{{ msg.role === 'user' ? 'Analyst inquiry' : 'PEM Aevum brief' }}</span>
             <time *ngIf="!msg.isStreaming" class="brief__time">{{ formatTime(msg.timestamp) }}</time>
-          </header>
+          </header> -->
 
           <div class="brief__body">
             <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
@@ -258,13 +315,25 @@
               <span *ngIf="msg.isStreaming" class="stream-cursor" aria-hidden="true"></span>
             </ng-container>
           </div>
-        </article>
-    </div>
+        </div>
+      </article>
+    </ng-container>
 
     <div *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'" class="synthesis-panel">
-      <span class="synthesis-panel__label">Synthesizing intelligence</span>
-      <span class="synthesis-panel__track" aria-hidden="true"><span class="synthesis-panel__fill"></span></span>
+      <div class="synthesis-panel__icon" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="#77BD3E" stroke-width="1.4" opacity="0.4"/>
+          <circle cx="10" cy="10" r="2.5" fill="#77BD3E"/>
+        </svg>
+      </div>
+      <div class="synthesis-panel__content">
+        <span class="synthesis-panel__label">Processing Intelligence</span>
+        <span class="synthesis-panel__track" aria-hidden="true"><span class="synthesis-panel__fill"></span></span>
+      </div>
     </div>
+
+    </div>
+  </div>
 
     <footer class="chat-input-area">
     <div *ngIf="showSuggestions() && suggestions().length > 0" class="suggestions-dropdown">
@@ -275,13 +344,22 @@
       </button>
     </div>
 
-    <div class="input-shell" [class.input-shell--focused]="inputText().length > 0">
+    <div class="input-shell"
+      [class.input-shell--focused]="inputText().length > 0 && !isTyping()"
+      [class.input-shell--processing]="isTyping()">
       <div class="input-shell__field">
-        <input #inputField id="pem-aevum-input" [value]="inputText()" [disabled]="isTyping()"
+        <div *ngIf="isTyping()" class="input-processing" aria-live="polite">
+          <span class="input-processing__pulse" aria-hidden="true"></span>
+          <span class="input-processing__label">Processing Intelligence</span>
+          <span class="input-processing__dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <input *ngIf="!isTyping()" #inputField id="pem-aevum-input" [value]="inputText()"
           (input)="onInputChange($event)" (keydown)="onKeyDown($event)" (blur)="closeSuggestions()"
           type="text" class="chat-input" placeholder=" " autocomplete="off" spellcheck="false">
-        <span *ngIf="!inputText().trim()" class="input-rotator" [class.input-rotator--out]="placeholderAnimating()"
-          aria-hidden="true">
+        <span *ngIf="!isTyping() && !inputText().trim()" class="input-rotator"
+          [class.input-rotator--out]="placeholderAnimating()" aria-hidden="true">
           {{ rotatingPlaceholders[placeholderIndex()] }}
         </span>
       </div>
@@ -303,16 +381,13 @@
       Outputs support analysis; validate critical judgments against primary sources.
     </p>
   </footer>
-  
   </div>
-
-  
 </div>
- 
 
 
     <!-- Sidebar -->
   <aside class="pem-sidebar">
+    <div class="pem-sidebar__scroll">
 
     <!-- Country Overview Card -->
     <section class="sidebar-card country-overview">
@@ -320,21 +395,36 @@
     <div class="stats-card">
       <h3 class="title">AT A GLANCE</h3>
 
+      <ng-container *ngIf="selectedCountry(); else glanceNoCountry">
+      <ng-container *ngIf="countrySlidesLoading(); else glanceLoaded">
+        <div class="sidebar-loading" aria-live="polite" aria-busy="true">
+          <div class="sidebar-loading__spinner" aria-hidden="true"></div>
+          <p class="sidebar-loading__text">Loading country intelligence…</p>
+          <div class="sidebar-loading__skeleton">
+            <span class="sidebar-loading__bar"></span>
+            <span class="sidebar-loading__bar"></span>
+            <span class="sidebar-loading__bar sidebar-loading__bar--short"></span>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #glanceLoaded>
+      <ng-container *ngIf="contrySlide; else glanceLoadFailed">
       <!-- Peace Score -->
       <div class="stat-row">
         <div class="left">
           <p class="label">Peace Score</p>
 
           <div class="score-line">
-            <span class="score">1.736</span>
+            <span class="score">{{contrySlide.country.countryAIScore}}</span>
             <span>/</span>
-            <span class="max"> 5.000</span>
+            <span class="max">100</span>
           </div>
 
-          <p class="sub-text">Very High Peace</p>
+          <p class="sub-text">{{ peaceLevelLabel(contrySlide.country.countryAIScore) }}</p>
         </div>
 
-        <div class="chart green">
+        <div class="chart chart--dynamic"
+          [style.--chart-color]="scoreToColor(contrySlide.country.countryAIScore)">
           <svg viewBox="0 0 120 60" preserveAspectRatio="none">
             <path
               d="M5 50
@@ -355,14 +445,15 @@
           <p class="label">Global Rank</p>
 
           <div class="rank-line">
-            <span class="rank">1</span>
+            <span class="rank">{{contrySlide.country.countryRank}}</span>
             <sup>st</sup>
           </div>
 
-          <p class="sub-text">Out of 163 countries</p>
+          <p class="sub-text">Out of {{contrySlide.country.totalCountry}} countries</p>
         </div>
 
-        <div class="chart purple">
+        <div class="chart chart--dynamic"
+          [style.--chart-color]="scoreToColor(rankPeaceIndex(contrySlide.country.countryRank, contrySlide.country.totalCountry))">
           <svg viewBox="0 0 120 60" preserveAspectRatio="none">
             <path
               d="M5 52
@@ -382,12 +473,13 @@
         <div class="left">
           <p class="label">Trend</p>
 
-          <div class="trend">Improving</div>
+          <div class="trend">{{contrySlide.recentPerformance.trend}}</div>
 
           <p class="sub-text">vs last year</p>
         </div>
 
-        <div class="chart green">
+        <div class="chart chart--dynamic"
+          [style.--chart-color]="trendChartColor(contrySlide.recentPerformance.trend)">
           <svg viewBox="0 0 120 60" preserveAspectRatio="none">
             <path
               d="M5 50
@@ -402,6 +494,26 @@
           <span class="dot"></span>
         </div>
       </div>
+      </ng-container>
+      </ng-template>
+      <ng-template #glanceLoadFailed>
+        <div class="sidebar-empty-state">
+          <p class="sidebar-empty-state__text">Unable to load country intelligence. Please try again.</p>
+        </div>
+      </ng-template>
+      </ng-container>
+
+      <ng-template #glanceNoCountry>
+        <div class="sidebar-empty-state">
+          <svg class="sidebar-empty-state__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <circle cx="20" cy="20" r="19" stroke="#77BD3E" stroke-opacity="0.35" stroke-width="1.5"/>
+            <path d="M20 11v10M20 27v1" stroke="#003160" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p class="sidebar-empty-state__text">
+            Please select a country to view country-specific intelligence.
+          </p>
+        </div>
+      </ng-template>
     </div>
 
     </section>
@@ -412,117 +524,119 @@
         <div class="pillars-header">
           <div class="title-wd-btn">
             <h3 class="title">KEY PILLARS</h3>
-            <button class="view-all">View All</button>
+            <!-- <button class="view-all">View All</button> -->
           </div>
           
         </div>
 
-        <!-- Item 1 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon blue"></div>
-            <div class="info">
-              <div class="name">Safety & Security</div>
-            </div>
+        <ng-container *ngIf="!selectedCountry(); else pillarsWithCountry">
+          <div class="sidebar-empty-state">
+            <p class="sidebar-empty-state__text">
+              Please select a country to view country-specific intelligence.
+            </p>
           </div>
-          <div class="pillar-right">
-            <div class="value">1.342</div>
-            <div class="bar">
-              <div class="fill blue" style="width: 65%"></div>
+        </ng-container>
+        <ng-template #pillarsWithCountry>
+          <ng-container *ngIf="countrySlidesLoading(); else pillarsLoaded">
+            <div class="sidebar-loading sidebar-loading--compact" aria-live="polite" aria-busy="true">
+              <div class="sidebar-loading__spinner" aria-hidden="true"></div>
+              <p class="sidebar-loading__text">Loading pillars…</p>
             </div>
-          </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon orange"></div>
-            <div class="info">
-              <div class="name">Ongoing Conflict</div>
+          </ng-container>
+          <ng-template #pillarsLoaded>
+        <div class="pillar-list" *ngIf="sidebarPillars.length; else noPillarData">
+          <div class="pillar-row" *ngFor="let p of sidebarPillars; trackBy: trackPillarId">
+            <div class="pillar-img-wrap"
+              [style.--pillar-color]="pillarScoreColor(p.pillarScore)">
+              <img class="pillar-row__img city_img"
+                *ngIf="p.imagePath"
+                [src]="urlBase + '/' + p.imagePath"
+                [alt]="p.pillarName" />
             </div>
-          </div>
-          <div class="pillar-right">
-            <div class="value">1.210</div>
-            <div class="bar">
-              <div class="fill orange" style="width: 55%"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon green"></div>
-            <div class="info">
-              <div class="name">Societal Safety</div>
-            </div>
-          </div>
-          <div class="pillar-right">
-            <div class="value">1.665</div>
-            <div class="bar">
-              <div class="fill green" style="width: 70%"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 4 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon purple"></div>
-            <div class="info">
-              <div class="name">Militarization</div>
-            </div>
-          </div>
-          <div class="pillar-right">
-            <div class="value">2.345</div>
-            <div class="bar">
-              <div class="fill purple" style="width: 80%"></div>
+            <div class="pillar-item">
+              <div class="pillar-left">
+                <div class="info">
+                  <div class="name"
+                    [matTooltip]="p.pillarName"
+                    [matTooltipDisabled]="!isPillarNameTruncated(p.pillarName)"
+                    matTooltipPosition="above">
+                    {{ truncatePillarName(p.pillarName) }}
+                  </div>
+                </div>
+              </div>
+              <div class="pillar-right">
+                <div class="value">{{ p.pillarID != null ? p.pillarID.toFixed(1) : '—' }}</div>
+                <div class="bar">
+                  <div class="pillar-fill"
+                    [style.width]="pillarBarWidth(p.pillarID*7)"
+                    [style.background]="pillarScoreColor(p.pillarID*7)"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Item 5 -->
-        <div class="pillar-item">
-          <div class="pillar-left">
-            <div class="icon blue-dark"></div>
-            <div class="info">
-              <div class="name">Sustainable Development</div>
-            </div>
-          </div>
-          <div class="pillar-right">
-            <div class="value">1.980</div>
-            <div class="bar">
-              <div class="fill blue-dark" style="width: 75%"></div>
-            </div>
-          </div>
-        </div>
+        <ng-template #noPillarData>
+          <p class="pillar-empty">No pillar data available for this country.</p>
+        </ng-template>
+          </ng-template>
+        </ng-template>
       </div>
     </section>
-
-    <section class="sidebar-card latest-intel">      
-      <div class="stats-card">
-        <div class="pillars-header">
-          <div class="title-wd-btn">
-            <h3 class="title">LATEST INTELLIGENCE</h3>
-            <button class="view-all">View All</button>
-          </div>          
-        </div>
-
-        <div class="intel-item">
-            <div class="intel_icon">
-                 <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="25" cy="25" r="25" fill="#E0EDDA"/>
-                  <path d="M38 15.05V14C38 13.4696 37.7893 12.9609 37.4142 12.5858C37.0391 12.2107 36.5304 12 36 12H32.408C32.305 11.7085 32.1144 11.456 31.8624 11.277C31.6103 11.098 31.3091 11.0013 31 11H28C27.6304 11.0012 27.2743 11.139 27.0003 11.3871C26.7263 11.6352 26.5538 11.9758 26.516 12.3435C25.8856 12.6368 25.3584 13.1134 25.003 13.711C24.6933 13.1903 24.2538 12.7589 23.7274 12.459C23.201 12.1591 22.6058 12.0009 22 12H14C13.4696 12 12.9609 12.2107 12.5858 12.5858C12.2107 12.9609 12 13.4696 12 14V15.05C11.4357 15.166 10.9287 15.4731 10.5644 15.9194C10.2 16.3657 10.0007 16.9239 10 17.5V36.5C10.0008 37.1628 10.2644 37.7982 10.7331 38.2669C11.2018 38.7356 11.8372 38.9992 12.5 39H37.5C38.1628 38.9992 38.7982 38.7356 39.2669 38.2669C39.7356 37.7982 39.9992 37.1628 40 36.5V17.5C39.9993 16.9239 39.8 16.3657 39.4356 15.9194C39.0713 15.4731 38.5643 15.166 38 15.05ZM27.5 12.5C27.5 12.3674 27.5527 12.2402 27.6464 12.1464C27.7402 12.0527 27.8674 12 28 12H31C31.1326 12 31.2598 12.0527 31.3536 12.1464C31.4473 12.2402 31.5 12.3674 31.5 12.5V21.9595L29.8125 20.6095C29.7238 20.5385 29.6136 20.4998 29.5 20.4998C29.3864 20.4998 29.2762 20.5385 29.1875 20.6095L27.5 21.9595V12.5ZM26.5 13.5V23C26.5 23.0942 26.5265 23.1865 26.5767 23.2663C26.6268 23.3461 26.6985 23.41 26.7834 23.4508C26.8683 23.4917 26.963 23.5076 27.0567 23.497C27.1503 23.4863 27.239 23.4494 27.3125 23.3905L29.5 21.6405L31.6875 23.3905C31.761 23.4494 31.8497 23.4863 31.9433 23.497C32.037 23.5076 32.1317 23.4917 32.2166 23.4508C32.3015 23.41 32.3732 23.3461 32.4233 23.2663C32.4735 23.1865 32.5 23.0942 32.5 23V13H36C36.2652 13 36.5196 13.1054 36.7071 13.2929C36.8946 13.4804 37 13.7348 37 14V32C37 32.2652 36.8946 32.5196 36.7071 32.7071C36.5196 32.8946 36.2652 33 36 33H25.55C25.6668 35.4361 25.9741 34.9295 26.4202 34.5654C26.8663 34.2012 27.4241 34.0016 28 34H36C36.3512 34.0005 36.6963 33.9079 37 33.7315V33.73ZM13 14C13 13.7348 13.1054 13.4804 13.2929 13.2929C13.4804 13.1054 13.7348 13 14 13H22C22.6628 13.0008 23.2982 13.2644 23.7669 13.7331C24.2356 14.2018 24.4992 14.8372 24.5 15.5V34.05C24.1744 33.717 23.7855 33.4526 23.3561 33.2723C22.9268 33.0919 22.4657 32.9994 22 33H14C13.7348 33 13.4804 32.8946 13.2929 32.7071C13.1054 32.5196 13 32.2652 13 32V14ZM13 33.7315C13.3037 33.9079 13.6488 34.0005 14 34H22C22.5761 34.0006 23.1344 34.1999 23.5807 34.5642C24.027 34.9286 24.334 35.4357 24.45 36H14C13.7348 36 13.4804 35.8946 13.2929 35.7071C13.1054 35.5196 13 35.2652 13 35V33.7315ZM39 36.5C39 36.8978 38.842 37.2794 38.5607 37.5607C38.2794 37.842 37.8978 38 37.5 38H12.5C12.1022 38 11.7206 37.842 11.4393 37.5607C11.158 37.2794 11 36.8978 11 36.5V17.5C11.0013 17.1909 11.098 16.8897 11.277 16.6377C11.456 16.3856 11.7085 16.195 12 16.092V35C12 35.5304 12.2107 36.0391 12.5858 36.4142C12.9609 36.7893 13.4696 37 14 37H36C36.5304 37 37.0391 36.7893 37.4142 36.4142C37.7893 36.0391 38 35.5304 38 35V16.092C38.2915 16.195 38.544 16.3856 38.723 16.6377C38.902 16.8897 38.9987 17.1909 39 17.5V36.5Z" fill="#52AE28"/>
-                  <path d="M15 16H22C22.1326 16 22.2598 15.9473 22.3536 15.8536C22.4473 15.7598 22.5 15.6326 22.5 15.5C22.5 15.3674 22.4473 15.2402 22.3536 15.1464C22.2598 15.0527 22.1326 15 22 15H15C14.8674 15 14.7402 15.0527 14.6464 15.1464C14.5527 15.2402 14.5 15.3674 14.5 15.5C14.5 15.6326 14.5527 15.7598 14.6464 15.8536C14.7402 15.9473 14.8674 16 15 16ZM15 18.5H22C22.1326 18.5 22.2598 18.4473 22.3536 18.3536C22.4473 18.2598 22.5 18.1326 22.5 18C22.5 17.8674 22.4473 17.7402 22.3536 17.6464C22.2598 17.5527 22.1326 17.5 22 17.5H15C14.8674 17.5 14.7402 17.5527 14.6464 17.6464C14.5527 17.7402 14.5 17.8674 14.5 18C14.5 18.1326 14.5527 18.2598 14.6464 18.3536C14.7402 18.4473 14.8674 18.5 15 18.5ZM15 21H22C22.1326 21 22.2598 20.9473 22.3536 20.8536C22.4473 20.7598 22.5 20.6326 22.5 20.5C22.5 20.3674 22.4473 20.2402 22.3536 20.1464C22.2598 20.0527 22.1326 20 22 20H15C14.8674 20 14.7402 20.0527 14.6464 20.1464C14.5527 20.2402 14.5 20.3674 14.5 20.5C14.5 20.6326 14.5527 20.7598 14.6464 20.8536C14.7402 20.9473 14.8674 21 15 21ZM15 23.5H17C17.1326 23.5 17.2598 23.4473 17.3536 23.3536C17.4473 23.2598 17.5 23.1326 17.5 23C17.5 22.8674 17.4473 22.7402 17.3536 22.6464C17.2598 22.5527 17.1326 22.5 17 22.5H15C14.8674 22.5 14.7402 22.5527 14.6464 22.6464C14.5527 22.7402 14.5 22.8674 14.5 23C14.5 23.1326 14.5527 23.2598 14.6464 23.3536C14.7402 23.4473 14.8674 23.5 15 23.5ZM22 22.5H19C18.8674 22.5 18.7402 22.5527 18.6464 22.6464C18.5527 22.7402 18.5 22.8674 18.5 23C18.5 23.1326 18.5527 23.2598 18.6464 23.3536C18.7402 23.4473 18.8674 23.5 19 23.5H22C22.1326 23.5 22.2598 23.4473 22.3536 23.3536C22.4473 23.2598 22.5 23.1326 22.5 23C22.5 22.8674 22.4473 22.7402 22.3536 22.6464C22.2598 22.5527 22.1326 22.5 22 22.5ZM15 26H22C22.1326 26 22.2598 25.9473 22.3536 25.8536C22.4473 25.7598 22.5 25.6326 22.5 25.5C22.5 25.3674 22.4473 25.2402 22.3536 25.1464C22.2598 25.0527 22.1326 25 22 25H15C14.8674 25 14.7402 25.0527 14.6464 25.1464C14.5527 25.2402 14.5 25.3674 14.5 25.5C14.5 25.6326 14.5527 25.7598 14.6464 25.8536C14.7402 25.9473 14.8674 26 15 26ZM15 28.5H22C22.1326 28.5 22.2598 28.4473 22.3536 28.3536C22.4473 28.2598 22.5 28.1326 22.5 28C22.5 27.8674 22.4473 27.7402 22.3536 27.6464C22.2598 27.5527 22.1326 27.5 22 27.5H15C14.8674 27.5 14.7402 27.5527 14.6464 27.6464C14.5527 27.7402 14.5 27.8674 14.5 28C14.5 28.1326 14.5527 28.2598 14.6464 28.3536C14.7402 28.4473 14.8674 28.5 15 28.5ZM15 31H17.5C17.6326 31 17.7598 30.9473 17.8536 30.8536C17.9473 30.7598 18 30.6326 18 30.5C18 30.3674 17.9473 30.2402 17.8536 30.1464C17.7598 30.0527 17.6326 30 17.5 30H15C14.8674 30 14.7402 30.0527 14.6464 30.1464C14.5527 30.2402 14.5 30.3674 14.5 30.5C14.5 30.6326 14.5527 30.7598 14.6464 30.8536C14.7402 30.9473 14.8674 31 15 31ZM22 30H19.5C19.3674 30 19.2402 30.0527 19.1464 30.1464C19.0527 30.2402 19 30.3674 19 30.5C19 30.6326 19.0527 30.7598 19.1464 30.8536C19.2402 30.9473 19.3674 31 19.5 31H22C22.1326 31 22.2598 30.9473 22.3536 30.8536C22.4473 30.7598 22.5 30.6326 22.5 30.5C22.5 30.3674 22.4473 30.2402 22.3536 30.1464C22.2598 30.0527 22.1326 30 22 30Z" fill="#52AE28"/>
-                  </svg> 
-            </div>
-            <div class="intel-text-outer">
-                <div class="intel-text">Peace Score has improved by 0.2 points since last month, driven by reduced societal violence.</div>
-                <div class="intel-time">2 hours ago</div>
-            </div>
-        </div>
-
-      </div>      
-    </section>
+    
+    </div>
   </aside>
+
+  <!-- Full analysis reader (long subtitle text) -->
+  <div class="analysis-modal" *ngIf="analysisModalOpen()" role="dialog" aria-modal="true"
+    aria-labelledby="analysis-modal-title" (click)="closeFullAnalysis()">
+    <div class="analysis-modal__panel" (click)="$event.stopPropagation()">
+      <header class="analysis-modal__header">
+        <div class="analysis-modal__header-main">
+          <span class="analysis-modal__eyebrow">Country intelligence brief</span>
+          <h2 id="analysis-modal-title" class="analysis-modal__title">{{ activeAnalysisSlide?.title }}</h2>
+          <span class="trend-badge analysis-modal__badge" *ngIf="getTrendLabel(activeAnalysisSlide)">
+            <span class="trend-dot"></span>
+            {{ getTrendLabel(activeAnalysisSlide) }}
+          </span>
+        </div>
+        <button type="button" class="analysis-modal__close" (click)="closeFullAnalysis()"
+          aria-label="Close full analysis">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="analysis-modal__meta" *ngIf="selectedCountry() as country">
+        <span class="analysis-modal__country">{{ country.countryName }}</span>
+        <span class="analysis-modal__slide-count" *ngIf="sliderItems.length > 1">
+          Insight {{ currentSlide + 1 }} of {{ sliderItems.length }}
+        </span>
+      </div>
+
+      <div class="analysis-modal__body">
+        <p class="analysis-modal__text">{{ activeAnalysisSlide?.subtitle }}</p>
+      </div>
+
+      <footer class="analysis-modal__footer">
+        <div class="analysis-modal__nav" *ngIf="sliderItems.length > 1">
+          <button type="button" class="analysis-modal__nav-btn" (click)="navigateAnalysisInModal(-1, $event)"
+            aria-label="Previous insight">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Previous
+          </button>
+          <button type="button" class="analysis-modal__nav-btn" (click)="navigateAnalysisInModal(1, $event)"
+            aria-label="Next insight">
+            Next
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M5 2.5L9.5 7 5 11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <button type="button" class="analysis-modal__done" (click)="closeFullAnalysis()">Close</button>
+      </footer>
+    </div>
+  </div>
 </div>

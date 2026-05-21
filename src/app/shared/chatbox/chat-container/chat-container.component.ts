@@ -10,10 +10,11 @@ import {
   inject,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, finalize } from 'rxjs';
 import { MarkdownPipe } from '../../directives/markdown.pipe';
 import { ChatService } from 'src/app/core/services/chat.service';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -22,6 +23,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { PillarsVM } from 'src/app/core/models/PillersVM';
 import { CountryVM } from 'src/app/core/models/CountryVM';
 import { AIAssistantFAQDto } from 'src/app/core/models/chat/AIAssistantFAQDto';
+import {
+  CountryExecutiveSlidesResult,
+  PillarsUserHistroyResponseDto,
+} from 'src/app/core/models/chat/ChatCountryExecutiveSlidesResponse';
+import { CommonService } from 'src/app/core/services/common.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-chat-container',
@@ -33,14 +40,10 @@ import { AIAssistantFAQDto } from 'src/app/core/models/chat/AIAssistantFAQDto';
 })
 export class ChatContainerComponent implements OnInit, OnDestroy {
 
-  // ─── Sidebar Data ──────────────────────────────────────────────────────
-  countryStats: { peaceScore?: number; globalRank?: number } | null = null;
-  keyPillars: Array<{ name: string; score: number; iconClass?: string }> = [];
-  latestIntelligence: Array<{ text: string; time: string }> = [];
-
   // ─── DI ───────────────────────────────────────────────────────────────────
   protected chatService = inject(ChatService);
   private cdr = inject(ChangeDetectorRef);
+  private commonService = inject(CommonService);
 
   // ─── View refs ────────────────────────────────────────────────────────────
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
@@ -52,6 +55,9 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   showSuggestions = signal(false);
   showContextPanel = signal(true);
   unreadCount = signal(0);
+  contrySlide :CountryExecutiveSlidesResult|null = null;
+  countrySlidesLoading = signal(false);
+  urlBase = environment.apiUrl;
 
   // ─── Service signal aliases ───────────────────────────────────────────────
   protected isOpen = this.chatService.isOpen;
@@ -81,7 +87,14 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   protected showWorkspaceEmpty = computed(() => this.displayMessages().length === 0);
 
+  /** Seconds for one full TRY ASKING marquee loop (scales with chip count). */
+  protected railMarqueeDuration = computed(() => {
+    const count = this.chatService.quickQuestions().length;
+    return Math.max(28, count * 5);
+  });
+
   readonly rotatingHeadlines = [
+    'Welcome to PEM Aevum',
     'Surface stability signals across regions',
     'Interrogate country risk with pillar context',
     'Compare indices and emerging pressure points',
@@ -109,6 +122,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   currentSlide = 0;
   animate = false;
   intervalId: any;
+  analysisModalOpen = signal(false);
 
   constructor() {
     // Auto-scroll whenever messages list grows
@@ -156,15 +170,33 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   onCountryChange(city: CountryVM | null): void {
+    this.analysisModalOpen.set(false);
     this.sliderItems = [];
     this.currentSlide = 0;
     clearInterval(this.intervalId);
     this.chatService.selectedCountry.set(city ?? null);
 
-    this.chatService.getCountrySlides(city?.countryID ?? 0).subscribe({
-      next: res => {
+    if (!city?.countryID) {
+      this.contrySlide = null;
+      this.countrySlidesLoading.set(false);
+      this.cdr.markForCheck();
+      return;
+    }
 
+    this.contrySlide = null;
+    this.countrySlidesLoading.set(true);
+    this.cdr.markForCheck();
+
+    this.chatService.getCountrySlides(city.countryID).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.countrySlidesLoading.set(false);
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: res => {
         const data = res?.result?.result;
+        this.contrySlide = data ?? null;
 
         if (!data) return;
 
@@ -178,27 +210,31 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
         this.sliderItems = [
           {
-            title: `${data.countryName} recent performance`,
+            title: `${data.country.countryName} recent performance`,
             subtitle: data.recentPerformance?.summary,
             trend: "Recent"
           },
+          ...combinedRisks.map((x: any) => ({
+            title: 'Risk Overview',
+            subtitle: x.summary || x.description,
+            trend: "Risk"
+          })),
           ...earlyWarnings.map((x: any) => ({
             title: x.title || 'Early Warning',
             subtitle: x.description || x.summary,
             trend: "Early Warning"
           })),
-
-          ...combinedRisks.map((x: any) => ({
-            title: x.riskName || 'Risk',
-            subtitle: x.summary || x.description,
-            trend: "Risk"
-          }))
         ];
 
         this.currentSlide = 0;
-
         this.startSlider();
-      }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.contrySlide = null;
+        this.sliderItems = [];
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -212,7 +248,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   protected engineStatusLabel(): string {
-    if (this.isTyping()) return 'Processing analysis';
+    if (this.isTyping()) return 'Processing Intelligence';
     if (this.hasContext()) return 'Context locked';
     return 'Engine ready';
   }
@@ -256,6 +292,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
         complete: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
         error: () => this.cdr.markForCheck(),
       });
+  }
+
+  trackQuickQuestion(_index: number, item: { label: string }): string {
+    return item.label;
   }
 
   sendQuickQuestion(text: string): void {
@@ -342,6 +382,91 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /** Pillars from country slide, ordered for sidebar display. */
+  get sidebarPillars(): PillarsUserHistroyResponseDto[] {
+    const pillars = this.contrySlide?.country?.pillars;
+    if (!pillars?.length) return [];
+    return [...pillars].sort(
+      (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
+    );
+  }
+
+  /** 0–100 peace index → PEM pillar palette (higher = more peaceful). */
+  scoreToColor(value: number | null | undefined): string {
+    const colors = this.commonService.PillarColors;
+    if (value == null || isNaN(Number(value))) return '#E0E0E0';
+    const v = Math.min(100, Math.max(0, Number(value)));
+    if (v >= 90) return colors[0];
+    if (v >= 80) return colors[1];
+    if (v >= 70) return colors[2];
+    if (v >= 60) return colors[3];
+    if (v >= 50) return colors[4];
+    if (v >= 40) return colors[5];
+    if (v >= 30) return colors[6];
+    if (v >= 20) return colors[7];
+    if (v >= 10) return colors[8];
+    return colors[9];
+  }
+
+  /** Pillar score 0–100 → bar / image accent color. */
+  pillarScoreColor(score: number | null | undefined): string {
+    return this.scoreToColor(this.normalizePillarScore(score));
+  }
+
+  pillarBarWidth(score: number | null | undefined): string {
+    const pct = this.normalizePillarScore(score);
+    if (pct == null) return '0%';
+    return `${Math.max(0, pct)}%`;
+  }
+
+  private normalizePillarScore(score: number | null | undefined): number | null {
+    if (score == null || isNaN(Number(score))) return null;
+    return Math.min(100, Math.max(0, Number(score)));
+  }
+
+  truncatePillarName(name: string | null | undefined, maxWords = 3): string {
+    if (!name?.trim()) return '—';
+    const words = name.trim().split(/\s+/);
+    if (words.length <= maxWords) return name.trim();
+    return words.slice(0, maxWords).join(' ') + '…';
+  }
+
+  isPillarNameTruncated(name: string | null | undefined, maxWords = 4): boolean {
+    if (!name?.trim()) return false;
+    return name.trim().split(/\s+/).length > maxWords;
+  }
+
+  peaceLevelLabel(score: number | null | undefined): string {
+    if (score == null || isNaN(Number(score))) return '—';
+    const v = Number(score);
+    if (v >= 80) return 'Very High Peace';
+    if (v >= 60) return 'High Peace';
+    if (v >= 40) return 'Moderate Peace';
+    if (v >= 20) return 'Low Peace';
+    return 'Very Low Peace';
+  }
+
+  rankPeaceIndex(rank: number | null | undefined, total: number | null | undefined): number {
+    if (!rank || !total) return 50;
+    return Math.min(100, Math.max(0, ((total - rank) / total) * 100));
+  }
+
+  trendChartColor(trend: string | null | undefined): string {
+    if (!trend) return '#94a3b8';
+    const t = trend.toLowerCase().trim();
+    if (t.includes('improv') || t.startsWith('+') || t.includes('↑') || t.includes('up')) {
+      return '#53c341';
+    }
+    if (t.includes('declin') || t.startsWith('-') || t.includes('↓') || t.includes('down') || t.includes('worsen')) {
+      return '#ef4444';
+    }
+    return '#64748b';
+  }
+
+  trackPillarId(_: number, p: PillarsUserHistroyResponseDto): number {
+    return p.pillarID;
+  }
+
   /** Search both country name and alias (also used as a fallback for pillar name) */
   customSearchFn(term: string, item: any): boolean {
     const t = term.toLowerCase();
@@ -357,6 +482,38 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   getTrendLabel(item: any): string {
     return item?.trend;
+  }
+
+  get activeAnalysisSlide(): { title?: string; subtitle?: string; trend?: string } | null {
+    return this.sliderItems[this.currentSlide] ?? null;
+  }
+
+  openFullAnalysis(event?: Event): void {
+    event?.stopPropagation();
+    event?.preventDefault();
+    if (!this.activeAnalysisSlide?.subtitle?.trim()) return;
+    this.analysisModalOpen.set(true);
+    this.cdr.markForCheck();
+  }
+
+  closeFullAnalysis(): void {
+    this.analysisModalOpen.set(false);
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.analysisModalOpen()) {
+      this.closeFullAnalysis();
+    }
+  }
+
+  navigateAnalysisInModal(delta: number, event?: Event): void {
+    event?.stopPropagation();
+    const len = this.sliderItems.length;
+    if (len < 2) return;
+    this.currentSlide = (this.currentSlide + delta + len) % len;
+    this.cdr.markForCheck();
   }
 
 
