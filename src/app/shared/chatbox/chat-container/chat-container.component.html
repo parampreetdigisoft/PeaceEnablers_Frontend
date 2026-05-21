@@ -82,8 +82,14 @@
 
 
 <div class="pem-chat">
-<div class="pem-chat-inner">
-    <div class="per-chat-slides">
+<div class="pem-chat-inner"
+  [class.pem-chat-inner--has-hero]="sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--hero-expanded]="isExpanded && sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--hero-collapsed]="!isExpanded && sliderItems.length > 0 && selectedCountry()"
+  [class.pem-chat-inner--has-chat]="displayMessages().length > 0 || isTyping()">
+    <div class="per-chat-slides"
+      [class.per-chat-slides--expanded]="isExpanded && sliderItems.length > 0 && selectedCountry()"
+      [class.per-chat-slides--collapsed]="!isExpanded && sliderItems.length > 0 && selectedCountry()">
         <section class="flip-hero"  aria-label="Country intelligence highlights">
           <div class="flip-hero__viewport">
             <div class="flip-hero__slider" [class.slide]="animate">
@@ -156,14 +162,30 @@
 
                 </div>
               </article>
-              <nav class="suggestions-rail" aria-label="Suggested inquiries">
-                <span class="rail__label">TRY ASKING</span>
-                <button *ngFor="let item of chatService.quickQuestions()" type="button"
-                  (click)="sendQuickQuestion(item.question)" class="rail__chip">
-                  {{ item.label }}
-                </button>
-              </nav>
             </div>
+            <nav class="suggestions-rail" aria-label="Suggested inquiries">
+              <span class="rail__label">TRY ASKING</span>
+              <div class="suggestions-rail__viewport">
+                <div class="suggestions-rail__marquee"
+                  [style.--rail-marquee-duration]="railMarqueeDuration() + 's'"
+                  role="list">
+                  <div class="suggestions-rail__sequence">
+                    <button *ngFor="let item of chatService.quickQuestions(); trackBy: trackQuickQuestion"
+                      type="button" role="listitem"
+                      (click)="sendQuickQuestion(item.question)" class="rail__chip">
+                      {{ item.label }}
+                    </button>
+                  </div>
+                  <div class="suggestions-rail__sequence suggestions-rail__sequence--clone" aria-hidden="true">
+                    <button *ngFor="let item of chatService.quickQuestions(); trackBy: trackQuickQuestion"
+                      type="button" tabindex="-1"
+                      (click)="sendQuickQuestion(item.question)" class="rail__chip">
+                      {{ item.label }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </nav>
             <!-- <div class="flip-hero__dots" role="tablist">
               <button *ngFor="let item of sliderItems; let i = index" type="button" class="flip-hero__dot"
                 [class.active]="i === currentSlide" (click)="goToSlide(i)"
@@ -175,8 +197,10 @@
         </section>
         
     </div>
-
+  <div class="pem-chat-body">
   <div #messagesContainer class="chat-messages" role="log" aria-live="polite">
+    <div class="chat-messages__inner">
+    <div class="chat-messages__anchor" *ngIf="displayMessages().length > 0 || isTyping()"></div>
 
     <section *ngIf="showWorkspaceEmpty()" class="workspace-empty">
 
@@ -236,29 +260,71 @@
       </ul>
     </section>
 
-    <article *ngFor="let msg of displayMessages(); trackBy: trackById"
-      [class.brief--query]="msg.role === 'user'"
-      [class.brief--intel]="msg.role === 'assistant'"
-      class="brief">
-
-      <header class="brief__meta">
-        <span class="brief__role">{{ msg.role === 'user' ? 'Analyst inquiry' : 'PEM Aevum brief' }}</span>
-        <time *ngIf="!msg.isStreaming" class="brief__time">{{ formatTime(msg.timestamp) }}</time>
-      </header>
-
-      <div class="brief__body">
-        <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
-        <ng-container *ngIf="msg.role === 'assistant'">
-          <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
-          <span *ngIf="msg.isStreaming" class="stream-cursor" aria-hidden="true"></span>
-        </ng-container>
+    <ng-container *ngFor="let msg of displayMessages(); trackBy: trackById; let i = index; let last = last">
+      <div *ngIf="i > 0 && displayMessages()[i - 1].role !== msg.role" class="brief-exchange" aria-hidden="true">
+        <span class="brief-exchange__line"></span>
+        <span class="brief-exchange__icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M6 4.5L12 9 6 13.5" stroke="#77BD3E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 9h9" stroke="#003160" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.35"/>
+          </svg>
+        </span>
+        <span class="brief-exchange__line"></span>
       </div>
-    </article>
+
+      <article
+        [class.brief--query]="msg.role === 'user'"
+        [class.brief--intel]="msg.role === 'assistant'"
+        [class.brief--streaming]="msg.isStreaming"
+        class="brief">
+
+        <div class="brief__rail" [class.brief__rail--last]="last && !isTyping()">
+          <div class="brief__icon" [class.brief__icon--user]="msg.role === 'user'"
+            [class.brief__icon--intel]="msg.role === 'assistant'">
+            <svg *ngIf="msg.role === 'user'" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <svg *ngIf="msg.role === 'assistant'" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.4" opacity="0.35"/>
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="brief__main">
+          <header class="brief__meta">
+            <span class="brief__role">{{ msg.role === 'user' ? 'Analyst inquiry' : 'PEM Aevum brief' }}</span>
+            <time *ngIf="!msg.isStreaming" class="brief__time">{{ formatTime(msg.timestamp) }}</time>
+          </header>
+
+          <div class="brief__body">
+            <ng-container *ngIf="msg.role === 'user'">{{ msg.content }}</ng-container>
+            <ng-container *ngIf="msg.role === 'assistant'">
+              <div [innerHTML]="msg.content | markdown" class="markdown-body cus_markdown-body"></div>
+              <span *ngIf="msg.isStreaming" class="stream-cursor" aria-hidden="true"></span>
+            </ng-container>
+          </div>
+        </div>
+      </article>
+    </ng-container>
 
     <div *ngIf="isTyping() && messages()[messages().length - 1]?.role !== 'assistant'" class="synthesis-panel">
-      <span class="synthesis-panel__label">Synthesizing intelligence</span>
-      <span class="synthesis-panel__track" aria-hidden="true"><span class="synthesis-panel__fill"></span></span>
+      <div class="synthesis-panel__icon" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="#77BD3E" stroke-width="1.4" opacity="0.4"/>
+          <circle cx="10" cy="10" r="2.5" fill="#77BD3E"/>
+        </svg>
+      </div>
+      <div class="synthesis-panel__content">
+        <span class="synthesis-panel__label">Processing Intelligence</span>
+        <span class="synthesis-panel__track" aria-hidden="true"><span class="synthesis-panel__fill"></span></span>
+      </div>
     </div>
+
+    </div>
+  </div>
 
     <footer class="chat-input-area">
     <div *ngIf="showSuggestions() && suggestions().length > 0" class="suggestions-dropdown">
@@ -269,13 +335,22 @@
       </button>
     </div>
 
-    <div class="input-shell" [class.input-shell--focused]="inputText().length > 0">
+    <div class="input-shell"
+      [class.input-shell--focused]="inputText().length > 0 && !isTyping()"
+      [class.input-shell--processing]="isTyping()">
       <div class="input-shell__field">
-        <input #inputField id="pem-aevum-input" [value]="inputText()" [disabled]="isTyping()"
+        <div *ngIf="isTyping()" class="input-processing" aria-live="polite">
+          <span class="input-processing__pulse" aria-hidden="true"></span>
+          <span class="input-processing__label">Processing Intelligence</span>
+          <span class="input-processing__dots" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <input *ngIf="!isTyping()" #inputField id="pem-aevum-input" [value]="inputText()"
           (input)="onInputChange($event)" (keydown)="onKeyDown($event)" (blur)="closeSuggestions()"
           type="text" class="chat-input" placeholder=" " autocomplete="off" spellcheck="false">
-        <span *ngIf="!inputText().trim()" class="input-rotator" [class.input-rotator--out]="placeholderAnimating()"
-          aria-hidden="true">
+        <span *ngIf="!isTyping() && !inputText().trim()" class="input-rotator"
+          [class.input-rotator--out]="placeholderAnimating()" aria-hidden="true">
           {{ rotatingPlaceholders[placeholderIndex()] }}
         </span>
       </div>
@@ -297,16 +372,13 @@
       Outputs support analysis; validate critical judgments against primary sources.
     </p>
   </footer>
-  
   </div>
-
-  
 </div>
- 
 
 
     <!-- Sidebar -->
   <aside class="pem-sidebar">
+    <div class="pem-sidebar__scroll">
 
     <!-- Country Overview Card -->
     <section class="sidebar-card country-overview">
@@ -484,11 +556,11 @@
                 </div>
               </div>
               <div class="pillar-right">
-                <div class="value">{{ p.pillarScore != null ? p.pillarScore.toFixed(1) : '—' }}</div>
+                <div class="value">{{ p.pillarID != null ? p.pillarID.toFixed(1) : '—' }}</div>
                 <div class="bar">
                   <div class="pillar-fill"
-                    [style.width]="pillarBarWidth(p.pillarScore)"
-                    [style.background]="pillarScoreColor(p.pillarScore)"></div>
+                    [style.width]="pillarBarWidth(p.pillarID*7)"
+                    [style.background]="pillarScoreColor(p.pillarID*7)"></div>
                 </div>
               </div>
             </div>
@@ -527,6 +599,7 @@
 
       </div>      
     </section> -->
+    </div>
   </aside>
 
   <!-- Full analysis reader (long subtitle text) -->

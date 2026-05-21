@@ -87,7 +87,14 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   protected showWorkspaceEmpty = computed(() => this.displayMessages().length === 0);
 
+  /** Seconds for one full TRY ASKING marquee loop (scales with chip count). */
+  protected railMarqueeDuration = computed(() => {
+    const count = this.chatService.quickQuestions().length;
+    return Math.max(28, count * 5);
+  });
+
   readonly rotatingHeadlines = [
+    'Welcome to PEM Aevum',
     'Surface stability signals across regions',
     'Interrogate country risk with pillar context',
     'Compare indices and emerging pressure points',
@@ -207,17 +214,16 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
             subtitle: data.recentPerformance?.summary,
             trend: "Recent"
           },
+          ...combinedRisks.map((x: any) => ({
+            title: 'Risk Overview',
+            subtitle: x.summary || x.description,
+            trend: "Risk"
+          })),
           ...earlyWarnings.map((x: any) => ({
             title: x.title || 'Early Warning',
             subtitle: x.description || x.summary,
             trend: "Early Warning"
           })),
-
-          ...combinedRisks.map((x: any) => ({
-            title: x.riskName || 'Risk',
-            subtitle: x.summary || x.description,
-            trend: "Risk"
-          }))
         ];
 
         this.currentSlide = 0;
@@ -286,6 +292,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
         complete: () => { this.scrollToBottom(); this.cdr.markForCheck(); },
         error: () => this.cdr.markForCheck(),
       });
+  }
+
+  trackQuickQuestion(_index: number, item: { label: string }): string {
+    return item.label;
   }
 
   sendQuickQuestion(text: string): void {
@@ -414,7 +424,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     return Math.min(100, Math.max(0, Number(score)));
   }
 
-  truncatePillarName(name: string | null | undefined, maxWords = 4): string {
+  truncatePillarName(name: string | null | undefined, maxWords = 3): string {
     if (!name?.trim()) return '—';
     const words = name.trim().split(/\s+/);
     if (words.length <= maxWords) return name.trim();
