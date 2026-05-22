@@ -270,7 +270,7 @@ export class ChatService {
   }
 
   getContriesCrossComparision() {
-    let userText = "Explain cross comparisons for these countries for each pillar with risk and opportunities."
+    let userText = "Provide a detailed comparative analysis of the selected countries across all PEM pillars, including key risks, opportunities, structural vulnerabilities, resilience indicators, emerging trends, and strategic observations for each pillar."
 
     if (this.isTyping()) {
       this.stopGeneration();
@@ -329,6 +329,7 @@ export class ChatService {
               const fullText = res.result?.responseText ?? '';
               this.pendingFullText = fullText;
               this.typewriterStream(fullText, assistantId, observer);
+              this.crossComparisionCountryIDs.next([]);
             } else {
               this.handleError(assistantId, observer, res.errors?.join(', ') ?? 'Unknown error');
             }

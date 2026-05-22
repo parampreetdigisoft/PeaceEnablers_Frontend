@@ -16,6 +16,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { ChatService } from 'src/app/core/services/chat.service';
 import { UserRole } from 'src/app/core/enums/UserRole';
 import { Router } from '@angular/router';
+import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -35,7 +36,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-ai-country-comparison',
   standalone: true,
-  imports: [CommonModule, SharedModule, CircularScoreComponent],
+  imports: [CommonModule, SharedModule, CircularScoreComponent,UtcToLocalTooltipDirective],
   templateUrl: './ai-country-comparison.component.html',
   styleUrl: './ai-country-comparison.component.css'
 })
@@ -623,6 +624,6 @@ export class AiCountryComparisonComponent implements OnInit {
 
   viewPEMAveumCrossComparision(){
     this.chatService.crossComparisionCountryIDs.next(this.selectedCountries);
-    this.router.navigate(['/admin/chat'], { state: { role: UserRole.Admin } });
+    this.router.navigate(['/admin/aevum'], { state: { role: UserRole.Admin } });
   }
 }

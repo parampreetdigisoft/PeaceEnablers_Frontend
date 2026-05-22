@@ -43,7 +43,7 @@ const routes: Routes = [
         loadComponent: () => import('./container/ai-kpi-analysis/kpianalysis.component').then(m => m.KPIAnalysisComponent)
       },
       {
-        path: "chat",
+        path: "aevum",
         loadComponent: () =>
           import("../../shared/chatbox/chat-container/chat-container.component").then(
             (m) => m.ChatContainerComponent

@@ -39,7 +39,7 @@
     <!-- Pagination -->
     <ng-container *ngIf="totalRecords > pageSize">
       <div class="pagination-wrapper">
-        <app-pagination [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize"
+        <app-pagination [selectedYear]="selectedYear" [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize"
           [isLoader]="isLoader" (pageChange)="compareCountries($event)">
         </app-pagination>
       </div>

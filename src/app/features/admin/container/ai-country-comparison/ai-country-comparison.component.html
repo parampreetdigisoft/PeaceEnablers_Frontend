@@ -286,9 +286,26 @@
 													{{ country.countryName }}
 												</h1>
 												<div class="header_Score">
-													<p class="city_cards_p">
-														AI Score : {{ country.value.toFixed(2) }}
+													<p class="city_cards_p header_score_pill">
+														<span class="header_score_label">AI Score</span>
+														<span class="header_score_value">{{ country.value.toFixed(2) }}</span>
 													</p>
+													<div
+														class="header_recency"
+														[utcToLocalTooltip]="
+															commonService.isValidDate(country?.updatedAt)
+																? country?.updatedAt
+																: 'null'
+														"
+														matTooltip
+														tooltipFormat="fullDate">
+														<span class="header_recency_label">Recency</span>
+														<span
+															[ngClass]="commonService.researchStatusClass(country.updatedAt)"
+															class="research_date">
+															{{ commonService.getGeneratedTime(country?.updatedAt) }}
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -299,8 +316,6 @@
 					</th>
 				</tr>
 			</thead>
-
-
 
 			<tbody>
 				<tr *ngFor="let piller of pillarWiseData"

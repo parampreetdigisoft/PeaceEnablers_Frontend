@@ -18,6 +18,7 @@ export interface PillarValueDto {
 export interface ChartTableRowDto {
   countryID: number;
   countryName: string;
+  updatedAt: string;
   value: number;
   pillarValues: PillarValueDto[];
 }

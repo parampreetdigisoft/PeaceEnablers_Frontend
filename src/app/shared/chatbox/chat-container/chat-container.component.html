@@ -65,10 +65,10 @@
     </div>
 
     <div class="cb__status">
-      <div class="cb__engine-state" [class.cb__engine-state--active]="isTyping()">
+      <!-- <div class="cb__engine-state" [class.cb__engine-state--active]="isTyping()">
         <span class="cb__engine-bar" aria-hidden="true"><span class="cb__engine-bar-fill"></span></span>
         <span class="cb__engine-label">{{ engineStatusLabel() }}</span>
-      </div>
+      </div> -->
       <button type="button" (click)="clearHistory()" class="cb__session-btn" matTooltip="Start a new analysis session">
         <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M2.5 7h9M7 2.5v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -572,11 +572,11 @@
                 </div>
               </div>
               <div class="pillar-right">
-                <div class="value">{{ p.pillarID != null ? p.pillarID.toFixed(1) : '—' }}</div>
+                <div class="value">{{ p.pillarScore != null ? p.pillarScore.toFixed(1) : '—' }}</div>
                 <div class="bar">
                   <div class="pillar-fill"
-                    [style.width]="pillarBarWidth(p.pillarID*7)"
-                    [style.background]="pillarScoreColor(p.pillarID*7)"></div>
+                    [style.width]="pillarBarWidth(p.pillarScore)"
+                    [style.background]="pillarScoreColor(p.pillarScore)"></div>
                 </div>
               </div>
             </div>

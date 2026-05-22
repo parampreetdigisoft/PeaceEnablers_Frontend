@@ -84,7 +84,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "chat",
+        path: "aevum",
         loadComponent: () =>
           import("../../shared/chatbox/chat-container/chat-container.component").then(
             (m) => m.ChatContainerComponent

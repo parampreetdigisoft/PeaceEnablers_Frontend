@@ -615,6 +615,6 @@ export class AiCountryComparisonComponent implements OnInit {
   }
     viewPEMAveumCrossComparision(){
     this.chatService.crossComparisionCountryIDs.next(this.selectedCountries);
-    this.router.navigate(['/countryuser/chat'], { state: { role: UserRole.CountryUser } });
+    this.router.navigate(['/countryuser/aevum'], { state: { role: UserRole.CountryUser } });
   }
 }

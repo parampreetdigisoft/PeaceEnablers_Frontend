@@ -15,10 +15,12 @@ export class PaginationComponent implements OnChanges {
   {
     this.ctx.detectChanges();
   }
+  currentYear = new Date().getFullYear();
   @Input() isLoader: boolean = false;
   @Input() currentPage: number = 1;
   @Input() totalPage: number = 0; // total items
   @Input() pageSize: number = 10;
+  @Input() selectedYear: number = new Date().getFullYear();
 
   @Output() pageChange = new EventEmitter<number>();
 
