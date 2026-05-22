@@ -180,15 +180,25 @@
                                 <div class="city_card">
                                     <div class="city_card_inner">
                                         <div class="melbourne-card-text">
-                                            <div class="card_title">
-                                                <h1 class="city_cards_h1">{{ country.countryName }}</h1>
+                                            <div class="card_title card_title--compact">
+                                                <h2 class="city_cards_h1 country_header_name">{{ country.countryName }}</h2>
                                                 <div class="header_Score">
-                                                    <p class="city_cards_p">
-                                                        AI Score : {{ country.value.toFixed(2) }}
-                                                    </p>
-
+                                                    <span class="header_score_chip">
+                                                        AI Score <strong>{{ country.value.toFixed(2) }}</strong>
+                                                    </span>
+                                                    <span
+                                                        class="research_date"
+                                                        [ngClass]="commonService.researchStatusClass(country.updatedAt)"
+                                                        [utcToLocalTooltip]="
+                                                            commonService.isValidDate(country?.updatedAt)
+                                                                ? country?.updatedAt
+                                                                : 'null'
+                                                        "
+                                                        matTooltip
+                                                        tooltipFormat="fullDate">
+                                                        {{ commonService.getGeneratedTime(country?.updatedAt) }}
+                                                    </span>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

@@ -281,17 +281,17 @@
 								<div class="city_card">
 									<div class="city_card_inner">
 										<div class="melbourne-card-text">
-											<div class="card_title">
-												<h1 class="city_cards_h1">
+											<div class="card_title card_title--compact">
+												<h2 class="city_cards_h1 country_header_name">
 													{{ country.countryName }}
-												</h1>
+												</h2>
 												<div class="header_Score">
-													<p class="city_cards_p header_score_pill">
-														<span class="header_score_label">AI Score</span>
-														<span class="header_score_value">{{ country.value.toFixed(2) }}</span>
-													</p>
-													<div
-														class="header_recency"
+													<span class="header_score_chip">
+														AI Score <strong>{{ country.value.toFixed(2) }}</strong>
+													</span>
+													<span
+														class="research_date"
+														[ngClass]="commonService.researchStatusClass(country.updatedAt)"
 														[utcToLocalTooltip]="
 															commonService.isValidDate(country?.updatedAt)
 																? country?.updatedAt
@@ -299,13 +299,8 @@
 														"
 														matTooltip
 														tooltipFormat="fullDate">
-														<span class="header_recency_label">Recency</span>
-														<span
-															[ngClass]="commonService.researchStatusClass(country.updatedAt)"
-															class="research_date">
-															{{ commonService.getGeneratedTime(country?.updatedAt) }}
-														</span>
-													</div>
+														{{ commonService.getGeneratedTime(country?.updatedAt) }}
+													</span>
 												</div>
 											</div>
 										</div>
