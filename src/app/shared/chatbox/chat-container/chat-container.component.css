@@ -213,6 +213,7 @@
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
+  overflow: auto;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1560,6 +1561,7 @@
   /* min-height: 100%; */
   box-sizing: border-box;
   margin-bottom: auto;
+  overflow: auto;
 }
 
 .chat-messages__anchor {
