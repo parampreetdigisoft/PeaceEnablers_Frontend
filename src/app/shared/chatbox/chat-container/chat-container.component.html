@@ -511,17 +511,83 @@
       </ng-container>
 
       <ng-template #glanceNoCountry>
-        <div class="sidebar-empty-state">
-          <svg class="sidebar-empty-state__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <circle cx="20" cy="20" r="19" stroke="#77BD3E" stroke-opacity="0.35" stroke-width="1.5"/>
-            <path d="M20 11v10M20 27v1" stroke="#003160" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <p class="sidebar-empty-state__text">
-            Please select a country to view country-specific intelligence.
-          </p>
+            <div class="stats-card emerging-trends">
+      <ng-container *ngIf="emergingTrendsLoading(); else emergingTrendsReady">
+        <div class="sidebar-loading emerging-trends__loading" aria-live="polite" aria-busy="true">
+          <div class="sidebar-loading__spinner" aria-hidden="true"></div>
+          <p class="sidebar-loading__text">Scanning global signals…</p>
+          <div class="emerging-trends__skeleton">
+            <span></span><span></span><span></span>
+          </div>
         </div>
+      </ng-container>
+
+      <ng-template #emergingTrendsReady>
+        <ng-container *ngIf="emergingTrends() as feed; else emergingTrendsFailed">
+          <header class="emerging-trends__header">
+            <h3 class="title">{{ feed.headline || 'Emerging Issues & Trends' }}</h3>
+            <time class="emerging-trends__updated" *ngIf="feed.updatedAt">
+              Updated {{ formatTrendUpdatedAt(feed.updatedAt) }}
+            </time>
+          </header>
+
+          <div class="emerging-trends__list" role="list">
+            <button
+              type="button"
+              class="trend-card"
+              role="listitem"
+              *ngFor="let card of feed.countries; trackBy: trackTrendCard"
+              [class.trend-card--active]="isTrendSelected(card)"
+              [attr.aria-expanded]="isTrendSelected(card)"
+              [style.--trend-accent]="trendAccentColor(card.color)"
+              (click)="selectTrendCard(card)"
+            >
+              <span class="trend-card__accent" aria-hidden="true"></span>
+              <div class="trend-card__row">
+                <span class="trend-card__code">{{ card.countryCode }}</span>
+                <span class="trend-card__country">{{ card.country }}</span>
+                <span class="trend-card__badge" [class.trend-card__badge--risk]="card.type === 'risk'">
+                  {{ card.type === 'risk' ? 'Risk' : 'Trend' }}
+                </span>
+              </div>
+              <h4 class="trend-card__title">{{ card.title }}</h4>
+              <div class="trend-card__meta">
+                <span class="trend-card__pill">{{ card.status }}</span>
+                <span class="trend-card__pill trend-card__pill--muted">{{ card.category }}</span>
+              </div>
+              <div class="trend-card__body" *ngIf="isTrendSelected(card)">
+                <p class="trend-card__summary">{{ card.summary }}</p>
+                <a
+                  class="trend-card__link"
+                  [href]="card.sourceUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  (click)="$event.stopPropagation()"
+                >
+                  Read more
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </div>
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-template #emergingTrendsFailed>
+          <div class="emerging-trends__error">
+            <p>{{ emergingTrendsError() || 'Unable to load global trends.' }}</p>
+            <button type="button" class="emerging-trends__retry" (click)="retryEmergingTrends()">
+              Retry
+            </button>
+          </div>
+        </ng-template>
       </ng-template>
     </div>
+      </ng-template>
+    </div>
+    
+
 
     </section>
 

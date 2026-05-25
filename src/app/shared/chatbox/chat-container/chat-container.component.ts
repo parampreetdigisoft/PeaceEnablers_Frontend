@@ -27,6 +27,10 @@ import {
   CountryExecutiveSlidesResult,
   PillarsUserHistroyResponseDto,
 } from 'src/app/core/models/chat/ChatCountryExecutiveSlidesResponse';
+import {
+  ChatEmergingTrendsResponse,
+  EmergingTrendCountryCard
+} from 'src/app/core/models/chat/EmergingTrendsResponse';
 import { CommonService } from 'src/app/core/services/common.service';
 import { environment } from 'src/environments/environment';
 
@@ -57,6 +61,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   unreadCount = signal(0);
   contrySlide :CountryExecutiveSlidesResult|null = null;
   countrySlidesLoading = signal(false);
+  emergingTrends = signal<ChatEmergingTrendsResponse | null>(null);
+  emergingTrendsLoading = signal(false);
+  emergingTrendsError = signal<string | null>(null);
+  selectedTrendCode = signal<string | null>(null);
   urlBase = environment.apiUrl;
 
   // ─── Service signal aliases ───────────────────────────────────────────────
@@ -162,6 +170,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     this.chatService.getAllCountries();
     this.chatService.getPillars();
     this.chatService.getFAQDs();
+    this.loadEmergingTrends();
     this.startSlider();
     this.startPromptRotation();
     if (this.chatService.crossComparisionCountryIDs.value.length > 0) {
@@ -465,6 +474,85 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   trackPillarId(_: number, p: PillarsUserHistroyResponseDto): number {
     return p.pillarID;
+  }
+
+  loadEmergingTrends(): void {
+    this.emergingTrendsLoading.set(true);
+    this.emergingTrendsError.set(null);
+    this.cdr.markForCheck();
+
+    this.chatService.getEmergingTrendsAndIssues(8).pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.emergingTrendsLoading.set(false);
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: res => {
+        const payload = res?.succeeded ? res.result : null;
+        const countries = payload?.countries?.filter(c => c?.country && c?.sourceUrl) ?? [];
+
+        if (!payload || !countries.length) {
+          this.emergingTrends.set(null);
+          this.emergingTrendsError.set(
+            res?.errors?.[0] ?? res?.messages?.join(", ") ?? 'Unable to load global trends right now.'
+          );
+          return;
+        }
+
+        this.emergingTrends.set({ ...payload, countries });
+        this.selectedTrendCode.set(countries[0]?.countryCode ?? null);
+        this.emergingTrendsError.set(null);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.emergingTrends.set(null);
+        this.emergingTrendsError.set('Unable to load global trends. Please try again.');
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  retryEmergingTrends(): void {
+    this.loadEmergingTrends();
+  }
+
+  selectTrendCard(card: EmergingTrendCountryCard): void {
+    this.selectedTrendCode.set(card.countryCode);
+    this.cdr.markForCheck();
+  }
+
+  isTrendSelected(card: EmergingTrendCountryCard): boolean {
+    return this.selectedTrendCode() === card.countryCode;
+  }
+
+  trackTrendCard(_: number, card: EmergingTrendCountryCard): string {
+    return card.countryCode;
+  }
+
+  trendAccentColor(color: string | null | undefined): string {
+    const map: Record<string, string> = {
+      green: '#53c341',
+      yellow: '#eab308',
+      orange: '#f97316',
+      red: '#ef4444',
+      blue: '#3b82f6',
+    };
+    return map[(color ?? '').toLowerCase()] ?? '#77bd3e';
+  }
+
+  formatTrendUpdatedAt(iso: string | null | undefined): string {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '';
+    }
   }
 
   /** Search both country name and alias (also used as a fallback for pillar name) */

@@ -16,6 +16,7 @@ import { ResultResponseDto } from '../models/ResultResponseDto';
 import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
 import { UserRole } from '../enums/UserRole';
 import { ChatCountryExecutiveSlidesResponse } from '../models/chat/ChatCountryExecutiveSlidesResponse';
+import { ChatEmergingTrendsResponse } from '../models/chat/EmergingTrendsResponse';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -414,6 +415,12 @@ export class ChatService {
       `Chat/countrySlides`,
       countryId as any
     );
+  }
+
+  getEmergingTrendsAndIssues(countryCount = 6): Observable<ResultResponseDto<ChatEmergingTrendsResponse>> {
+    return this.http
+      .getWithQueryParams('Public/emergingTrendsAndIssues', { countryCount })
+      .pipe(map(x => x as ResultResponseDto<ChatEmergingTrendsResponse>));
   }
 
   private getAllCountriesByUserId(userId: number) {
