@@ -17,6 +17,7 @@ import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
 import { UserRole } from '../enums/UserRole';
 import { ChatCountryExecutiveSlidesResponse } from '../models/chat/ChatCountryExecutiveSlidesResponse';
 import { ChatEmergingTrendsResponse } from '../models/chat/EmergingTrendsResponse';
+import { PillarLiveSignalsResult } from '../models/chat/PillarLiveSignalsResponse';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -421,6 +422,12 @@ export class ChatService {
     return this.http
       .getWithQueryParams('Public/emergingTrendsAndIssues', { countryCount })
       .pipe(map(x => x as ResultResponseDto<ChatEmergingTrendsResponse>));
+  }
+
+  getPillarLiveSignals(): Observable<ResultResponseDto<PillarLiveSignalsResult>> {
+    return this.http
+      .get('Public/pillarLiveSignals')
+      .pipe(map(x => x as ResultResponseDto<PillarLiveSignalsResult>));
   }
 
   private getAllCountriesByUserId(userId: number) {

@@ -31,6 +31,10 @@ import {
   ChatEmergingTrendsResponse,
   EmergingTrendCountryCard
 } from 'src/app/core/models/chat/EmergingTrendsResponse';
+import {
+  PillarLiveSignalCard,
+  PillarLiveSignalsResult,
+} from 'src/app/core/models/chat/PillarLiveSignalsResponse';
 import { CommonService } from 'src/app/core/services/common.service';
 import { environment } from 'src/environments/environment';
 
@@ -65,6 +69,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   emergingTrendsLoading = signal(false);
   emergingTrendsError = signal<string | null>(null);
   selectedTrendCode = signal<string | null>(null);
+  pillarLiveSignals = signal<PillarLiveSignalsResult | null>(null);
+  pillarLiveSignalsLoading = signal(false);
+  pillarLiveSignalsError = signal<string | null>(null);
+  selectedPillarSignalId = signal<number | null>(null);
   urlBase = environment.apiUrl;
 
   // ─── Service signal aliases ───────────────────────────────────────────────
@@ -171,6 +179,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     this.chatService.getPillars();
     this.chatService.getFAQDs();
     this.loadEmergingTrends();
+    this.loadPillarLiveSignals();
     this.startSlider();
     this.startPromptRotation();
     if (this.chatService.crossComparisionCountryIDs.value.length > 0) {
@@ -539,6 +548,64 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       blue: '#3b82f6',
     };
     return map[(color ?? '').toLowerCase()] ?? '#77bd3e';
+  }
+
+  loadPillarLiveSignals(): void {
+    this.pillarLiveSignalsLoading.set(true);
+    this.pillarLiveSignalsError.set(null);
+    this.cdr.markForCheck();
+
+    this.chatService.getPillarLiveSignals().pipe(
+      takeUntil(this.destroy$),
+      finalize(() => {
+        this.pillarLiveSignalsLoading.set(false);
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: res => {
+        const payload = res?.succeeded ? res.result : null;
+        const pillars = payload?.pillars?.filter(p => p?.pillarId && p?.sourceUrl) ?? [];
+
+        if (!payload || pillars.length < 1) {
+          this.pillarLiveSignals.set(null);
+          this.pillarLiveSignalsError.set(
+            res?.errors?.[0] ?? 'Unable to load pillar signals right now.'
+          );
+          return;
+        }
+
+        this.pillarLiveSignals.set({ ...payload, pillars });
+        this.selectedPillarSignalId.set(pillars[0]?.pillarId ?? null);
+        this.pillarLiveSignalsError.set(null);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.pillarLiveSignals.set(null);
+        this.pillarLiveSignalsError.set('Unable to load pillar signals. Please try again.');
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  retryPillarLiveSignals(): void {
+    this.loadPillarLiveSignals();
+  }
+
+  selectPillarSignal(card: PillarLiveSignalCard): void {
+    this.selectedPillarSignalId.set(card.pillarId);
+    this.cdr.markForCheck();
+  }
+
+  isPillarSignalSelected(card: PillarLiveSignalCard): boolean {
+    return this.selectedPillarSignalId() === card.pillarId;
+  }
+
+  trackPillarSignal(_: number, card: PillarLiveSignalCard): number {
+    return card.pillarId;
+  }
+
+  pillarSignalLabel(card: PillarLiveSignalCard): string {
+    return card.pillarName ?? `Pillar ${card.pillarId}`;
   }
 
   formatTrendUpdatedAt(iso: string | null | undefined): string {

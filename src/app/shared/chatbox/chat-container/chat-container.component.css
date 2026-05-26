@@ -3845,7 +3845,7 @@ aside.pem-sidebar {
 
 @media only screen and (max-width: 1550px) {
   .stats-card.emerging-trends {
-    padding: 20px;
+    padding: 5px;
   }
 
   .stats-card.emerging-trends .trend-card__title {
@@ -3864,4 +3864,221 @@ aside.pem-sidebar {
     transition: none;
     animation: none;
   }
+}
+
+/* ── Live pillar signals (KEY PILLARS) ─────────────────────── */
+.pillar-signals-card {
+  padding: 20px;
+}
+
+.pillar-signals__header {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgb(0 49 96 / 10%);
+}
+
+.pillar-signals__eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #003160;
+}
+
+.pillar-signals__updated {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.pillar-signals__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pillar-signal-card {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 10px 10px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pillar-signal-card:hover {
+  border-color: rgba(119, 189, 62, 0.45);
+}
+
+.pillar-signal-card--active {
+  border-color: rgba(0, 49, 96, 0.22);
+  box-shadow: 0 3px 12px rgba(0, 49, 96, 0.08);
+}
+
+.pillar-signal-card__accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--pillar-accent, #77bd3e);
+  border-radius: 10px 0 0 10px;
+}
+
+.pillar-signal-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pillar-signal-card__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(0, 49, 96, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 49, 96, 0.08);
+}
+
+.pillar-signal-card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #003160;
+}
+
+.pillar-signal-card__id {
+  font-size: 11px;
+  font-weight: 700;
+  color: #003160;
+}
+
+.pillar-signal-card__meta-head {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pillar-signal-card__name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pillar-signal-card__badge {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
+  flex-shrink: 0;
+}
+
+.pillar-signal-card__badge--risk {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.pillar-signal-card__title {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #0f172a;
+}
+
+.pillar-signal-card__pills {
+  display: flex;
+  gap: 4px;
+}
+
+.pillar-signal-card__pill {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(0, 49, 96, 0.08);
+  color: #003160;
+}
+
+.pillar-signal-card__body {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ececec;
+}
+
+.pillar-signal-card__summary {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #475569;
+}
+
+.pillar-signal-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #003160;
+  text-decoration: none;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(119, 189, 62, 0.15);
+  border: 1px solid rgba(119, 189, 62, 0.35);
+}
+
+.pillar-signals__divider {
+  margin: 16px 0 12px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(0, 49, 96, 0.15);
+}
+
+.pillar-signals__divider span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.pillar-signals__error {
+  text-align: center;
+  padding: 12px 8px;
+}
+
+.pillar-signals__error p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pillar-signals__retry {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: #003160;
+  cursor: pointer;
 }

@@ -505,7 +505,7 @@
       </ng-template>
       <ng-template #glanceLoadFailed>
         <div class="sidebar-empty-state">
-          <p class="sidebar-empty-state__text">Unable to load country intelligence. Please try again.</p>
+          <p class="sidebar-empty-state__text">No data available for this country.</p>
         </div>
       </ng-template>
       </ng-container>
@@ -593,23 +593,97 @@
 
 
     <section class="sidebar-card key-pillars">
-      <div class="stats-card">
+      <div class="stats-card pillar-signals-card">
         <div class="pillars-header">
           <div class="title-wd-btn">
             <h3 class="title">KEY PILLARS</h3>
-            <!-- <button class="view-all">View All</button> -->
           </div>
-          
         </div>
 
-        <ng-container *ngIf="!selectedCountry(); else pillarsWithCountry">
-          <div class="sidebar-empty-state">
-            <p class="sidebar-empty-state__text">
-              Please select a country to view country-specific intelligence.
-            </p>
-          </div>
+        <ng-container *ngIf="!selectedCountry()">
+          <ng-container *ngIf="pillarLiveSignalsLoading(); else pillarSignalsReady">
+            <div class="sidebar-loading sidebar-loading--compact" aria-live="polite" aria-busy="true">
+              <div class="sidebar-loading__spinner" aria-hidden="true"></div>
+              <p class="sidebar-loading__text">Loading live pillar signals…</p>
+            </div>
+          </ng-container>
+
+          <ng-template #pillarSignalsReady >
+            <ng-container *ngIf="pillarLiveSignals() as pillarFeed; else pillarSignalsFailed">
+              <header class="pillar-signals__header">
+                <p class="pillar-signals__eyebrow">{{ pillarFeed.headline || 'Live Pillar Signals' }}</p>
+                <time class="pillar-signals__updated" *ngIf="pillarFeed.updatedAt">
+                  Updated {{ formatTrendUpdatedAt(pillarFeed.updatedAt) }}
+                </time>
+              </header>
+
+              <div class="pillar-signals__list" role="list">
+                <button
+                  type="button"
+                  class="pillar-signal-card"
+                  role="listitem"
+                  *ngFor="let p of pillarFeed.pillars; trackBy: trackPillarSignal"
+                  [class.pillar-signal-card--active]="isPillarSignalSelected(p)"
+                  [attr.aria-expanded]="isPillarSignalSelected(p)"
+                  [style.--pillar-accent]="trendAccentColor(p.color)"
+                  (click)="selectPillarSignal(p)"
+                >
+                  <span class="pillar-signal-card__accent" aria-hidden="true"></span>
+                  <div class="pillar-signal-card__head">
+                    <div class="pillar-signal-card__icon"
+                      [style.--pillar-color]="trendAccentColor(p.color)">
+                      <img *ngIf="p.imagePath"
+                        [src]="urlBase + '/' + p.imagePath"
+                        [alt]="pillarSignalLabel(p)" />
+                      <span *ngIf="!p.imagePath" class="pillar-signal-card__id">{{ p.pillarId }}</span>
+                    </div>
+                    <div class="pillar-signal-card__meta-head">
+                      <span class="pillar-signal-card__name">{{ pillarSignalLabel(p) }}</span>
+                      <span class="pillar-signal-card__badge"
+                        [class.pillar-signal-card__badge--risk]="p.type === 'risk'">
+                        {{ p.type === 'risk' ? 'Risk' : 'Trend' }}
+                      </span>
+                    </div>
+                  </div>
+                  <h4 class="pillar-signal-card__title">{{ p.title }}</h4>
+                  <div class="pillar-signal-card__pills">
+                    <span class="pillar-signal-card__pill">{{ p.status }}</span>
+                  </div>
+                  <div class="pillar-signal-card__body" *ngIf="isPillarSignalSelected(p)">
+                    <p class="pillar-signal-card__summary">{{ p.summary }}</p>
+                    <a
+                      class="pillar-signal-card__link"
+                      [href]="p.sourceUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Read more
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  </div>
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #pillarSignalsFailed>
+              <div class="pillar-signals__error">
+                <p>{{ pillarLiveSignalsError() || 'Unable to load pillar signals.' }}</p>
+                <button type="button" class="pillar-signals__retry" (click)="retryPillarLiveSignals()">
+                  Retry
+                </button>
+              </div>
+            </ng-template>
+          </ng-template>
         </ng-container>
-        <ng-template #pillarsWithCountry>
+        
+
+        <ng-container *ngIf="selectedCountry()">
+          <div class="pillar-signals__divider">
+            <span>Country pillar scores</span>
+          </div>
           <ng-container *ngIf="countrySlidesLoading(); else pillarsLoaded">
             <div class="sidebar-loading sidebar-loading--compact" aria-live="polite" aria-busy="true">
               <div class="sidebar-loading__spinner" aria-hidden="true"></div>
@@ -652,7 +726,7 @@
           <p class="pillar-empty">No pillar data available for this country.</p>
         </ng-template>
           </ng-template>
-        </ng-template>
+        </ng-container>
       </div>
     </section>
     
