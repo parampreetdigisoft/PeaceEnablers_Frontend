@@ -63,7 +63,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   showSuggestions = signal(false);
   showContextPanel = signal(true);
   unreadCount = signal(0);
-  contrySlide :CountryExecutiveSlidesResult|null = null;
+  contrySlide: CountryExecutiveSlidesResult | null = null;
   countrySlidesLoading = signal(false);
   emergingTrends = signal<ChatEmergingTrendsResponse | null>(null);
   emergingTrendsLoading = signal(false);
@@ -822,6 +822,28 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       }, 280);
     }
+  }
+
+  getOrdinalSuffix(rank?: number): string {
+
+    if (!rank) return '';
+
+    const j = rank % 10;
+    const k = rank % 100;
+
+    if (j === 1 && k !== 11) {
+      return 'st';
+    }
+
+    if (j === 2 && k !== 12) {
+      return 'nd';
+    }
+
+    if (j === 3 && k !== 13) {
+      return 'rd';
+    }
+
+    return 'th';
   }
 
 }

@@ -453,7 +453,7 @@
 
           <div class="rank-line">
             <span class="rank">{{contrySlide.country.countryRank}}</span>
-            <sup>st</sup>
+            <sup>{{ getOrdinalSuffix(contrySlide.country.countryRank) }}</sup>
           </div>
 
           <p class="sub-text">Out of {{contrySlide.country.totalCountry}} countries</p>
