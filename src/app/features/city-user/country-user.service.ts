@@ -21,6 +21,7 @@ import { AiCountryPillarResponseDto } from 'src/app/core/models/aiVm/AiCountryPi
 import { AiCountrySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestPdfDto';
 import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerRequestDto';
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
+import { EarlyWarningDashboardDto, PeaceStressTestDashboardDto, ResilienceScorecardDto } from 'src/app/core/models/CountrySignalDashboardDto';
 
 @Injectable({
   providedIn: 'root'
@@ -91,5 +92,17 @@ export class CountryUserService {
   }
   public getMutiplekpiLayerResults(payload: GetMutiplekpiLayerRequestDto) {
     return this.http.post(`kpi/getMutiplekpiLayerResults`, payload).pipe(map(x => x as ResultResponseDto<GetMutiplekpiLayerResultsDto>));;
+  }
+  public getPeaceStressTestDashboard(countryID: number, year: number) {
+    return this.http.getWithQueryParams(`CountryUser/getPeaceStressTestDashboard`, { countryID, year })
+      .pipe(map(x => x as ResultResponseDto<PeaceStressTestDashboardDto>));
+  }
+  public getEarlyWarningDashboard(countryID: number, year: number) {
+    return this.http.getWithQueryParams(`CountryUser/getEarlyWarningDashboard`, { countryID, year })
+      .pipe(map(x => x as ResultResponseDto<EarlyWarningDashboardDto>));
+  }
+  public getResilienceScorecard(countryID: number, year: number) {
+    return this.http.getWithQueryParams(`CountryUser/getResilienceScorecard`, { countryID, year })
+      .pipe(map(x => x as ResultResponseDto<ResilienceScorecardDto>));
   }
 }

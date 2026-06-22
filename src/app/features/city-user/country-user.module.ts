@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { CountryUserComponent } from './country-user.component';
 import { tierAccessGuard } from 'src/app/core/services/tier-access.guard';
-import { CountryUserDashboardComponent } from './container/country-user-dashboard/country-user-dashboard.component';
 import { SharedModule } from 'src/app/shared/share.module';
 import { CountryViewComponent } from './container/country-view/country-view.component';
 import { CountryDetailsComponent } from './features/country-details/country-details.component';
 import { ChooseKpisComponent } from './container/choose-kpis/choose-kpis.component';
+import { CountryUserDashboardComponent } from './container/country-signal-dashboard/country-signal-dashboard.component';
 const routes: Routes = [
   {
     path: '',
