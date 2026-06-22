@@ -48,4 +48,6 @@ export interface AiCountrySummeryDto {
   isVerified: boolean;
 
   aiCompletionRate?: number;
+  rank?: number;
+  regionRank?: number;
 }

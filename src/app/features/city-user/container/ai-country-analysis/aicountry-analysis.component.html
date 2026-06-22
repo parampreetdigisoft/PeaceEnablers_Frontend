@@ -48,6 +48,8 @@
           <th>Country</th>
           <th>Continent</th>          
           <th>Score</th>
+          <th>Rank</th>
+          <th>Region Rank</th>
           <th class="action_th">View Details</th>
         </tr>
       </thead>
@@ -63,6 +65,13 @@
           <td class="city-col">
             <app-circular-score [value]="country?.aiProgress ?? 0"></app-circular-score>
           </td>
+          <td class="city-col">
+            {{ country.rank }}
+          </td>
+          <td class="city-col">
+            {{ country.regionRank }}
+          </td>
+
           <td class="action_td">
             <table>
               <tbody>

@@ -80,7 +80,7 @@
 
 .tab_head {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   flex-wrap: wrap;
   flex: 1;
   min-width: 0;
