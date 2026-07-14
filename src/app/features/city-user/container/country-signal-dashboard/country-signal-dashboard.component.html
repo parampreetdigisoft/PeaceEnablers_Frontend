@@ -256,7 +256,7 @@
         </div>
         <div>
           <span class="resilience_hero_label">Governance Resilience Scorecard</span>
-          <h3>{{ getCountryName() }} · Rank {{ getResilienceRankText() }}</h3>
+          <h3>{{ getCountryName() }} · {{ getResilienceRankText() }}</h3>
           <p>{{ getResilienceRegionText() }} · SCS {{ (resilienceDashboard.scs || 0).toFixed(1) }}</p>
         </div>
       </div>

@@ -17,7 +17,15 @@ import { SortDirection } from "src/app/core/enums/SortDirection";
 import { ActivatedRoute } from "@angular/router";
 import { PillarsVM } from "src/app/core/models/PillersVM";
 import { CountryUserService } from "src/app/features/city-user/country-user.service";
+
 declare var bootstrap: any;
+
+interface CountryUserRow extends GetUserByRoleResponse {
+  countriesText?: string;
+  countriesExpand?: boolean;
+  showCountriesToggle?: boolean;
+}
+
 @Component({
   selector: "app-country-user-view",
   templateUrl: "./country-user-view.component.html",
@@ -27,7 +35,7 @@ export class CountryUserViewComponent implements OnInit, OnDestroy {
   isLoader: boolean = false;
   selectedCountryUser: GetUserByRoleResponse | null = null;
   selectedCity: CountryVM | null = null;
-  countryUserResponse: PaginationResponse<GetUserByRoleResponse> | undefined;
+  countryUserResponse: PaginationResponse<CountryUserRow> | undefined;
   totalRecords: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
@@ -91,12 +99,44 @@ export class CountryUserViewComponent implements OnInit, OnDestroy {
       payload.getUserRole = UserRoleValue.CountryUser;
     }
     this.adminService.getUserListByRole(payload).subscribe((countryUserList) => {
-      this.countryUserResponse = countryUserList;
+      this.countryUserResponse = {
+        ...countryUserList,
+        data: (countryUserList.data ?? []).map((user) => this.mapCountryUserRow(user)),
+      };
       this.totalRecords = countryUserList.totalRecords;
       this.currentPage = currentPage;
       this.pageSize = countryUserList.pageSize;
       this.isLoader = false;
     });
+  }
+
+  private mapCountryUserRow(user: GetUserByRoleResponse): CountryUserRow {
+    const countriesText = this.getCountriesText(user);
+    return {
+      ...user,
+      countriesText,
+      countriesExpand: false,
+      showCountriesToggle: this.isLongCountryText(countriesText),
+    };
+  }
+
+  getCountriesText(user: GetUserByRoleResponse): string {
+    return (user.countries ?? [])
+      .map((country) => country?.countryName)
+      .filter((name): name is string => !!name)
+      .join(", ");
+  }
+
+  isLongCountryText(text: string): boolean {
+    if (!text) {
+      return false;
+    }
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    return words.length > 16 || text.length > 72;
+  }
+
+  toggleCountries(countryuser: CountryUserRow): void {
+    countryuser.countriesExpand = !countryuser.countriesExpand;
   }
 
   editCountryUser(countryuser: GetUserByRoleResponse | null, isOpen: boolean = true) {
@@ -153,7 +193,8 @@ export class CountryUserViewComponent implements OnInit, OnDestroy {
       password: countryuser.password,
       role: UserRoleValue.CountryUser,
       invitedUserID: this.userService.userInfo?.userID ?? 0,
-      countryID: countryuser.countryID,
+      countryID: countryuser.isAllCountries ? [] : countryuser.countryID,
+      isAllCountries: !!countryuser.isAllCountries,
       userID: countryuser.userID,
       tier :countryuser.tier,
       pillars:countryuser.pillars

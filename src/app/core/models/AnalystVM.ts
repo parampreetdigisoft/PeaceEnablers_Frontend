@@ -6,13 +6,14 @@ export interface RegisterDto {
   phone: string;
   password: string;
   role: number;
-  tier?:TieredAccessPlanValue | TieredAccessPlanValue.Pending;
-  pillars?:number[]|[];
+  tier?: TieredAccessPlanValue | TieredAccessPlanValue.Pending;
+  pillars?: number[] | [];
 }
 
 export interface InviteUserDto extends RegisterDto {
   invitedUserID: number;
-  countryID: number[]; 
+  countryID: number[];
+  isAllCountries?: boolean;
 }
 
 export interface UpdateInviteUserDto extends InviteUserDto {
@@ -22,7 +23,7 @@ export interface InviteBulkUserDto {
   users: InviteUserDto[];
 }
 export interface SendRequestMailToUpdateCountry {
-    userID: number;
-    mailToUserID: number;
-    userCountryMappingID: number;
+  userID: number;
+  mailToUserID: number;
+  userCountryMappingID: number;
 }

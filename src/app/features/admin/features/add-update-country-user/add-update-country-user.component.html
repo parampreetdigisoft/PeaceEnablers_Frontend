@@ -2,7 +2,7 @@
     <div class="modal-content">
 
         <div class="modal-body">
-            <button type="button" (click)="closeModel()" class="btn-close" ></button>
+            <button type="button" (click)="closeModel()" class="btn-close"></button>
             <h4 class="modal_head"> {{countryUser ?'Update':'Add' }} Country User</h4>
             <p class="modal_sub_head">Enter The details and marked</p>
             <div class="modal_tabs">
@@ -12,11 +12,6 @@
                             data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
                             aria-selected="true">{{countryUser ?'Update':'Add' }} Single</button>
                     </li>
-                    <!-- <li class="nav-item" role="presentation" *ngIf="!countryUser">
-                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                            data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                            aria-selected="false">Bulk Import</button>
-                    </li> -->
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home">
@@ -56,8 +51,8 @@
                                     *ngIf="countryUserForm.get('phone')?.invalid && (countryUserForm.get('phone')?.touched || isSubmitted)">
                                     Phone number is required.
                                 </div>
-                            </div>                       
-                            
+                            </div>
+
                             <div class="input_field">
                                 <label>Tier Plan*</label>
                                 <ng-select [items]="tierOptions" bindValue="value" bindLabel="label"
@@ -65,7 +60,7 @@
                                     class="form-control analyst_multi_select" [searchable]="false"
                                     [placeholder]="countryUserForm.get('tier')?.invalid ? 'Select tier plan' : ''">
 
-                                    <ng-template ng-label-tmp let-item="item " class="select_item">
+                                    <ng-template ng-label-tmp let-item="item" class="select_item">
                                         {{ item.label }}
                                     </ng-template>
 
@@ -74,21 +69,21 @@
                                     </ng-template>
                                 </ng-select>
 
-
                                 <div class="error-msg"
                                     *ngIf="countryUserForm.get('tier')?.invalid && (isSubmitted || countryUserForm.get('tier')?.touched)">
-                                   Tier Plan is required.
+                                    Tier Plan is required.
                                 </div>
                             </div>
-                            <div class="input_field">
+
+                            <div class="input_field" *ngIf="!isPremium">
                                 <label>Select Pillars *</label>
                                 <ng-select [items]="pillars" bindValue="pillarID" bindLabel="pillarName"
-                                    formControlName="pillars" [multiple]="true"
+                                    formControlName="pillars" [multiple]="true" [closeOnSelect]="false"
                                     class="form-control analyst_multi_select" [searchable]="true"
                                     [placeholder]="countryUserForm.get('pillars')?.invalid ? 'Select Pillars' : ''"
                                     (change)="checkSelectionLimit('pillars')" [trackByFn]="trackByFn">
 
-                                    <ng-template ng-label-tmp let-item="item " class="select_item">
+                                    <ng-template ng-label-tmp let-item="item" class="select_item">
                                         {{ item.pillarName }}
                                     </ng-template>
 
@@ -96,7 +91,6 @@
                                         {{ item.pillarName }}
                                     </ng-template>
                                 </ng-select>
-
 
                                 <div class="error-msg"
                                     *ngIf="countryUserForm.get('pillars')?.invalid && (isSubmitted || countryUserForm.get('pillars')?.touched)">
@@ -106,16 +100,37 @@
                                     {{ limitMessages['pillars'] }}
                                 </div>
                             </div>
-                            <!-- Country Multi-Select -->
-                            <div class="input_field">
+
+                            <div class="input_field" *ngIf="isPremium">
+                                <label>Pillars</label>
+                                <p class="modal_sub_head mb-0">Premium includes access to all pillars automatically.</p>
+                            </div>
+
+                            <div class="input_field" *ngIf="isPremium">
+                                <label>Geographic Access *</label>
+                                <div class="d-flex flex-wrap gap-3 mt-1">
+                                    <label class="d-flex align-items-center gap-2 mb-0">
+                                        <input type="radio" name="premiumGeoMode" [checked]="premiumGeoMode === 'select'"
+                                            (change)="onPremiumGeoModeChange('select')">
+                                        <span>Select Countries</span>
+                                    </label>
+                                    <label class="d-flex align-items-center gap-2 mb-0">
+                                        <input type="radio" name="premiumGeoMode" [checked]="premiumGeoMode === 'all'"
+                                            (change)="onPremiumGeoModeChange('all')">
+                                        <span>All Countries</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="input_field" *ngIf="!isPremium || premiumGeoMode === 'select'">
                                 <label>Assign Country *</label>
                                 <ng-select [items]="countries" bindValue="countryID" bindLabel="countryName"
-                                    formControlName="country" [multiple]="true"
+                                    formControlName="country" [multiple]="true" [closeOnSelect]="false"
                                     class="form-control analyst_multi_select" [searchable]="true"
                                     [placeholder]="countryUserForm.get('country')?.invalid ? 'Assign Country' : ''"
                                     (change)="checkSelectionLimit('country')">
 
-                                    <ng-template ng-label-tmp let-item="item " class="select_item">
+                                    <ng-template ng-label-tmp let-item="item" class="select_item">
                                         {{ item.countryName}}
                                     </ng-template>
 
@@ -123,7 +138,6 @@
                                         {{ item.countryName }}, {{ item.continent }}
                                     </ng-template>
                                 </ng-select>
-
 
                                 <div class="error-msg"
                                     *ngIf="countryUserForm.get('country')?.invalid && (isSubmitted || countryUserForm.get('country')?.touched)">
@@ -134,7 +148,11 @@
                                 </div>
                             </div>
 
-                            <!-- Submit -->
+                            <div class="input_field" *ngIf="isPremium && premiumGeoMode === 'all'">
+                                <label>Assign Country *</label>
+                                <p class="modal_sub_head mb-0">All countries assigned.</p>
+                            </div>
+
                             <button type="submit" class="common_button w-100 mt-4">
                                 {{countryUser ?'Update':'Save' }} <span *ngIf="loading"
                                     class="spinner-border spinner-border-sm ms-2"></span>
