@@ -91,11 +91,6 @@
                                         {{ item.pillarName }}
                                     </ng-template>
                                 </ng-select>
-
-                                <div class="error-msg"
-                                    *ngIf="countryUserForm.get('pillars')?.invalid && (isSubmitted || countryUserForm.get('pillars')?.touched)">
-                                    Please select at least one pillar.
-                                </div>
                                 <div *ngIf="limitMessages['pillars']" class="error-msg">
                                     {{ limitMessages['pillars'] }}
                                 </div>
@@ -139,10 +134,6 @@
                                     </ng-template>
                                 </ng-select>
 
-                                <div class="error-msg"
-                                    *ngIf="countryUserForm.get('country')?.invalid && (isSubmitted || countryUserForm.get('country')?.touched)">
-                                    Please select at least one country.
-                                </div>
                                 <div *ngIf="limitMessages['country']" class="error-msg">
                                     {{ limitMessages['country'] }}
                                 </div>
