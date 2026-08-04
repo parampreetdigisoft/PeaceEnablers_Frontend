@@ -1473,9 +1473,6 @@
   height: 46px;
   border-radius: 50%;
   border: 3px solid #dde7f1;
-  border-top-color: var(--pe-secondary);
-  border-right-color: var(--pe-primary);
-  animation: loaderSpin 0.9s linear infinite;
 }
 
 

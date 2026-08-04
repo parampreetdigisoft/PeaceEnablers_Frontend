@@ -289,7 +289,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
     const evaluatorSeries = data.map(x => x.evaluationValue);
     this.chartPillarOptions = {
       series: [{
-        name: 'AI Progress',
+        name: 'AI Score',
         data: aiSeries
       },
       {
@@ -446,7 +446,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
           const avgScore = ((progressPercent + evaluatorProgressPercent) / 2);
 
           const statusText = avgScore >= 75 ? 'Excellent Performance' :
-            avgScore >= 50 ? 'Strong Progress' :
+            avgScore >= 50 ? 'Strong Score' :
               avgScore >= 25 ? 'Steady Growth' : 'Early Stage';
 
           const statusIcon = avgScore >= 75 ? '🌟' :
@@ -520,7 +520,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
                 </div>
               </div>
 
-              <!-- Progress Bar -->
+              <!-- Score Bar -->
               <div style="margin-bottom: 14px;">
                 <div style="
                   display: flex;

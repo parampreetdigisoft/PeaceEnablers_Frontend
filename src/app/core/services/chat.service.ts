@@ -148,7 +148,7 @@ export class ChatService {
    * call stopGeneration() first, so the UI never has two concurrent streams.
    */
   sendMessage(userText: string): Observable<string> {
-    // Auto-cancel any in-progress generation before starting a new one.
+    // Auto-cancel any in-Score generation before starting a new one.
     if (this.isTyping()) {
       this.stopGeneration();
     }
@@ -472,7 +472,7 @@ export class ChatService {
   countryQuickQuestions = [
     {
       label: 'Peace summary',
-      question: 'Summarize the recent peace progress and overall stability of this country.'
+      question: 'Summarize the recent peace score and overall stability of this country.'
     },
     {
       label: 'Peace initiatives',

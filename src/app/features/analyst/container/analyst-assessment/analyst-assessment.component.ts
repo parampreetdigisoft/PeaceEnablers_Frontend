@@ -323,7 +323,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
         if (res.succeeded) {
           this.userService.assessmentProgress.next(res.result);
         } else {
-          this.toaster.showError("Failed to fetch assessment progress history");
+          this.toaster.showError("Failed to fetch assessment score history");
         }
       });
   }
