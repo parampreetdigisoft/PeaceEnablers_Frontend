@@ -59,6 +59,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
   $kpiChanged = new Subject();
   mutipleCitykpiLayerResults: GetMutiplekpiLayerResultsDto | null = null;
   viewDetailIndex = -1;
+  exportKpiLoader =false;
   constructor(
     private countryUserService: CountryUserService,
     private toaster: ToasterService,
@@ -446,7 +447,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
     this.toaster.showWarning("Please select countries");
     return;
   }
-  this.isLoader = true;
+  this.exportKpiLoader = true;
   const params = {
     countries: this.selectedCountries.join(','),
     kpis: null,
@@ -456,7 +457,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
   this.adminService.exportCompareCountriesCountryUsers(params)
     .subscribe({
       next: (res: Blob) => {
-        this.isLoader = false;
+        this.exportKpiLoader = false;
         const url = window.URL.createObjectURL(res);
         const a = document.createElement("a");
         a.href = url;
@@ -467,7 +468,7 @@ export class ComparisonComponent implements OnInit, OnDestroy {
 
       error: (err) => {
         console.error("Export failed:", err);
-        this.isLoader = false;
+        this.exportKpiLoader = false;
         // Show user-friendly message
         this.toaster.showError(
           err?.error?.message || "Failed to export data. Please try again."
