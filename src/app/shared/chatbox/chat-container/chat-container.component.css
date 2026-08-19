@@ -2129,6 +2129,19 @@
   color: #0a2e5c;
 }
 
+::ng-deep .markdown-body.cus_markdown-body a {
+  color: #003160;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #77bd3e;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+::ng-deep .markdown-body.cus_markdown-body a:hover {
+  color: #77bd3e;
+}
+
 /* ══════════════════════════════════════════════════════════════
    INPUT AREA
    ══════════════════════════════════════════════════════════════ */

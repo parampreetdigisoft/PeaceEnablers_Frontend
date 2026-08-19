@@ -25,6 +25,11 @@ export class MarkdownPipe implements PipeTransform {
       return `<pre class="md-code"><code>${code}</code></pre>`;
     };
 
+    renderer.link = (href: string, title: string | null | undefined, text: string) => {
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
+    };
+
     marked.use({ renderer, breaks: true });
   }
 
