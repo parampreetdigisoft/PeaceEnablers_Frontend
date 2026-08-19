@@ -11,6 +11,12 @@ import {
 } from "ng-apexcharts";
 import { SharedModule } from 'src/app/shared/share.module';
 import { CommonModule } from '@angular/common';
+import { UserService } from 'src/app/core/services/user.service';
+import { ToasterService } from 'src/app/core/services/toaster.service';
+import { UserRole } from 'src/app/core/enums/UserRole';
+import { ResultResponseDto } from 'src/app/core/models/ResultResponseDto';
+import { SummarizeKpiRequestDto, SummarizeKpiResponseDto } from 'src/app/core/models/SummarizeKpiDto';
+import { AiComputationService } from 'src/app/core/services/ai-computation.service';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -39,14 +45,74 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
   public chartOptions!: Partial<ChartOptions>;
 
 
-  ngOnInit(): void {
 
+  canShowAiSummary = false;
+  isSummarizing = false;
+  aiSummary: SummarizeKpiResponseDto | null = null;
+  aiSummaryError: string | null = null;
+
+  constructor(
+    private userService: UserService,
+    private aiComputationService: AiComputationService,
+    private toaster: ToasterService,
+  ) {}
+
+  ngOnInit(): void {
+    this.updateAiSummaryVisibility();
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.ApexGetPieOptions();
+    this.updateAiSummaryVisibility();
+    if (changes['selectedLayer']) {
+      this.aiSummary = null;
+      this.aiSummaryError = null;
+      this.isSummarizing = false;
+    }
   }
+
   onImgError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/images/Frame 1321315029.png';
+  }
+
+  private updateAiSummaryVisibility(): void {
+    const role = this.userService.userInfo?.role;
+    this.canShowAiSummary = role === UserRole.CountryUser;
+  }
+
+  generateAiSummary(): void {
+    if (!this.canShowAiSummary || this.isSummarizing) return;
+
+    const layerResultID = this.selectedLayer?.layerResultID;
+    if (!layerResultID) {
+      this.toaster.showError('KPI result is missing. Please reopen the KPI details.');
+      return;
+    }
+
+    this.isSummarizing = true;
+    this.aiSummaryError = null;
+
+    const payload: SummarizeKpiRequestDto = { layerResultID };
+    this.aiComputationService.summarizeKpiPerformance(payload).subscribe({
+      next: (res) => {
+        const response = res as ResultResponseDto<SummarizeKpiResponseDto>;
+        this.isSummarizing = false;
+        if (response?.succeeded && response.result?.summary) {
+          this.aiSummary = response.result;
+          this.aiSummaryError = null;
+        } else {
+          const message = response?.errors?.[0] || 'Failed to generate AI summary. Please try again.';
+          this.aiSummary = null;
+          this.aiSummaryError = message;
+          this.toaster.showError(message);
+        }
+      },
+      error: () => {
+        this.isSummarizing = false;
+        this.aiSummary = null;
+        this.aiSummaryError = 'Unable to reach the AI service. Please try again later.';
+        this.toaster.showError(this.aiSummaryError);
+      }
+    });
   }
 
   getConditionByid() {
@@ -169,6 +235,4 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
       labels: ["Performance"]
     };
   }
-
 }
-

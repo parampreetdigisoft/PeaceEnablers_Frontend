@@ -9,7 +9,6 @@ import { PillarsVM } from "src/app/core/models/PillersVM";
 import { CountryVM } from "src/app/core/models/CountryVM";
 import { UserService } from "src/app/core/services/user.service";
 import { CountryMappingPillerRequestDto } from "src/app/core/models/QuestionRequest";
-import { GetQuestionByCountryMappingResponse } from "src/app/core/models/QuestionResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { FormBuilder, FormGroup, FormArray, Validators } from "@angular/forms";
 import {
@@ -19,7 +18,10 @@ import {
 import { environment } from "src/environments/environment";
 import { EvaluatorService } from "../../evaluator.service";
 import { CommonService } from "src/app/core/services/common.service";
-
+import {
+  AssessmentQuestionOptionResponse,
+  GetQuestionByCountryMappingResponse,
+} from "src/app/core/models/QuestionResponse";
 @Component({
   selector: "app-make-assessment",
   templateUrl: "./make-assessment.component.html",
@@ -78,25 +80,24 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
           responseID: [q.responseID],
           assessmentID: [this.pillerQuestions?.assessmentID],
           questionOptionID: [
-            q.isSelected ? option?.optionID : "",
+            q.isSelected ? option?.optionID : null,
             Validators.required,
           ],
-          score: [q.isSelected ? option?.scoreValue : ""],
+          score: [q.isSelected ? option?.scoreValue : null],
           justification: [
-            q.isSelected ? option?.justification : "",
+            q.isSelected ? option?.justification : null,
             Validators.required,
           ],
-          source: [q.isSelected ? option?.source : ""]
+          source: [q.isSelected ? option?.source : null]
         })
       );
     });
   }
 
-  onOptionChange(event: any, index: number) {
-    const optionId = +event.target.value;
-    const selectedOption = this.pillerQuestions?.questions[
-      index
-    ].questionOptions.find((o) => o.optionID === optionId);
+  onOptionChange(
+    selectedOption: AssessmentQuestionOptionResponse | null,
+    index: number
+  ) {
 
     if (selectedOption) {
       const formGroup = this.questionsArray.at(index) as FormGroup;

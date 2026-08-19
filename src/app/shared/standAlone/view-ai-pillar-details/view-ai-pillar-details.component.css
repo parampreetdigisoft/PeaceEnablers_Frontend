@@ -219,3 +219,21 @@ button.btn-close:focus-visible {
     color: #155724 !important;
     border: 1px solid #75d69c !important;
 }
+.ai-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ai-edit-surface {
+    border-color: #006d77;
+    box-shadow: 0 0 0 1px rgba(0, 109, 119, 0.08);
+}
+.ai-edit-access-banner {
+  margin: 0 16px 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+.ai-edit-access-banner p { margin: 0 0 10px; font-size: 13px; color: #374151; }

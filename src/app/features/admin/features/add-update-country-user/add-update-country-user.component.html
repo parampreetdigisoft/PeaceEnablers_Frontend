@@ -45,7 +45,7 @@
 
                             <div class="input_field">
                                 <label>Phone No.*</label>
-                                <input type="text" formControlName="phone" placeholder="Enter phone number"
+                                <input type="text" formControlName="phone" placeholder="Enter Phone Number"
                                     class="form-control" minlength="10" maxlength="15" (keypress)="numberOnly($event)">
                                 <div class="error-msg"
                                     *ngIf="countryUserForm.get('phone')?.invalid && (countryUserForm.get('phone')?.touched || isSubmitted)">

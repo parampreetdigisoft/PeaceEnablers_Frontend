@@ -268,7 +268,7 @@
 <!-- Bootstrap 5 Offcanvas Sidebar -->
 <div class="offcanvas offcanvas-end custom-sidebar kpi_sidebar" tabindex="-1" id="kpiLayerSidebar">
   <div class="offcanvas-body">
-    <app-view-country-detail [country]="selectedCountry"></app-view-country-detail>
+    <app-view-country-detail [country]="selectedCountry" (dataSaved)="getAICountries(currentPage)"></app-view-country-detail>
   </div>
 </div>
 

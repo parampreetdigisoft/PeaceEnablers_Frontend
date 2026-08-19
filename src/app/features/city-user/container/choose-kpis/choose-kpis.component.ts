@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UpdateInviteUserDto } from 'src/app/core/models/AnalystVM';
+import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CountryVM } from 'src/app/core/models/CountryVM';
 import { UserService } from 'src/app/core/services/user.service';
 import { CountryUserService } from '../../country-user.service';
@@ -24,37 +23,75 @@ export class ChooseKpisComponent {
   alertMsg = "";
   excelData: any;
   isSubmitted: boolean = false;
-  kpiForm: FormGroup<any> = this.fb.group({});
-  pillarLimitMsg: string = '';
-  limitMessages: { [key: string]: string } = {};
-  premiumGeoMode: 'select' | 'all' = 'select';
-  pillarLimits: any = {
-    1: { min: 1, max: 7, name: 'Basic' },
-    2: { min: 1, max: 12, name: 'Standard' }
-  };
+  kpiForm: FormGroup = this.fb.group({});
+pillarLimitMsg: string = '';
+limitMessages: { [key: string]: string } = {};
 
-  get isPremium(): boolean {
-    return this.tier === TieredAccessPlanValue.Premium;
+premiumGeoMode: 'select' | 'all' = 'select';
+
+pillarLimits: any = {
+  1: { min: 1, max: 7, name: 'Basic' },
+  2: { min: 1, max: 12, name: 'Standard' }
+};
+
+get isPremium(): boolean {
+  return this.tier === TieredAccessPlanValue.Premium;
+}
+
+constructor(
+  private fb: FormBuilder,
+  private countryUserService: CountryUserService,
+  private userService: UserService
+) {
+  this.tier = this.userService?.userInfo?.tier || TieredAccessPlanValue.Pending;
+}
+
+ngOnInit(): void {
+  this.initializeForm();
+  this.getAllCountries();
+
+  if (this.isPremium) {
+    this.applyPremiumPillars();
+    this.kpiForm.get('pillars')?.clearValidators();
+    this.kpiForm.get('pillars')?.updateValueAndValidity({ emitEvent: false });
+  }
+}
+
+initializeForm(): void {
+  const countryValidators = [];
+
+  if (this.isPremium) {
+    countryValidators.push(Validators.required);
+  } else if (this.tier !== TieredAccessPlanValue.Pending) {
+    const limits = this.pillarLimits[this.tier];
+    countryValidators.push(
+      Validators.required,
+      this.maxSelectedCountriesValidator(limits?.max ?? 7)
+    );
   }
 
-  constructor(private fb: FormBuilder, private countryUserService: CountryUserService, private userService: UserService) {
-    this.tier = this.userService?.userInfo?.tier || TieredAccessPlanValue.Pending;
-  }
-  ngOnInit(): void {
-    this.initializeForm();
-    this.getAllCountries();
-    if (this.isPremium) {
-      this.applyPremiumPillars();
-      this.kpiForm.get('pillars')?.clearValidators();
-      this.kpiForm.get('pillars')?.updateValueAndValidity({ emitEvent: false });
+  this.kpiForm = this.fb.group({
+    pillars: [[], this.isPremium ? [] : [Validators.required]],
+    countries: [[], countryValidators]
+  });
+}
+maxSelectedCountriesValidator(max: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const selected = control.value;
+
+    if (Array.isArray(selected) && selected.length > max) {
+      return {
+        maxSelected: {
+          max,
+          actual: selected.length
+        }
+      };
     }
-  }
-  initializeForm() {
-    this.kpiForm = this.fb.group({
-      pillars: [[], this.isPremium ? [] : [Validators.required]],
-      countries: [[], [Validators.required]]
-    });
-  }
+
+    return null;
+  };
+}
+
   trackByFn(item: any) {
     return item.pillarID;
   }
@@ -104,6 +141,8 @@ export class ChooseKpisComponent {
   }
 
   checkSelectionLimit(controlName: string) {
+  const control = this.kpiForm.get(controlName);
+    const limits = this.pillarLimits[this.tier];
     const selected = this.kpiForm.get(controlName)?.value || [];
     let message = '';
 
@@ -120,6 +159,13 @@ export class ChooseKpisComponent {
       if (selected.length < 1) {
         message = 'Please select at least one country.';
       }
+      else if (selected.length > limits?.max) {
+        control?.patchValue(selected.slice(0, limits?.max));
+        message = `${limits?.name} plan allows maximum ${limits?.max} country.`;
+      } else if (selected.length < this.pillarLimits?.min) {
+        message = `${limits?.name} plan requires at least ${limits?.min} country.`;
+      }
+
       this.limitMessages[controlName] = message;
       return;
     }

@@ -1,0 +1,101 @@
+.page_sub {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  max-width: 900px;
+}
+
+.grant-box {
+  padding: 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.grant-box h5 {
+  margin-bottom: 16px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-active { background: #dcfce7; color: #166534; }
+.badge-pending { background: #fef3c7; color: #92400e; }
+.badge-consumed { background: #e0e7ff; color: #3730a3; }
+.badge-rejected { background: #fee2e2; color: #991b1b; }
+
+::ng-deep .analyst_multi_select .ng-option-selected {
+  background-color: #e8f0ff !important;
+  color: #006D77 !important;
+  font-weight: 600;
+}
+
+::ng-deep .analyst_multi_select .ng-option:hover {
+  background-color: #f2f6ff !important;
+}
+
+::ng-deep .compare_select .ng-select-container {
+  border: none !important;
+  background-color: #ffffff !important;
+  min-height: auto !important;
+  height: 100% !important;
+}
+
+::ng-deep .compare_select .ng-select-container:hover {
+  box-shadow: none !important;
+}
+
+::ng-deep .compare_select .ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  box-shadow: none !important;
+}
+
+::ng-deep .compare_select .ng-value-container .ng-value {
+  white-space: nowrap;
+  padding: 2px 5px !important;
+  border-radius: 5px !important;
+  background-color: #006D77 !important;
+  color: #ffffff !important;
+}
+
+.compare_select .analyst_multi_select {
+  flex: 1;
+  height: auto;
+  background-color: #ffffff;
+  min-height: 36px;
+  align-items: center;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  appearance: none !important;
+  border-radius: 12px !important;
+  padding: 6px 10px 6px 3px !important;
+  border: 1px solid #d7d7d7 !important;
+}
+
+.notes-input {
+  width: 100%;
+  outline: none;
+  box-shadow: none;
+}
+
+.selexted_piller {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background-color: #006D77;
+  color: #fff;
+  font-size: 12px;
+}

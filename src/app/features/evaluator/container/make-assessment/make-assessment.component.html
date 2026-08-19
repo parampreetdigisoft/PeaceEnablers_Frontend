@@ -1,7 +1,7 @@
 <div class="heading_area">
   <div class="row justify-content-between align-items-center gap-2 custom_gap">
     <div class="col">
-      <h3 class="page_head">Assesment</h3>
+      <h3 class="page_head">Assessment</h3>
     </div>
 
 
@@ -36,7 +36,7 @@
         <div class="next_btn">
           <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer" [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0"
             class="common_button" (click)="isAssessementFinalized=true">
-            {{'Submit Assesment' }}
+            {{'Submit Assessment' }}
           </button>
         </div>
       </div>
@@ -74,14 +74,27 @@
             <div class="faq_main_item_inner">
               <p>{{ i + 1 }}. {{ questions[i].questionText }}</p>
 
-              <select class="form-select faq_select" formControlName="questionOptionID"
+              <ng-select class="faq_select assessment_select"
+                [items]="questions[i].questionOptions"
+                bindValue="optionID"
+                formControlName="questionOptionID"
+                placeholder="Select option"
+                [searchable]="false"
+                [clearable]="true"
+                dropdownPosition="auto"
                 (change)="onOptionChange($event, i)">
-                <option value="">Select option</option>
-                <option *ngFor="let o of questions[i].questionOptions" [value]="o.optionID">
-                  {{ o.scoreValue != null ? o.scoreValue + " - " : "" }}
-                  {{ o.optionText }}
-                </option>
-              </select>
+                <ng-template ng-label-tmp let-item="item">
+                  <span class="assessment_select_label" [title]="item.optionText">
+                    <span *ngIf="item.scoreValue != null">{{ item.scoreValue }} - </span>{{ item.optionText }}
+                  </span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="assessment_option">
+                    <span *ngIf="item.scoreValue != null" class="assessment_option_score">{{ item.scoreValue }}</span>
+                    <span class="assessment_option_text">{{ item.optionText }}</span>
+                  </div>
+                </ng-template>
+              </ng-select>
               <div class="faqtextarea">
                 <textarea class="form-control" formControlName="justification" rows="3"
                   (blur)="autoSaveSingleAssessemnt(i)" placeholder="Add Comment . . ."></textarea>
@@ -113,7 +126,7 @@
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized? 'Submit Pillar' : 'Save Pillar'
   " [message]="
     pillerQuestions?.displayOrder == 14 || isAssessementFinalized
-      ? 'Are you sure you want to submit this country? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
+      ? 'Are you sure you want to submit this country? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Analyst.'
       : 'Are you sure you want to save this pillar?'
   " [confirmText]="pillerQuestions?.displayOrder == 14 || isAssessementFinalized ? 'Submit' : 'Save'"
   [cancelText]="'Cancel'" (confirm)="SaveAssessment()" (cancel)="isAssessementFinalized=false">

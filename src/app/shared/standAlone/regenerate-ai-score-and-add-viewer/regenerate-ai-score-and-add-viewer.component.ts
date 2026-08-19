@@ -32,7 +32,7 @@ export class RegenerateAiScoreAndAddViewerComponent implements OnInit, OnChanges
   }
   ngOnChanges(changes: SimpleChanges): void {
     
-    this.showRegenerateMissingQuestionsOption = this.country.aiCompletionRate > 0 || this.country.score > 0;
+    this.showRegenerateMissingQuestionsOption = this.country.aiCompletionRate < 100 ;
 
     this.aiOptions = [
       { label: 'Pillar-level AI insights', control: 'pillarEnable', time: this.importPillar ? 5 +' '+'min' : 30 +' '+ 'min' },

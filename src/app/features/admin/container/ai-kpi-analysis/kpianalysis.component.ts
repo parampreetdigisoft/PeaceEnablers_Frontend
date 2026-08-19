@@ -103,7 +103,12 @@ export class KPIAnalysisComponent implements OnInit {
     this.getAITrustLevels();
   }
   getSelectedCountry() {
-    return this.countries?.find(x => x.countryID == this.selectedCountry);
+    let country  = this.countries?.find(x => x.countryID == this.selectedCountry);
+    if(!country) return;
+
+    country.aiScore = this.selectedAiCountryPillar?.aiScore ?? 0;
+    country.aiCompletionRate = this.selectedAiCountryPillar?.aiCompletionRate ?? 0;
+    return  country;
   }
 
   getAITrustLevels() {
@@ -129,6 +134,7 @@ export class KPIAnalysisComponent implements OnInit {
   }
 
   getAICountryPillars() {
+    this.closeSidebar();
     if (!this.selectedCountry) {
       this.toaster.showWarning("Please select at least one country to view data.");
       return;
@@ -420,6 +426,21 @@ export class KPIAnalysisComponent implements OnInit {
       }
     });
   }
+  closeSidebar(): void {
+    const sidebarEl = document.getElementById('kpiLayerSidebar');
+
+    if (!sidebarEl) {
+      return;
+    }
+
+    const offcanvas = bootstrap.Offcanvas.getInstance(sidebarEl);
+
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  }
+
+
   buildUniqueCategories(data: { pillarName: string }[]): string[] {
     const used = new Set<string>();
     return data.map(item => {

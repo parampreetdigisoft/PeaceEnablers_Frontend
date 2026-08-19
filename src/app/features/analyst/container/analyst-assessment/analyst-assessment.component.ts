@@ -9,7 +9,6 @@ import { PillarsVM } from "src/app/core/models/PillersVM";
 import { CountryVM } from "src/app/core/models/CountryVM";
 import { UserService } from "src/app/core/services/user.service";
 import { CountryMappingPillerRequestDto } from "src/app/core/models/QuestionRequest";
-import { GetQuestionByCountryMappingResponse } from "src/app/core/models/QuestionResponse";
 import { ToasterService } from "src/app/core/services/toaster.service";
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from "@angular/forms";
 import {
@@ -25,6 +24,11 @@ import { AiComputationService } from "src/app/core/services/ai-computation.servi
 import { AITransferAssessmentRequestDto } from "src/app/core/models/aiVm/AITransferAssessmentRequestDto";
 import { AdminService } from "src/app/features/admin/admin.service";
 import { ExportType } from "src/app/core/enums/exportEnum";
+import {
+  AssessmentQuestionOptionResponse,
+  GetQuestionByCountryMappingResponse,
+  HistoryQuestionAnswerRawDto,
+} from "src/app/core/models/QuestionResponse";
 
 @Component({
   selector: "app-analyst-assessment",
@@ -87,33 +91,32 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
           responseID: [q.responseID],
           assessmentID: [this.pillerQuestions?.assessmentID],
           questionOptionID: [
-            q.isSelected ? option?.optionID : "",
+            q.isSelected ? option?.optionID : null,
             Validators.required,
           ],
-          score: [q.isSelected ? option?.scoreValue : ""],
+          score: [q.isSelected ? option?.scoreValue :null],
           justification: [
-            q.isSelected ? option?.justification : "",
+            q.isSelected ? option?.justification : null,
             Validators.required,
           ],
-          source: [q.isSelected ? option?.source : ""],
-          historyQuestionOptionID: [""],
+          source: [q.isSelected ? option?.source : null],
+          historyQuestionOptionID: [null],
         })
       );
     });
   }
 
-  onOptionChange(event: any, index: number) {
-    const optionId = +event.target.value;
-    const selectedOption = this.pillerQuestions?.questions[
-      index
-    ].questionOptions.find((o) => o.optionID === optionId);
+  onOptionChange(
+    selectedOption: AssessmentQuestionOptionResponse | null,
+    index: number
+  ) {
 
     if (selectedOption) {
       const formGroup = this.questionsArray.at(index) as FormGroup;
       formGroup.patchValue({
         questionOptionID: selectedOption.optionID,
         score: selectedOption.scoreValue,
-        historyQuestionOptionID: ''
+        historyQuestionOptionID: null
       });
     }
   }
@@ -463,12 +466,10 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
       },
     });
   }
-  onHistoryOptionChange(event: any, index: number) {
-    const userId = +event.target.value;
-    const selectedOption = this.pillerQuestions?.questions[
-      index
-    ].history.find((o) => o.userID === userId);
-
+  onHistoryOptionChange(
+    selectedOption: HistoryQuestionAnswerRawDto | null,
+    index: number
+  ) {
     if (selectedOption) {
       const formGroup = this.questionsArray.at(index) as FormGroup;
       formGroup.patchValue({

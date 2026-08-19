@@ -192,11 +192,13 @@ export class CommonService {
   const diffMs = now.getTime() - generatedDate.getTime();
 
   // If future date, treat as NA
-  if (diffMs < 0) return 'NA';
+  if (diffMs < -90000) return 'NA';
 
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const safeDiffMs = Math.max(0, diffMs);
+
+  const diffMinutes = Math.floor(safeDiffMs / (1000 * 60));
+  const diffHours = Math.floor(safeDiffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(safeDiffMs / (1000 * 60 * 60 * 24));
 
   // Less than 10 minutes
   if (diffMinutes < 10) {

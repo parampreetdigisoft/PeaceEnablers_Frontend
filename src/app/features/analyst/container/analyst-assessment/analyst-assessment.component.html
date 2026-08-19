@@ -1,7 +1,7 @@
 <div class="heading_area">
   <div class="row justify-content-between align-items-center gap-2 custom_gap">
     <div class="col">
-      <h3 class="page_head">Assesment</h3>
+      <h3 class="page_head">Assessment</h3>
     </div>
 
 
@@ -33,7 +33,7 @@
           <ul class="dropdown-menu">
             <li>
               <a class="dropdown-item" href="javascript:void(0)" (click)="downloadQuestions('excel')">
-                Download Assesment Template - Excel
+                Download Assessment Template - Excel
               </a>
             </li>
             <li>
@@ -119,23 +119,53 @@
             <div class="faq_main_item_inner">
               <p>{{ i + 1 }}. {{ questions[i].questionText }}</p>
 
-              <select class="form-select faq_select" formControlName="questionOptionID"
+              <ng-select class="faq_select assessment_select"
+                [items]="questions[i].questionOptions"
+                bindValue="optionID"
+                formControlName="questionOptionID"
+                placeholder="Select option"
+                [searchable]="false"
+                [clearable]="true"
+                dropdownPosition="auto"
                 (change)="onOptionChange($event, i)">
-                <option value="">Select option</option>
-                <option *ngFor="let o of questions[i].questionOptions" [value]="o.optionID">
-                  {{ o.scoreValue != null ? o.scoreValue + " - " : "" }}
-                  {{ o.optionText }}
-                </option>
-              </select>
-              <select class="form-select faq_select" formControlName="historyQuestionOptionID"
+                <ng-template ng-label-tmp let-item="item">
+                  <span class="assessment_select_label" [title]="item.optionText">
+                    <span *ngIf="item.scoreValue != null">{{ item.scoreValue }} - </span>{{ item.optionText }}
+                  </span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="assessment_option">
+                    <span *ngIf="item.scoreValue != null" class="assessment_option_score">{{ item.scoreValue }}</span>
+                    <span class="assessment_option_text">{{ item.optionText }}</span>
+                  </div>
+                </ng-template>
+              </ng-select>
+
+              <ng-select class="faq_select assessment_select"
+                [items]="questions[i].history"
+                bindValue="userID"
+                formControlName="historyQuestionOptionID"
+                placeholder="Choose from history"
+                [searchable]="false"
+                [clearable]="true"
+                dropdownPosition="auto"
                 (change)="onHistoryOptionChange($event, i)">
-                <option value="">Choose from history</option>
-                <option *ngFor="let o of questions[i].history" [value]="o.userID">
-                   {{ o.fullName   }} : 
-                  {{ o.scoreValue != null ? o.scoreValue + " - " : "" }}
-                  {{ o.optionText }}
-                </option>
-              </select>
+                <ng-template ng-label-tmp let-item="item">
+                  <span class="assessment_select_label" [title]="item.fullName + ': ' + item.optionText">
+                    {{ item.fullName }}:
+                    <span *ngIf="item.scoreValue != null">{{ item.scoreValue }} - </span>{{ item.optionText }}
+                  </span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="assessment_option assessment_option--history">
+                    <span class="assessment_option_content">
+                      <span class="assessment_option_user">{{ item.fullName }}</span>
+                      <span *ngIf="item.scoreValue != null" class="assessment_option_score">{{ item.scoreValue }}</span>
+                      <span class="assessment_option_text">{{ item.optionText }}</span>
+                    </span>
+                  </div>
+                </ng-template>
+              </ng-select>
               <div class="faqtextarea">
                 <textarea class="form-control" formControlName="justification" rows="3" placeholder="Add Comment . . ."
                   (blur)="autoSaveSingleAssessemnt(i)"></textarea>

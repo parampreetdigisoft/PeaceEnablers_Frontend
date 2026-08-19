@@ -106,9 +106,13 @@ export class KPIAnalysisComponent implements OnInit {
     });
   }
   getSelectedCountry() {
-    return this.countries?.find(x => x.countryID == this.selectedCountry);
-  }
+    let country  = this.countries?.find(x => x.countryID == this.selectedCountry);
+    if(!country) return;
 
+    country.aiScore = this.selectedAiCountryPillar?.aiScore ?? 0;
+    country.aiCompletionRate = this.selectedAiCountryPillar?.aiCompletionRate ?? 0;
+    return  country;
+  }
   getCountryUserCountries() {
     this.analystService.getAllCountriesByUserId(this.userService.userInfo?.userID ?? 0).subscribe({
       next: (p) => {
@@ -127,6 +131,7 @@ export class KPIAnalysisComponent implements OnInit {
   }
 
   getAICountryPillars() {
+    this.closeSidebar();
     if (!this.selectedCountry) {
       this.toaster.showWarning("Please select at least one country to view data.");
       return;
@@ -154,7 +159,19 @@ export class KPIAnalysisComponent implements OnInit {
       }
     });
   }
+  closeSidebar(): void {
+    const sidebarEl = document.getElementById('kpiLayerSidebar');
 
+    if (!sidebarEl) {
+      return;
+    }
+
+    const offcanvas = bootstrap.Offcanvas.getInstance(sidebarEl);
+
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  }
   buildPillarComparisonChart() {
     // 🔹 Stable fake score generator for locked pillars (15–35)
     const getLockedScore = (pillarId: number) => {

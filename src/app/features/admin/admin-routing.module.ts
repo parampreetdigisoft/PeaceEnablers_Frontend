@@ -83,6 +83,20 @@ const routes: Routes = [
             (m) => m.AiDocumentsComponent
           ),
       },
+            {
+        path: "ai/edit-permissions",
+        loadComponent: () =>
+          import("./container/ai-edit-permissions/ai-edit-permissions.component").then(
+            (m) => m.AiEditPermissionsComponent
+          ),
+      },
+      {
+        path: "ai/edit-changes",
+        loadComponent: () =>
+          import("./container/ai-edit-changes/ai-edit-changes.component").then(
+            (m) => m.AiEditChangesComponent
+          ),
+      },
       {
         path: "aevum",
         loadComponent: () =>
