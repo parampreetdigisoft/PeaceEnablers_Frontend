@@ -114,6 +114,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
     });
   }
   pillarChanged(pillar?: PillarsVM) {
+    debugger
     if (!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0) {
       this.toaster.showWarning("Please select country first");
       return;
@@ -233,7 +234,7 @@ export class MakeAssessmentComponent implements OnInit, OnDestroy {
             });
           }, 300);
           if (res.succeeded) {
-            if (this.pillerQuestions?.displayOrder == 14 || this.isAssessementFinalized) {
+            if (this.pillerQuestions?.displayOrder == this.pillerQuestions?.lastPillarDisplayOrder || this.isAssessementFinalized) {
               this.evaluatorService.userCountryMappingIDSubject$.next(null);
               this.getCountryByUserIdForAssessment();
             } else {

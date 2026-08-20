@@ -164,7 +164,9 @@ export class AiQuestionAnalysisComponent implements OnInit, OnChanges {
       }
     })
   }
-
+  getManualScore(value:number){
+    return Math.ceil(value/4)
+  }
   closeSidebar(): void {
     const sidebarEl = document.getElementById('kpiLayerSidebar');
 

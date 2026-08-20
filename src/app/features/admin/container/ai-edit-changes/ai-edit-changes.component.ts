@@ -65,13 +65,26 @@ export class AiEditChangesComponent implements OnInit {
 
   loadSessions(currentPage: any = 1) {
     this.isLoader = true;
-    this.auditService.getSessions({
-      countryID: this.filterCountryID || undefined,
-      year: this.filterYear || undefined,
-      status: this.filterStatus ?? undefined,
+
+    let payload: {
+      year: number;
+      pageNumber: number;
+      pageSize: number;
+      countryID?: number;
+      status?: number;
+    } = {
+      year: this.filterYear,
       pageNumber: currentPage,
       pageSize: this.pageSize
-    }).subscribe({
+    };
+    if(this.filterCountryID){
+      payload.countryID = this.filterCountryID;
+    }
+    if(this.filterStatus){
+      payload.status = this.filterStatus;
+    }
+
+    this.auditService.getSessions(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         if (res?.data) {

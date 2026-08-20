@@ -82,7 +82,9 @@ export class ViewAiQuestionDetailsComponent implements OnChanges {
     if (role === UserRole.Analyst) return !!this.editAccess?.canEdit;
     return false;
   }
-
+  getManualScore(value:number){
+    return Math.ceil(value/4)
+  }
   get isAnalyst(): boolean {
     return this.userService.userInfo?.role === UserRole.Analyst;
   }

@@ -46,9 +46,6 @@ export class EvaluatorService {
   public getCountryHistory(userID: number, updatedAt: string) {
     return this.http.get(`Country/getCountryHistory/` + updatedAt).pipe(map(x => x as ResultResponseDto<CountryHistoryDto>));
   }
-  public getEvaluator(request: GetUserByRoleRequestDto) {
-    return this.http.getWithQueryParams(`User/GetUserByRoleWithAssignedCountry`, request).pipe(map(x => x as PaginationResponse<GetUserByRoleResponse>));
-  }
 
   public getAllPillars() {
     return this.http.get(`Pillar/Pillars`).pipe(map(x => x as PillarsVM[]));

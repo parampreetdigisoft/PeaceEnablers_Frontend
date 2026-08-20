@@ -165,6 +165,9 @@ export class AiQuestionAnalysisComponent implements OnInit, OnChanges {
     })
   }
 
+  getManualScore(value:number){
+    return Math.ceil(value/4)
+  }
   viewDetails(country: AIEstimatedQuestionScoreDto) {
     this.selectedQuestion = country;
     const sidebarEl = document.getElementById('kpiLayerSidebar');

@@ -338,7 +338,16 @@ button.btn-close:focus-visible {
 }
 
 .integrate_outter .cross-pillar {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
     margin-top: 15px;
+}
+
+.integrate_outter .cross-pillar app-ai-editable-field {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.75rem;
 }
 
 .city_piller .city_card .common_button {

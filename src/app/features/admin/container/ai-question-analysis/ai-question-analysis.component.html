@@ -127,13 +127,13 @@
 
           <td>
             <app-circular-score
-              [value]="question?.evaluatorScore ?? 0"
+              [value]="getManualScore(question?.evaluatorScore ?? 0)"
             ></app-circular-score>
           </td>
 
           <td>
             <app-circular-score
-              [value]="question?.aiProgress ?? 0"
+              [value]="question?.aiScore ?? 0"
             ></app-circular-score>
           </td>
           <td>

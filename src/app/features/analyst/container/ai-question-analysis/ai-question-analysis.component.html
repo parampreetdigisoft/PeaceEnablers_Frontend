@@ -102,11 +102,11 @@
           </td>
 
           <td>
-            <app-circular-score [value]="question?.evaluatorScore ?? 0"></app-circular-score>
+            <app-circular-score [value]="getManualScore(question?.evaluatorScore ?? 0)"></app-circular-score>
           </td>
 
           <td>
-            <app-circular-score [value]="question?.aiProgress ?? 0"></app-circular-score>
+            <app-circular-score [value]="question?.aiScore ?? 0" [maxRangeValue]="4"></app-circular-score>
           </td>
           <td>
             <app-sparkline-score [value]="question?.discrepancy ?? 0"></app-sparkline-score>

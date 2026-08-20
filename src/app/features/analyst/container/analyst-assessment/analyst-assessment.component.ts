@@ -242,7 +242,7 @@ export class AnalystAssessmentComponent implements OnInit, OnDestroy {
             });
           }, 300);
           if (res.succeeded) {
-            if (this.pillerQuestions?.displayOrder == 14 || this.isAssessementFinalized) {
+            if (this.pillerQuestions?.displayOrder == this.pillerQuestions?.lastPillarDisplayOrder || this.isAssessementFinalized) {
               this.analystService.userCountryMappingIDSubject$.next(null);
               this.getCountryByUserIdForAssessment();
             } else {

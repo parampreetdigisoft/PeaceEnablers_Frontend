@@ -91,14 +91,26 @@ export class AiEditPermissionsComponent implements OnInit {
   }
 
   loadPermissions(currentPage: any = 1) {
-    this.isLoader = true;
-    this.auditService.getPermissions({
-      countryID: this.filterCountryID || undefined,
-      year: this.filterYear || undefined,
-      status: this.filterStatus ?? undefined,
+    let payload: {
+      year: number;
+      pageNumber: number;
+      pageSize: number;
+      countryID?: number;
+      status?: number;
+    } = {
+      year: this.filterYear,
       pageNumber: currentPage,
       pageSize: this.pageSize
-    }).subscribe({
+    };
+    if(this.filterCountryID){
+      payload.countryID = this.filterCountryID;
+    }
+    if(this.filterStatus){
+      payload.status = this.filterStatus;
+    }
+
+    this.isLoader = true;
+    this.auditService.getPermissions(payload).subscribe({
       next: (res) => {
         this.isLoader = false;
         this.permissions = res?.data ?? [];

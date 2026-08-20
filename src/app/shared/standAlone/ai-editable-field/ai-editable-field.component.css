@@ -1,7 +1,13 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .ai-field {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  width: 100%;
 }
 
 .ai-field-compact {
@@ -21,6 +27,8 @@
 
 .ai-field-input,
 .ai-field-textarea {
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #c9d7d4;
   border-radius: 0.5rem;
   font-size: 0.95rem;

@@ -181,7 +181,7 @@
         <div class="next_btn" [class.loading-bottom]="isLoader">
           <button type="button" data-bs-toggle="modal" data-bs-target="#confirmModal" style="cursor: pointer"
             class="common_button" [disabled]="!this.selectedUserCountryMappingID || this.selectedUserCountryMappingID == 0">
-            {{pillerQuestions?.displayOrder == 14 ? 'Submit' :'Save & NEXT' }}
+            {{selectedPillar?.displayOrder == pillerQuestions?.lastPillarDisplayOrder ? 'Submit' :'Save & NEXT' }}
           </button>
         </div>
       </form>
@@ -196,12 +196,12 @@
 <app-file-upload-modal (fileUploaded)="handleFileUpload($event)"></app-file-upload-modal>
 
 <app-prompt [title]="
-    pillerQuestions?.displayOrder == 14 || isAssessementFinalized? 'Submit Pillar' : 'Save Pillar'
+    selectedPillar?.displayOrder == this.pillerQuestions?.lastPillarDisplayOrder || isAssessementFinalized? 'Submit Pillar' : 'Save Pillar'
   " [message]="
-    pillerQuestions?.displayOrder == 14 || isAssessementFinalized
+    selectedPillar?.displayOrder == this.pillerQuestions?.lastPillarDisplayOrder || isAssessementFinalized
       ? 'Are you sure you want to submit this country? After submission, changes can’t be made directly. To edit later, you’ll need to request it from the Admin.'
       : 'Are you sure you want to save this pillar?'
-  " [confirmText]="pillerQuestions?.displayOrder == 14 || isAssessementFinalized ? 'Submit' : 'Save'"
+  " [confirmText]="pillerQuestions?.displayOrder == this.pillerQuestions?.lastPillarDisplayOrder || isAssessementFinalized ? 'Submit' : 'Save'"
   [cancelText]="'Cancel'" (confirm)="SaveAssessment()" (cancel)="isAssessementFinalized=false">
 </app-prompt>
 

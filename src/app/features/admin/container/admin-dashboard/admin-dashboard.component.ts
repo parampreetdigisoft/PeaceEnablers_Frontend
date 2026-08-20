@@ -681,18 +681,18 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
 
 PillarColorByScore(score: any): string {
   const colors = [
-    "#E3ECF7", // very light blue
-    "#C9DBF0",
-    "#AFC9E9",
-    "#95B8E2",
-    "#7BA6DB",
-    "#6195D4",
-    "#4A7FC2",
-    "#345FA3",
-    "#1F3F7A",
-    "#0D2B4D"  // deep navy (highest)
+    "#7FADE4",
+    "#6398DA",
+    "#60a1eb",
+    "#428FDD",
+    "#2878C8",
+    "#1764B0",
+    "#0D4F96",
+    "#467FCB",
+    "#2F65B0",
+    "#1D4E91",
+    "#0B2F6B"  // deep blue (highest)
   ];
-
   if (score === null || score === undefined || isNaN(score)) {
     return "#E0E0E0"; // neutral grey
   }
