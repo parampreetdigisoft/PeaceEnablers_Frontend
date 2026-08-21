@@ -86,8 +86,10 @@ export class PillarComponent implements OnInit, OnDestroy {
     formData.append("weight", (piller.weight ?? 1).toString());
     formData.append("reliability", piller.reliability.toString());
     formData.append("description", piller.description);
-    formData.append("displayOrder", (piller.displayOrder ?? 0).toString());
-    formData.append("kpiLayerIds", (piller.kpiLayerIds ?? []).join(","));
+    formData.append("displayOrder", (piller.displayOrder ?? 0).toString());    
+    if(piller.kpiLayerIds){
+      formData.append("kpiLayerIds", (piller.kpiLayerIds ?? []).join(","));
+    }
     if (piller.kpiUpdates?.length) {
       formData.append("kpiUpdates", JSON.stringify(piller.kpiUpdates));
     }
