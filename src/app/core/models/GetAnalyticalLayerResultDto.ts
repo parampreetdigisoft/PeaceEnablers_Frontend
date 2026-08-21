@@ -1,5 +1,6 @@
 import { CountryVM } from "./CountryVM";
 import { PaginationUserRequest } from "./PaginationRequest";
+import { SummarizeKpiResponseDto } from "./SummarizeKpiDto";
 
 export interface GetAnalyticalLayerRequestDto extends PaginationUserRequest {
   layerID?: number ;
@@ -30,6 +31,11 @@ export interface GetAnalyticalLayerResultDto extends AnalyticalLayerResponseDto 
 
   fiveLevelInterpretations: FiveLevelInterpretation[];
   country?: CountryVM | null;
+
+  /** Client-only cache: AI summary for this KPI, kept until page refresh or navigation. */
+  aiPerformanceSummary?: SummarizeKpiResponseDto | null;
+  aiPerformanceSummaryError?: string | null;
+  isAiSummarizing?: boolean;
 }
 
 export interface AnalyticalLayerResponseDto {
