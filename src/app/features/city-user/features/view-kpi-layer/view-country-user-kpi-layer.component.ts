@@ -47,9 +47,18 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
 
 
   canShowAiSummary = false;
-  isSummarizing = false;
-  aiSummary: SummarizeKpiResponseDto | null = null;
-  aiSummaryError: string | null = null;
+
+  get isSummarizing(): boolean {
+    return !!this.selectedLayer?.isAiSummarizing;
+  }
+
+  get aiSummary(): SummarizeKpiResponseDto | null {
+    return this.selectedLayer?.aiPerformanceSummary ?? null;
+  }
+
+  get aiSummaryError(): string | null {
+    return this.selectedLayer?.aiPerformanceSummaryError ?? null;
+  }
 
   constructor(
     private userService: UserService,
@@ -63,11 +72,6 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.ApexGetPieOptions();
     this.updateAiSummaryVisibility();
-    if (changes['selectedLayer']) {
-      this.aiSummary = null;
-      this.aiSummaryError = null;
-      this.isSummarizing = false;
-    }
   }
 
   onImgError(event: Event) {
@@ -80,37 +84,47 @@ export class ViewCountryUserKpiLayerComponent implements OnInit, OnChanges {
   }
 
   generateAiSummary(): void {
-    if (!this.canShowAiSummary || this.isSummarizing) return;
+    if (!this.canShowAiSummary) return;
 
-    const layerResultID = this.selectedLayer?.layerResultID;
-    if (!layerResultID) {
+    const layer = this.selectedLayer;
+    const layerResultID = layer?.layerResultID;
+    if (!layer || !layerResultID) {
       this.toaster.showError('KPI result is missing. Please reopen the KPI details.');
       return;
     }
 
-    this.isSummarizing = true;
-    this.aiSummaryError = null;
+    if (layer.aiPerformanceSummary || layer.isAiSummarizing) {
+      return;
+    }
+
+    layer.isAiSummarizing = true;
+    layer.aiPerformanceSummaryError = null;
 
     const payload: SummarizeKpiRequestDto = { layerResultID };
     this.aiComputationService.summarizeKpiPerformance(payload).subscribe({
       next: (res) => {
         const response = res as ResultResponseDto<SummarizeKpiResponseDto>;
-        this.isSummarizing = false;
+        layer.isAiSummarizing = false;
         if (response?.succeeded && response.result?.summary) {
-          this.aiSummary = response.result;
-          this.aiSummaryError = null;
+          layer.aiPerformanceSummary = response.result;
+          layer.aiPerformanceSummaryError = null;
         } else {
           const message = response?.errors?.[0] || 'Failed to generate AI summary. Please try again.';
-          this.aiSummary = null;
-          this.aiSummaryError = message;
-          this.toaster.showError(message);
+          layer.aiPerformanceSummary = null;
+          layer.aiPerformanceSummaryError = message;
+          if (this.selectedLayer?.layerResultID === layerResultID) {
+            this.toaster.showError(message);
+          }
         }
       },
       error: () => {
-        this.isSummarizing = false;
-        this.aiSummary = null;
-        this.aiSummaryError = 'Unable to reach the AI service. Please try again later.';
-        this.toaster.showError(this.aiSummaryError);
+        const message = 'Unable to reach the AI service. Please try again later.';
+        layer.isAiSummarizing = false;
+        layer.aiPerformanceSummary = null;
+        layer.aiPerformanceSummaryError = message;
+        if (this.selectedLayer?.layerResultID === layerResultID) {
+          this.toaster.showError(message);
+        }
       }
     });
   }
