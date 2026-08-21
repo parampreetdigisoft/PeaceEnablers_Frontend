@@ -21,6 +21,8 @@ export class HttpService {
     };
     if ('string' === typeof error.error) {
       err.message = error.error;
+    } else if (Array.isArray(error?.error?.errors) && error.error.errors.length > 0) {
+      err.message = error.error.errors.join(', ');
     } else if (error?.error?.errors?.Password && error.error.errors.Password.length > 0) {
       err.message = error.error.errors.Password[0];
     } else {
