@@ -103,7 +103,12 @@ export class KPIAnalysisComponent implements OnInit {
     this.getAITrustLevels();
   }
   getSelectedCountry() {
-    return this.countries?.find(x => x.countryID == this.selectedCountry);
+    let country  = this.countries?.find(x => x.countryID == this.selectedCountry);
+    if(!country) return;
+
+    country.aiScore = this.selectedAiCountryPillar?.aiScore ?? 0;
+    country.aiCompletionRate = this.selectedAiCountryPillar?.aiCompletionRate ?? 0;
+    return  country;
   }
 
   getAITrustLevels() {
@@ -129,6 +134,7 @@ export class KPIAnalysisComponent implements OnInit {
   }
 
   getAICountryPillars() {
+    this.closeSidebar();
     if (!this.selectedCountry) {
       this.toaster.showWarning("Please select at least one country to view data.");
       return;
@@ -193,8 +199,8 @@ export class KPIAnalysisComponent implements OnInit {
 
     this.chartOptions = {
       series: [
-        { name: 'AI Progress', data: aiSeries },
-        { name: 'Evaluator Progress', data: evaluatorSeries },
+        { name: 'AI Score', data: aiSeries },
+        { name: 'Evaluator Score', data: evaluatorSeries },
         { name: 'Discrepancy', data: discrepancySeries }
       ],
 
@@ -351,7 +357,7 @@ export class KPIAnalysisComponent implements OnInit {
               <div style="display:grid; row-gap:6px;">
 
                 <div style="display:flex; justify-content:space-between;">
-                  <span style="color:#6b7280;">AI Progress</span>
+                  <span style="color:#6b7280;">AI Score</span>
                   <span style="font-weight:600; color:#2d5e56;">
                     ${pillar.aiProgress?.toFixed(2) ?? '0.00'}
                   </span>
@@ -420,6 +426,21 @@ export class KPIAnalysisComponent implements OnInit {
       }
     });
   }
+  closeSidebar(): void {
+    const sidebarEl = document.getElementById('kpiLayerSidebar');
+
+    if (!sidebarEl) {
+      return;
+    }
+
+    const offcanvas = bootstrap.Offcanvas.getInstance(sidebarEl);
+
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  }
+
+
   buildUniqueCategories(data: { pillarName: string }[]): string[] {
     const used = new Set<string>();
     return data.map(item => {

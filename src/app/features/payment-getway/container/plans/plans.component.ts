@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { loadStripe } from '@stripe/stripe-js';
+//import { loadStripe } from '@stripe/stripe-js';
 import { ICreateCheckoutSessionDto, IPlan } from '../../models/ICreateCheckoutSessionDto';
 import { PaymentService } from '../../payment.service';
 import { ToasterService } from 'src/app/core/services/toaster.service';
@@ -18,7 +18,7 @@ type PlanCategory = 'Evaluation' | 'Access';
 export class PlansComponent {
   loading: boolean = false;
   userId!: string;
-  stripePromise = loadStripe(environment.stripePublicKey);
+  //stripePromise = loadStripe(environment.stripePublicKey);
   plans: IPlan[] = [
     { name: 'Basic', tier: TieredAccessPlanValue.Basic, amount: 1500 },
     { name: 'Standard', tier: TieredAccessPlanValue.Standard, amount: 2600 },

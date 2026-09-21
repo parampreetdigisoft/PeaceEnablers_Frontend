@@ -1,7 +1,7 @@
 export interface AIEstimatedQuestionScoreDto {
   countryID: number;
-  pillarId: number;
-  questionId: number;
+  pillarID: number;
+  questionID: number;
   questionText: string;
   year: number; // ✅ renamed from dataYear
   aiScore: number | null;

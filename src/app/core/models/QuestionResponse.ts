@@ -7,6 +7,7 @@ export interface GetQuestionByCountryMappingResponse {
   assessmentID: number;
   userCountryMappingID: number;
   displayOrder: number;
+  lastPillarDisplayOrder: number;
   submittedPillarDisplayOrder: number;
   pillarID: number;
   pillarName: string;

@@ -18,7 +18,13 @@
     width: calc(100% - 370px);
 }
 
-
+@media only screen and (max-width:1540px) {
+  .sidebar_area{
+      width: 335px;
+      padding: 0 15px 20px 15px;
+  }
+ 
+}
 
 @media only screen and (max-width:1339px){
     ::ng-deep .main_area .inner_sidebar .nav_links{

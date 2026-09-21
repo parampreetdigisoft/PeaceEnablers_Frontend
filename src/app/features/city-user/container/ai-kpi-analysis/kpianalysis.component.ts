@@ -230,7 +230,7 @@ export class KPIAnalysisComponent implements OnInit {
 
     this.chartOptions = {
       series: [{
-        name: 'Progress',
+        name: 'Score',
         data: aiSeries
       }],
 
@@ -261,7 +261,7 @@ export class KPIAnalysisComponent implements OnInit {
         style: {
           fontSize: '11px',
           fontWeight: 700,
-          colors: ['#2f4841']
+          colors: ['#32288f']
         },
         background: {
           enabled: true,
@@ -269,7 +269,7 @@ export class KPIAnalysisComponent implements OnInit {
           padding: 6,
           borderRadius: 4,
           borderWidth: 1,
-          borderColor: '#79a89b',
+          borderColor: '#7f8feb',
           opacity: 0.95
         }
       },
@@ -277,7 +277,7 @@ export class KPIAnalysisComponent implements OnInit {
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#4a7167']
+        colors: ['#425cf0']
       },
 
       fill: {
@@ -290,17 +290,17 @@ export class KPIAnalysisComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#79a89b',
+              color: '#5975c2',
               opacity: 0.8
             },
             {
               offset: 50,
-              color: '#8eb5ab',
+              color: '#78bef7',
               opacity: 0.5
             },
             {
               offset: 100,
-              color: '#a2c3ba',
+              color: '#a5bef5',
               opacity: 0.2
             }
           ]
@@ -325,7 +325,7 @@ export class KPIAnalysisComponent implements OnInit {
           style: {
             fontSize: '11px',
             fontWeight: 500,
-            colors: '#6b7280'
+            colors: '#2153b8'
           }
         },
         axisBorder: {
@@ -344,7 +344,7 @@ export class KPIAnalysisComponent implements OnInit {
           style: {
             fontSize: '13px',
             fontWeight: 600,
-            color: '#4b5563'
+            color: '#83b0ee'
           }
         },
         min: 0,
@@ -354,7 +354,7 @@ export class KPIAnalysisComponent implements OnInit {
           formatter: (val) => val >= 0 ? `${Math.round(val)}` : '',
           style: {
             fontSize: '12px',
-            colors: '#6b7280'
+            colors: '#3b5281'
           }
         }
       },
@@ -461,7 +461,7 @@ export class KPIAnalysisComponent implements OnInit {
                   </div>
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <span style="color: #8b5cf6; font-size: 16px;">✓</span>
-                    <span>Real-time Progress Tracking</span>
+                    <span>Real-time Score Tracking</span>
                   </div>
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="color: #8b5cf6; font-size: 16px;">✓</span>
@@ -495,7 +495,7 @@ export class KPIAnalysisComponent implements OnInit {
           const progressColor = this.PillarColorByScore(pillar);
           const progressPercent = pillar.aiProgress ?? 0;
           const statusText = progressPercent >= 75 ? 'Excellent Performance' :
-            progressPercent >= 50 ? 'Strong Progress' :
+            progressPercent >= 50 ? 'Strong Score' :
               progressPercent >= 25 ? 'Steady Growth' : 'Early Stage';
           const statusIcon = progressPercent >= 75 ? '🌟' :
             progressPercent >= 50 ? '📈' :
@@ -568,7 +568,7 @@ export class KPIAnalysisComponent implements OnInit {
                 </div>
               </div>
 
-              <!-- Progress Bar -->
+              <!-- Score Bar -->
               <div style="margin-bottom: 14px;">
                 <div style="
                   display: flex;
@@ -580,7 +580,7 @@ export class KPIAnalysisComponent implements OnInit {
                   font-weight: 600;
                   color: #6b7280;
                 ">
-                  <span>Progress</span>
+                  <span>Score</span>
                   <span>${progressPercent.toFixed(1)}</span>
                 </div>
                 <div style="
@@ -686,8 +686,16 @@ export class KPIAnalysisComponent implements OnInit {
   PillarColorByScore(pillar: any): string {
     let score = pillar.aiProgress;
     const colors = [
-      "#a2c3ba", "#8eb5ab", "#79a89b", "#649b8c", "#578679",
-      "#4a7167", "#3c5d54", "#2f4841", "#21342f", "#141f1c"
+      "#E3ECF7", // very light blue
+      "#C9DBF0",
+      "#AFC9E9",
+      "#95B8E2",
+      "#7BA6DB",
+      "#6195D4",
+      "#4A7FC2",
+      "#345FA3",
+      "#1F3F7A",
+      "#0D2B4D"  // deep navy (highest)
     ];
 
     if (score === null || score === undefined || isNaN(score)) {

@@ -224,3 +224,9 @@ p.btn_spinner {
     color: #ffffff;
     border-radius: 5px;
 }
+p.btn_spinner_export {
+    display: inline-block;
+    white-space: nowrap;
+    color: #ffffff;
+    border-radius: 5px;
+}

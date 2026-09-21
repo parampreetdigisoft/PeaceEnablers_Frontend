@@ -73,7 +73,7 @@
 					<td>
 						<div class="document_layaer document_td_data">
 							<p>
-								{{document.filesSize || 'NA'}}
+								{{formatFileSize(document.filesSize || 0)}}								
 							</p>
 						</div>
 					</td>
@@ -112,7 +112,7 @@
 			</tbody>
 		</table>
 	</div>
-	<app-pagination [totalPage]="totalRecords"
+	<app-pagination [totalPage]="totalRecords" [selectedYear]="selectedYear"
 		[currentPage]="currentPage"
 		[pageSize]="pageSize"
 		[isLoader]="isLoader"

@@ -1,4 +1,46 @@
 /* Default Bootstrap width is 400px */
+/* KPI filter bar — pairs with markup in kpi-layers.component.html */
+::ng-deep .kpi_select_shell--ng .ng-select-container {
+  min-height: 44px !important;
+  height: 44px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+::ng-deep .kpi_select_shell--ng .ng-select.ng-select-focused .ng-select-container,
+::ng-deep .kpi_select_shell--ng .ng-select.ng-select-opened .ng-select-container {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .kpi_ng_select .ng-value {
+  background: transparent !important;
+  color: #12352f !important;
+  font-weight: 600;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+::ng-deep .kpi_ng_select .ng-dropdown-panel {
+  border: 1px solid #d5e5df;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(18, 53, 47, 0.12);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+::ng-deep .kpi_ng_select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background: #eef6f2 !important;
+  color: #12352f !important;
+}
+
+::ng-deep .kpi_ng_select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+  background: linear-gradient(90deg, #e4f2eb, #f4faf7) !important;
+  color: #12352f !important;
+  font-weight: 600;
+}
+
 .custom-sidebar {
     width: 775px !important;
     /* 👈 set your desired width */

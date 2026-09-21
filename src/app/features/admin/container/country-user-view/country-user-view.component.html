@@ -64,9 +64,13 @@
         </ng-container>
 
         <td>
-          <span *ngFor="let country of countryuser?.countries; let last = last">
-            {{ country?.countryName }}{{ last ? "" : ", " }}
-          </span>
+          <div class="country-list desc" [class.collapsed]="!countryuser.countriesExpand">
+            {{ countryuser.countriesText }}
+          </div>
+          <a *ngIf="countryuser.showCountriesToggle" class="read-more" href="javascript:void(0)"
+            (click)="toggleCountries(countryuser)">
+            {{ countryuser.countriesExpand ? 'Read Less' : 'Read More' }}
+          </a>
         </td>
         <td *ngIf="!roleId">
           <button *ngIf="!countryuser.isEmailConfirmed" (click)="ResendInvitaion(countryuser,i)" class="common_button"

@@ -63,8 +63,7 @@
       </div>
     </div>
     <div class="col-md-auto">
-      <div class="compare_select input_field input_flex">
-        <a
+      <a
           style="cursor: pointer"
           [matTooltip]="'Refresh..'"
           (click)="getAIPillarQuestions(currentPage); $event.preventDefault()"
@@ -97,7 +96,6 @@
             </svg>
           </span>
         </a>
-      </div>
     </div>
   </div>
 </div>
@@ -108,12 +106,12 @@
       <thead>
         <tr>
           <th>S.No.</th>
-          <th>Country</th>
-          <th>Evaluator Score</th>
+          <th>Question</th>
+          <th>Analyst Score</th>
           <th>AI Score</th>
           <th>Discrepancy</th>
           <th>AI Trust Level</th>
-          <th>Year</th>
+       <th>Reporting Year</th>
           <th>Research Recency</th>
           <th class="action_th">View Details</th>
         </tr>
@@ -129,13 +127,13 @@
 
           <td>
             <app-circular-score
-              [value]="question?.evaluatorScore ?? 0"
+              [value]="getManualScore(question?.evaluatorScore ?? 0)"
             ></app-circular-score>
           </td>
 
           <td>
             <app-circular-score
-              [value]="question?.aiProgress ?? 0"
+              [value]="question?.aiScore ?? 0"
             ></app-circular-score>
           </td>
           <td>
@@ -211,6 +209,7 @@
     <app-view-ai-question-details
       [question]="selectedQuestion"
       [aiTrustLevels]="aiTrustLevels"
+      (dataSaved)="getAIPillarQuestions(currentPage)"
     ></app-view-ai-question-details>
   </div>
 </div>

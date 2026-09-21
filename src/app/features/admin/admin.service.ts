@@ -25,6 +25,8 @@ import { GetMutiplekpiLayerRequestDto } from 'src/app/core/models/aiVm/GetMutipl
 import { GetMutiplekpiLayerResultsDto } from 'src/app/core/models/aiVm/GetMutiplekpiLayerResultsDto';
 import { EmailExistDto } from 'src/app/core/models/EmailExistDto';
 import { ExportCountryWithOptionDto } from 'src/app/core/models/ExportCountryWithOptionDto';
+import { AnalyticalLayerPillarMappingDTO } from 'src/app/core/models/AnalyticalLayerPillarMappingDTO';
+import { PillarKpiMappingDto } from 'src/app/core/models/PillarKpiMappingDto';
 
 @Injectable({
   providedIn: "root",
@@ -125,6 +127,29 @@ export class AdminService {
     const formData = new FormData();
     return this.http
       .UploadFile(`Pillar/edit/${id}`, data)
+      .pipe(map((x) => x as ResultResponseDto<boolean>));
+  }
+public addPillar(data: FormData) {
+    return this.http
+      .UploadFile(`Pillar/add`, data)
+      .pipe(map((x) => x as ResultResponseDto<PillarsVM>));
+  }
+
+  public getPillarKpiMappings(pillarId: number) {
+    return this.http
+      .get(`Pillar/${pillarId}/kpiMappings`)
+      .pipe(map((x) => x as ResultResponseDto<PillarKpiMappingDto[]>));
+  }
+  public getKPIDetailsByLayerID(layerIds: number[]) {
+    const ids = Array.from(new Set((layerIds ?? []).map(Number).filter((id) => id > 0)));
+    return this.http
+      .getWithQueryParams(`Kpi/getKPIDetailsByLayerID`, { layerIds: ids.join(',') })
+      .pipe(map((x) => x as ResultResponseDto<AnalyticalLayerPillarMappingDTO[]>));
+  }
+
+  public deletePillar(id: number) {
+    return this.http
+      .delete(`Pillar/` + id)
       .pipe(map((x) => x as ResultResponseDto<boolean>));
   }
 

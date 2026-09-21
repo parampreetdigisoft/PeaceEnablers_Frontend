@@ -82,6 +82,27 @@ const routes: Routes = [
           import("./container/ai-documents/ai-documents.component").then(
             (m) => m.AiDocumentsComponent
           ),
+      },
+            {
+        path: "ai/edit-permissions",
+        loadComponent: () =>
+          import("./container/ai-edit-permissions/ai-edit-permissions.component").then(
+            (m) => m.AiEditPermissionsComponent
+          ),
+      },
+      {
+        path: "ai/edit-changes",
+        loadComponent: () =>
+          import("./container/ai-edit-changes/ai-edit-changes.component").then(
+            (m) => m.AiEditChangesComponent
+          ),
+      },
+      {
+        path: "aevum",
+        loadComponent: () =>
+          import("../../shared/chatbox/chat-container/chat-container.component").then(
+            (m) => m.ChatContainerComponent
+          ),
       }
     ],
   },

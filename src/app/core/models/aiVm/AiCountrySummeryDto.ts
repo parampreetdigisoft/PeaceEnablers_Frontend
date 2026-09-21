@@ -9,6 +9,8 @@ export interface AiCountrySummeryDto {
   evaluatorScore: number | null;
   discrepancy: number | null;
 
+  immediateSituationSummary: string;  
+  countryScoreSummery: string;  
   confidenceLevel: string;
   evidenceSummary: string;
 
@@ -43,9 +45,13 @@ export interface AiCountrySummeryDto {
   keyDevelopments: string | null;
   criticalRisks: string | null;
   gaps: string | null;
-
+  keyFindings: string | null;
+  recommendations: string | null;
+  
   updatedAt: Date;
   isVerified: boolean;
 
   aiCompletionRate?: number;
+  rank?: number;
+  regionRank?: number;
 }

@@ -53,7 +53,7 @@ export class AssessmentViewResultComponent implements OnInit {
         this.userService.assessmentProgress.next(res.result);
       }
       else {
-        this.toaster.showError("Failed to fetch assessment progress history");
+        this.toaster.showError("Failed to fetch assessment score history");
       }
     });
   }
