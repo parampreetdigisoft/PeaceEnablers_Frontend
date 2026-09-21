@@ -1,5 +1,5 @@
 export interface AIAssistantFAQDto {
-  faqID: number;
+  faqid: number;
   related: string;
   category: string;
   questionText: string;

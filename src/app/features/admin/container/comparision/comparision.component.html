@@ -2,7 +2,7 @@
   <div class="heading_area">
     <div class="row justify-content-between align-items-center gap-2">
       <div class="col-md-auto">
-        <h3 class="page_head">Evaluator Comparision</h3>
+        <h3 class="page_head">Assessment Comparision</h3>
       </div>
       <div class="col-md-6">
         <div class="input_field input_flex">
@@ -37,7 +37,7 @@
     <!-- Pagination -->
     <ng-container *ngIf="totalRecords > pageSize">
       <div class="pagination-wrapper">
-        <app-pagination [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize"
+        <app-pagination [selectedYear]="selectedYear" [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize"
           [isLoader]="isLoader" (pageChange)="compareCountries($event)">
         </app-pagination>
       </div>
@@ -45,7 +45,7 @@
   </div>
   <div class="row justify-content-between align-items-end mb-4">
     <div class="col-md-auto">
-      <h3 class="page_head mt-5 mb-3">Evaluator Details</h3>
+      <h3 class="page_head mt-5 mb-3">Assessment Details</h3>
     </div>
     <div class="col-md-auto" >
       <button class="common_button mb_15" [disabled]="isPillarHistroyDownloading" (click)="exportPillarsHistoryByUserId()">
@@ -162,7 +162,8 @@
       <ng-container *ngIf="pillarColumns?.length == 0 && !isLoader">
         <div class="no_result_found">
           <div class="no_result_found_inner">
-            <h3><i class="fas fa-search"></i> No Result Found</h3>
+            <h3 *ngIf="selectedYear == currentYear"><i class="fas fa-search"></i> No Result Found</h3>
+            <h3 *ngIf="selectedYear != currentYear"><i class="fas fa-search"></i> No result from previous year </h3>
           </div>
         </div>
       </ng-container>

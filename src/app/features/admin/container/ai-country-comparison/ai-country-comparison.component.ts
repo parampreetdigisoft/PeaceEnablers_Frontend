@@ -13,6 +13,10 @@ import { CommonModule } from '@angular/common';
 import { debounceTime, Subject } from 'rxjs';
 import { AdminService } from '../../admin.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { ChatService } from 'src/app/core/services/chat.service';
+import { UserRole } from 'src/app/core/enums/UserRole';
+import { Router } from '@angular/router';
+import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -32,7 +36,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-ai-country-comparison',
   standalone: true,
-  imports: [CommonModule, SharedModule, CircularScoreComponent],
+  imports: [CommonModule, SharedModule, CircularScoreComponent,UtcToLocalTooltipDirective],
   templateUrl: './ai-country-comparison.component.html',
   styleUrl: './ai-country-comparison.component.css'
 })
@@ -60,7 +64,9 @@ export class AiCountryComparisonComponent implements OnInit {
     private userService: UserService,
     private toaster: ToasterService,
     private aiComputationService: AiComputationService,
-    public commonService: CommonService
+    public commonService: CommonService,
+    private chatService:ChatService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -614,5 +620,10 @@ export class AiCountryComparisonComponent implements OnInit {
     /* AVERAGE */
     let avg = pillarValues.reduce((a, b) => a + b.value, 0) / pillarValues.length;
     return Math.round(avg * 100) / 100 + '';
+  }
+
+  viewPEMAveumCrossComparision(){
+    this.chatService.crossComparisionCountryIDs.next(this.selectedCountries);
+    this.router.navigate(['/admin/aevum'], { state: { role: UserRole.Admin } });
   }
 }

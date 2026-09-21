@@ -1,4 +1,4 @@
-declare var bootstrap: any; 
+declare var bootstrap: any;
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -231,6 +231,10 @@ export class AiDocumentsComponent {
       item.layerCode?.toLowerCase().includes(term) ||
       item.layerName?.toLowerCase().includes(term)
     );
+  }
+  
+  formatFileSize(size: number): string {
+    return (size / 1024).toFixed(1) + ' KB';
   }
 }
 

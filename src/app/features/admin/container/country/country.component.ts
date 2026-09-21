@@ -223,11 +223,6 @@ export class CountryComponent implements OnInit, OnDestroy {
 
   aiAllCountryDetailsReport(format: string = 'pdf') {
 
-    if (!this.selectedCountries.length) {
-      this.toaster.showWarning('Please select at least one country');
-      return;
-    }
-
     this.isReportExporting = true;
 
     const payload: DownloadReportDto = {
@@ -244,7 +239,7 @@ export class CountryComponent implements OnInit, OnDestroy {
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `All_Countries_Details_${new Date().toISOString().split('T')[0]}.${ext}`;
+          link.download = `Country_Ranking_Report_${new Date().toISOString().split('T')[0]}.${ext}`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);

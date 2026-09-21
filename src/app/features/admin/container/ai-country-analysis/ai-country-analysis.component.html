@@ -24,7 +24,7 @@
           </ng-template>
         </ng-select>
 
-        <a style="cursor: pointer" [matTooltip]="'Recalculate Kpis'" data-bs-toggle="modal" data-bs-target="#RecalculatekpiModal"
+        <a style="cursor: pointer" [matTooltip]="'Recalculate Scores'" data-bs-toggle="modal" data-bs-target="#RecalculatekpiModal"
           >
           <span style="display: inline-block">
 
@@ -261,14 +261,14 @@
       </tbody>
     </table>
   </div>
-  <app-pagination [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize" [isLoader]="isLoader"
+  <app-pagination [selectedYear]="selectedYear" [totalPage]="totalRecords" [currentPage]="currentPage" [pageSize]="pageSize" [isLoader]="isLoader"
     (pageChange)="getAICountries($event)"></app-pagination>
 </div>
 
 <!-- Bootstrap 5 Offcanvas Sidebar -->
 <div class="offcanvas offcanvas-end custom-sidebar kpi_sidebar" tabindex="-1" id="kpiLayerSidebar">
   <div class="offcanvas-body">
-    <app-view-country-detail [country]="selectedCountry"></app-view-country-detail>
+    <app-view-country-detail [country]="selectedCountry" (dataSaved)="getAICountries(currentPage)"></app-view-country-detail>
   </div>
 </div>
 
@@ -292,7 +292,7 @@
   </div>
 </ng-container>
 <ng-container *ngIf="!isRecalcualteKpi">
-  <app-prompt [title]="'Recalculate All kpis'" [uniqueId]="'RecalculatekpiModal'" [message]="
-      'Are you sure you want to recalculate kpis ?'
+  <app-prompt [title]="'Recalculate All Score'" [uniqueId]="'RecalculatekpiModal'" [message]="
+      'Are you sure you want to recalculate Scores?'
     " [confirmText]="'Yes'" [cancelText]="'No'" (confirm)="reCalculateKpis()"></app-prompt>
 </ng-container>

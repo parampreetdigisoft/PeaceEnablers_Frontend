@@ -38,6 +38,7 @@ export type ChartOptions = {
 })
 
 export class ComparisionComponent implements OnInit {
+  currentYear = new Date().getFullYear();
   selectedYear = new Date().getFullYear();
   pillers: PillarsVM[] = [];
   pillersHistory: PillarsHistoryResponse[] = [];

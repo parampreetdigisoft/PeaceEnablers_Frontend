@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { debounceTime, Subject } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
 import { EvaluatorService } from '../../evaluator.service';
+import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-local-tooltip.directive';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -32,7 +33,7 @@ export type ChartOptions = {
 @Component({
   selector: 'app-ai-country-comparison',
   standalone: true,
-  imports: [CommonModule, SharedModule, CircularScoreComponent],
+  imports: [CommonModule, SharedModule, CircularScoreComponent, UtcToLocalTooltipDirective],
   templateUrl: './ai-country-comparison.component.html',
   styleUrl: './ai-country-comparison.component.css'
 })

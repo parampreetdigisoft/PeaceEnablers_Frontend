@@ -1,3 +1,5 @@
+import { AssessmentPhase } from "../enums/AssessmentPhase";
+
 export interface CountryVM extends AddUpdateCountryDto {
   isActive: boolean;
   createdDate: string;   // ISO date string from backend
@@ -10,6 +12,8 @@ export interface CountryVM extends AddUpdateCountryDto {
   progress?: number;
   aiScore?: number; 
   selected:boolean;
+  assessmentPhase:AssessmentPhase;
+  aiCompletionRate?: number; 
 }
 export interface AddUpdateCountryDto {
   countryID: number;

@@ -26,7 +26,8 @@ import { UtcToLocalTooltipDirective } from 'src/app/shared/directives/utc-to-loc
 import { AiCountrySummeryRequestPdfDto } from 'src/app/core/models/aiVm/AiCountrySummeryRequestPdfDto';
 import { RegenerateAiScoreAndAddViewerComponent } from 'src/app/shared/standAlone/regenerate-ai-score-and-add-viewer/regenerate-ai-score-and-add-viewer.component';
 import { ActivatedRoute } from '@angular/router';
-import { ViewCountryDetailComponent } from 'src/app/features/city-user/features/view-country-detail/view-country-detail.component';
+import { ViewCountryDetailComponent } from 'src/app/shared/standAlone/view-country-detail/view-country-detail.component';
+
 
 declare var bootstrap: any; // 👈 use Bootstrap JS API
 @Component({
@@ -49,7 +50,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
   isLoader: boolean = false;
   loading: boolean = false;
   aiCountries: AiCountrySummeryDto[] = []
- selectedCountry?: AiCountrySummeryDto | null = null;
+  selectedCountry?: AiCountrySummeryDto | null = null;
   countries: CountryVM[] | null = [];
   filterCountry!: number;
   selectedIndex: number = -1;
@@ -57,7 +58,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
   evaluatorList: PublicUserResponse[] = [];
   isOpenResearchBox: boolean = false;
   constructor(private aiComputationService: AiComputationService, private analystService: AnalystService,
-    private toaster: ToasterService, private userService: UserService, private cdr: ChangeDetectorRef, public commonService: CommonService,private route:ActivatedRoute ) { }
+    private toaster: ToasterService, private userService: UserService, private cdr: ChangeDetectorRef, public commonService: CommonService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -94,13 +95,14 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
   }
 
   getaiCountries(currentPage: any = 1) {
+    this.closeSidebar();
     this.isLoader = true;
     let payload: AiCountrySummeryRequestDto = {
       sortDirection: SortDirection.DESC,
       sortBy: 'AIProgress',
       pageNumber: currentPage,
       pageSize: this.pageSize,
-      year:this.selectedYear
+      year: this.selectedYear
     }
     if (this.userService?.userInfo?.userID == null || this.filterCountry > 0) {
       payload.countryID = this.filterCountry;
@@ -120,7 +122,19 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       }
     })
   }
+  closeSidebar(): void {
+    const sidebarEl = document.getElementById('kpiLayerSidebar');
 
+    if (!sidebarEl) {
+      return;
+    }
+
+    const offcanvas = bootstrap.Offcanvas.getInstance(sidebarEl);
+
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  }
   viewDetails(country: AiCountrySummeryDto) {
     this.selectedCountry = country;
     const sidebarEl = document.getElementById('kpiLayerSidebar');
@@ -278,18 +292,17 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       this.closeModal();
     }
   }
-  
-    customSearchFn(term: string, item: any) {
+
+  customSearchFn(term: string, item: any) {
     term = term.toLowerCase();
     return (
       item.countryName?.toLowerCase().includes(term) ||
       item.countryAliasName?.toLowerCase().includes(term)
     );
-}
+  }
 
-refresh()
-{
+  refresh() {
     this.getaiCountries(this.currentPage);
-}
+  }
 
 }

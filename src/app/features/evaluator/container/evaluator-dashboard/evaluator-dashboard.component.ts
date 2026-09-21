@@ -138,7 +138,7 @@ export class EvaluatorDashboardComponent {
 
     this.chartPillarOptions = {
       series: [{
-        name: 'Score Progress',
+        name: 'Score Score',
         data: seriesData
       }],
       chart: {
@@ -314,7 +314,7 @@ export class EvaluatorDashboardComponent {
             <!-- Content Section -->
             <div style="padding: 18px 20px; background: linear-gradient(to bottom, #ffffff 0%, #f9fafb 100%);">
               
-              <!-- Progress Score -->
+              <!-- Score Score -->
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <div style="width: 8px; height: 8px; background: ${barColor}; border-radius: 50%; box-shadow: 0 0 8px ${barColor}80;"></div>
@@ -333,7 +333,7 @@ export class EvaluatorDashboardComponent {
                 </span>
               </div>
 
-              <!-- Completion Rate with Progress Bar -->
+              <!-- Completion Rate with Score Bar -->
               <div style="margin-top: 14px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                   <span style="color: #4a5568; font-weight: 600; font-size: 12px;">Completion Rate</span>

@@ -4,6 +4,7 @@ import {
   ChatMessage,
   ChatResponseDto,
   CountryChatRequestDto,
+  CrossComparisionChatRequestDto,
   GlobalChatRequestDto
 } from '../models/chat/ChatMessage';
 import { UserService } from './user.service';
@@ -13,6 +14,10 @@ import { HttpService } from '../http/http.service';
 import { ToasterService } from './toaster.service';
 import { ResultResponseDto } from '../models/ResultResponseDto';
 import { AIAssistantFAQDto } from '../models/chat/AIAssistantFAQDto';
+import { UserRole } from '../enums/UserRole';
+import { ChatCountryExecutiveSlidesResponse } from '../models/chat/ChatCountryExecutiveSlidesResponse';
+import { ChatEmergingTrendsResponse } from '../models/chat/EmergingTrendsResponse';
+import { PillarLiveSignalsResult } from '../models/chat/PillarLiveSignalsResponse';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -28,6 +33,8 @@ export class ChatService {
   countries = new BehaviorSubject<CountryVM[]>([]);
   pillars = new BehaviorSubject<PillarsVM[]>([]);
   faqs = new BehaviorSubject<AIAssistantFAQDto[]>([]);
+
+  crossComparisionCountryIDs = new BehaviorSubject<number[]>([]);
 
   quickQuestions = computed(() => this.selectedCountry() ? this.countryQuickQuestions : this.globalQuickQuestions)
 
@@ -54,14 +61,7 @@ export class ChatService {
   private readonly welcomeMessage: ChatMessage = {
     id: 'welcome',
     role: 'assistant',
-    content: `## Welcome to PeaceMappers
-
-Get insights on:
-- Global peace and security
-- Country risk and stability
-- Trends, rankings, and recommendations
-
-Select a country or pillar above, or ask a question to begin.`,
+    content: '',
     timestamp: new Date(),
   };
 
@@ -133,11 +133,11 @@ Select a country or pillar above, or ask a question to begin.`,
     if (this.selectedCountry()) {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && !pq.related.includes('global'))
-        //.slice(0, 4);
+      //.slice(0, 4);
     } else {
       return this.faqs.value
         .filter(pq => pq.questionText.toLowerCase().includes(q) && pq.related.includes('global'))
-        //.slice(0, 4);
+      //.slice(0, 4);
     }
   }
 
@@ -148,7 +148,7 @@ Select a country or pillar above, or ask a question to begin.`,
    * call stopGeneration() first, so the UI never has two concurrent streams.
    */
   sendMessage(userText: string): Observable<string> {
-    // Auto-cancel any in-progress generation before starting a new one.
+    // Auto-cancel any in-Score generation before starting a new one.
     if (this.isTyping()) {
       this.stopGeneration();
     }
@@ -165,7 +165,7 @@ Select a country or pillar above, or ask a question to begin.`,
       .map(msg => {
         const content =
           msg.content.length > 200
-            ? msg.content.substring(0, 200) + '...'
+            ? msg.content.substring(0, 150) + '...'
             : msg.content;
 
         return `${msg.role}: ${content}`;
@@ -192,17 +192,14 @@ Select a country or pillar above, or ask a question to begin.`,
         timestamp: new Date(),
         isStreaming: true,
       };
-
       this.messages.update(msgs => [...msgs, placeholder]);
-
-
 
       if (country) {
         const payload: CountryChatRequestDto = {
           countryID: country.countryID,
           pillarID: pillar?.pillarID ?? 0,
           questionText: userText,
-          fAQID: this.selectedfaq()?.faqID,
+          fAQID: this.selectedfaq()?.faqid,
           historyText: histories,
         };
 
@@ -226,7 +223,7 @@ Select a country or pillar above, or ask a question to begin.`,
       } else {
         const payload: GlobalChatRequestDto = {
           questionText: userText,
-          fAQID: this.selectedfaq()?.faqID,
+          fAQID: this.selectedfaq()?.faqid,
           historyText: histories,
         };
 
@@ -274,6 +271,79 @@ Select a country or pillar above, or ask a question to begin.`,
     });
   }
 
+  getContriesCrossComparision() {
+    let userText = "Provide a detailed comparative analysis of the selected countries across all PEM pillars, including key risks, opportunities, structural vulnerabilities, resilience indicators, emerging trends, and strategic observations for each pillar."
+
+    if (this.isTyping()) {
+      this.stopGeneration();
+    }
+
+    this.cancelStream$ = new Subject<void>();
+
+    const histories = this.messages()
+      .slice(1)
+      .slice(-3)
+      .map(msg => {
+        const content =
+          msg.content.length > 200
+            ? msg.content.substring(0, 200) + '...'
+            : msg.content;
+
+        return `${msg.role}: ${content}`;
+      }).join('\n');
+
+    // Add user message
+    const userMsg: ChatMessage = {
+      id: this.uid(),
+      role: 'user',
+      content: userText,
+      timestamp: new Date(),
+    };
+    this.messages.update(msgs => [...msgs, userMsg]);
+    this.isTyping.set(true);
+
+    return new Observable<string>(observer => {
+      const assistantId = this.uid();
+      this.pendingAssistantId = assistantId;
+
+      const placeholder: ChatMessage = {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      this.messages.update(msgs => [...msgs, placeholder]);
+
+      if (this.crossComparisionCountryIDs.value.length > 0) {
+        const payload: CrossComparisionChatRequestDto = {
+          countryIDs: this.crossComparisionCountryIDs.value,
+          questionText: userText,
+          historyText: histories,
+        };
+
+        this.activeRequest$ = this.crossComparisionquestion(payload).subscribe({
+          next: res => {
+            this.activeRequest$ = null; // HTTP done; typewriter phase begins
+
+            if (res.succeeded) {
+              const fullText = res.result?.responseText ?? '';
+              this.pendingFullText = fullText;
+              this.typewriterStream(fullText, assistantId, observer);
+              this.crossComparisionCountryIDs.next([]);
+            } else {
+              this.handleError(assistantId, observer, res.errors?.join(', ') ?? 'Unknown error');
+            }
+          },
+          error: () => {
+            this.activeRequest$ = null;
+            this.handleError(assistantId, observer, 'Request failed. Please try again.');
+          },
+        });
+      }
+    });
+  }
 
 
   // ─── Private helpers ──────────────────────────────────────────────────────
@@ -338,21 +408,40 @@ Select a country or pillar above, or ask a question to begin.`,
   }
 
 
-
-
-
-
   // ─── HTTP ─────────────────────────────────────────────────────────────────
 
-  private getAllCountriesByUserId(userId: number) {
+  getCountrySlides(countryId: number): Observable<ResultResponseDto<ChatCountryExecutiveSlidesResponse>> {
+
+    return this.http.post<ResultResponseDto<ChatCountryExecutiveSlidesResponse>>(
+      `Chat/countrySlides`,
+      countryId as any
+    );
+  }
+
+  getEmergingTrendsAndIssues(countryCount = 6): Observable<ResultResponseDto<ChatEmergingTrendsResponse>> {
     return this.http
-      .get(`Country/getAllCountryByUserId/${userId}`)
+      .getWithQueryParams('Public/emergingTrendsAndIssues', { countryCount })
+      .pipe(map(x => x as ResultResponseDto<ChatEmergingTrendsResponse>));
+  }
+
+  getPillarLiveSignals(): Observable<ResultResponseDto<PillarLiveSignalsResult>> {
+    return this.http
+      .get('Public/pillarLiveSignals')
+      .pipe(map(x => x as ResultResponseDto<PillarLiveSignalsResult>));
+  }
+
+  private getAllCountriesByUserId(userId: number) {
+    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/getCountryUserCountries' : `Country/getAllCountryByUserId/${userId}`;
+
+    return this.http
+      .get(url)
       .pipe(map(x => x as ResultResponseDto<CountryVM[]>));
   }
 
   private getAllPillars() {
+    let url = this.userService.userInfo.role == UserRole.CountryUser ? 'CountryUser/Pillars' : `Pillar/Pillars`;
     return this.http
-      .get('Pillar/Pillars')
+      .get(url)
       .pipe(map(x => x as PillarsVM[]));
   }
 
@@ -373,14 +462,17 @@ Select a country or pillar above, or ask a question to begin.`,
       .post('chat/askglobalQuestion', request)
       .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
   }
-
-
+  private crossComparisionquestion(request: CrossComparisionChatRequestDto) {
+    return this.http
+      .post('chat/crossComparision', request)
+      .pipe(map(x => x as ResultResponseDto<ChatResponseDto>));
+  }
 
   // Questions for a single country
   countryQuickQuestions = [
     {
       label: 'Peace summary',
-      question: 'Summarize the recent peace progress and overall stability of this country.'
+      question: 'Summarize the recent peace score and overall stability of this country.'
     },
     {
       label: 'Peace initiatives',
@@ -408,12 +500,11 @@ Select a country or pillar above, or ask a question to begin.`,
     }
   ];
 
-
   // Questions for all countries globally
   globalQuickQuestions = [
     {
       label: 'Peace summary',
-      question: 'Summarize the peace progress across all countries in recent days.'
+      question: 'Summarize the peace across all countries in recent days.'
     },
     {
       label: 'Peace leaders',
@@ -425,11 +516,11 @@ Select a country or pillar above, or ask a question to begin.`,
     },
     {
       label: 'Recommendations',
-      question: 'What recommendations can improve peace and stability across countries?'
+      question: 'What are the key recommendations for enhancing global peace and stability?'
     },
     {
       label: 'Improved countries',
-      question: 'Which countries have improved their peace index the most recently?'
+      question: 'Which nations have experienced the most significant improvement in peace indicators recently?'
     },
     {
       label: 'Risk countries',

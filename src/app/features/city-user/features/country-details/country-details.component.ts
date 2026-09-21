@@ -43,6 +43,7 @@ export class CountryDetailsComponent implements OnInit {
 
   countryDetail: CountryDetailsDto | null = null;
   country: CountryVM | null = null;
+  currentYear = new Date().getFullYear();
   selectedYear = new Date().getFullYear();
 
   urlBase = environment.apiUrl;

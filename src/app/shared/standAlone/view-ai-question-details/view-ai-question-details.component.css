@@ -1,6 +1,6 @@
 
 .cus_table .table th {
-    background-color: #77BD3E;
+    background-color: #A8E063;
     font-weight: 600;
     color: #ffffff;
     font-size: 14px;
@@ -8,7 +8,7 @@
 }
 
 .cus_table .score_label_tab {
-    background: #003160;
+    background: #006D77;
     color: #ffffff;
     padding: 0.3rem 0.5rem;
     border-radius: 0.5rem;
@@ -47,7 +47,7 @@ h4.kpi_head_col {
     font-size: 2.2rem;
     font-weight: 600;
     margin-bottom: 2rem;
-    color: #304a43;
+    color: #003d44;
 }
 
 
@@ -114,7 +114,7 @@ span:empty, div:empty{
 }
 
 .kpi_custom_table th {
-  background-color: #77BD3E;
+  background-color: #A8E063;
   color: #ffffff;
   font-weight: 600;
   padding: 8px;
@@ -162,20 +162,20 @@ span:empty, div:empty{
     border-radius: 15px;
 }
 .active_row td {
-    background-color: #003160;
+    background-color: #006D77;
     color: #ffffff;
 }
 .active_row td .score_label_tab {
     background-color: rgba(255,255,255,0.08) !important;
 }
 .last_data td {
-    background-color: #003160;
+    background-color: #006D77;
     color: #ffffff;
     text-align: center;
 }
 .last_data td span {
     color: #ffffff;
-    background-color: #77BD3E;
+    background-color: #A8E063;
     white-space: nowrap;
     padding: 5px 8px;
     border-radius: 30px;
@@ -230,3 +230,22 @@ button.btn-close:focus-visible {
     color: #155724 !important;
     border: 1px solid #75d69c !important;
 }
+
+.ai-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ai-edit-surface {
+    border-color: #006d77;
+    box-shadow: 0 0 0 1px rgba(0, 109, 119, 0.08);
+}
+.ai-edit-access-banner {
+  margin: 0 16px 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+.ai-edit-access-banner p { margin: 0 0 10px; font-size: 13px; color: #374151; }

@@ -98,6 +98,7 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
   }
 
   getAICountries(currentPage: any = 1) {
+    this.closeSidebar();
     this.isLoader = true;
     let payload: AiCountrySummeryRequestDto = {
       sortDirection: SortDirection.DESC,
@@ -124,7 +125,16 @@ export class AICountryAnalaysisComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  closeSidebar(): void {
+    const sidebarEl = document.getElementById('kpiLayerSidebar');
+    if (!sidebarEl) {
+      return;
+    }
+    const offcanvas = bootstrap.Offcanvas.getInstance(sidebarEl);
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  }
   viewDetails(country: AiCountrySummeryDto) {
     this.selectedCountry = country;
     const sidebarEl = document.getElementById("kpiLayerSidebar");

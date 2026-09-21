@@ -5,6 +5,11 @@
 .modal_design .modal_tabs form {
     margin-top: 30px;
 }
+
+.modal_design .modal-dialog.pillar-modal-dialog {
+    width: 800px;
+    max-width: min(800px, calc(100% - 20px));
+}
 .table_outer .table thead th:nth-child(2) {
     width: 280px;
 }

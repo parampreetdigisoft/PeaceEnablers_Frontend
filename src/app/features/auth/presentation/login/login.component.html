@@ -7,8 +7,8 @@
             <h4 class="before_login_card_head text-center">Welcome {{role =='3' ? 'to the Peace Enablers Matrix Portal — your Peace Copilot for peace systems.': ''}} </h4>
             <p class="before_login_card_desc text-center">Log In to your account.</p>
             <div class="input_field">
-                <label for="">Username *</label>
-                <input type="text" formControlName="email" placeholder="Enter Username" class="form-control">
+                <label for="">Email *</label>
+                <input type="text" formControlName="email" placeholder="Enter email" class="form-control">
                 <div *ngIf="(email?.touched || (email?.invalid && isSubmitted))  " class="error-msg">
                     <div *ngIf="email?.errors?.['required']">
                         Email is required.

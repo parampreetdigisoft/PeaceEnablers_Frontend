@@ -40,7 +40,7 @@
 						class="desc">
 						{{question.justification}}
 					</div>
-					<a (click)="question.showComment = !question.showComment"
+					<a *ngIf="(question?.justification?.length ?? 0) > 30" (click)="question.showComment = !question.showComment"
 						class="read-more">
 						{{ question.showComment ? 'Read Less' : 'Read More' }}
 					</a>
@@ -51,7 +51,7 @@
 						class="desc">
 						{{question.source}}
 					</div>
-					<a (click)="question.showSource = !question.showSource"
+					<a *ngIf="(question?.source?.length ?? 0) > 30" (click)="question.showSource = !question.showSource"
 						class="read-more">
 						{{ question.showSource ? 'Read Less' : 'Read More' }}
 					</a>

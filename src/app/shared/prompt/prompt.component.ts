@@ -15,6 +15,7 @@ export class PromptComponent {
   @Input() cancelText: string = 'Cancel';
   @Input() value: any;
   @Input() uniqueId ="confirmModal";
+  @Input() showConfirmButton =true;
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
