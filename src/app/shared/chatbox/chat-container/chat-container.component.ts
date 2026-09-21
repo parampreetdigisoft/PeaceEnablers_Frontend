@@ -107,8 +107,12 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
      this.clearHistory();
     this.closeChat();
     this.clearContext();
+     this.clearHistory();
+    this.closeChat();
+    this.clearContext();
     this.chatService.getAllCountries();
     this.chatService.getPillars();
+    this.chatService.getFAQDs();   
     this.chatService.getFAQDs();   
   }
 
