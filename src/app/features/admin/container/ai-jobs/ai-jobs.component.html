@@ -1,0 +1,150 @@
+<div class="heading_area">
+  <div class="row justify-content-between align-items-center">
+    <div class="col-md-auto">
+      <h3 class="page_head">AI Jobs Monitor</h3>
+      <p class="page_sub">
+        Track running and recent AI jobs, who triggered them, and cancel in-flight work when needed.
+      </p>
+    </div>
+    <div class="col-md-auto d-flex gap-2 align-items-center">
+      <span class="badge-pill" *ngIf="health">AI: {{ health.status }}</span>
+      <span class="badge-pill badge-inflight">In flight: {{ inflightCount }}</span>
+      <button type="button" class="common_button" (click)="loadJobs()">Refresh</button>
+      <button type="button" class="common_button outline_btn" (click)="toggleAutoRefresh()">
+        Auto-refresh: {{ autoRefresh ? 'On' : 'Off' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="heading_area">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-2 input_field">
+      <label>Scope</label>
+      <select class="form-control" [(ngModel)]="inflightOnly" (change)="loadJobs()">
+        <option [ngValue]="true">Running / queued</option>
+        <option [ngValue]="false">All jobs</option>
+      </select>
+    </div>
+
+    <div class="col-md-2 input_field">
+      <label>Role</label>
+      <select class="form-control" [(ngModel)]="filterRole" (change)="loadJobs()">
+        <option *ngFor="let r of roleOptions" [ngValue]="r.value">{{ r.label }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 input_field">
+      <label>Search by user name</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="filterUserName"
+        (ngModelChange)="onFilterChanged()"
+        placeholder="Name or email" />
+    </div>
+
+    <div class="col-md-3 input_field">
+      <label>Search by job name</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="filterJobName"
+        (ngModelChange)="onFilterChanged()"
+        placeholder="Purpose, type, or job id" />
+    </div>
+  </div>
+</div>
+
+<div class="table_outer compare_city_table">
+  <div class="table_custom_inner">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>S.No.</th>
+          <th>Job</th>
+          <th>Status</th>
+          <th>Users</th>
+          <th>Role(s)</th>
+          <th>Elapsed</th>
+          <th>Model</th>
+          <th>Started</th>
+          <th class="action_th">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="isLoader">
+          <td colspan="9" class="text-center py-4">Loading jobs…</td>
+        </tr>
+        <tr *ngIf="!isLoader && jobs.length === 0">
+          <td colspan="9" class="text-center py-4">No jobs match the current filters.</td>
+        </tr>
+        <tr *ngFor="let job of jobs; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <div class="job-name">{{ job.jobName }}</div>
+            <div class="job-meta">{{ job.resourceType }} · {{ job.jobId | slice:0:8 }}…</div>
+          </td>
+          <td>
+            <span class="status-chip" [ngClass]="statusClass(job.status)">{{ job.status }}</span>
+          </td>
+          <td>
+            <div *ngFor="let u of job.users" class="user-row">
+              {{ u.fullName }}
+              <span class="user-email" *ngIf="u.email"> · {{ u.email }}</span>
+            </div>
+            <span *ngIf="!job.users?.length">—</span>
+          </td>
+          <td>
+            <span *ngFor="let u of job.users; let last = last" class="role-chip">
+              {{ u.role }}<span *ngIf="!last">, </span>
+            </span>
+            <span *ngIf="!job.users?.length">—</span>
+          </td>
+          <td>{{ formatElapsed(job.elapsedSeconds) }}</td>
+          <td>
+            <span *ngIf="job.provider || job.model">{{ job.provider }}{{ job.model ? ' / ' + job.model : '' }}</span>
+            <span *ngIf="!job.provider && !job.model">—</span>
+          </td>
+          <td>{{ job.startedAt || job.createdAt | date:'short' }}</td>
+          <td class="action_th">
+            <button type="button" class="link_btn" (click)="viewJob(job)">Details</button>
+            <button
+              type="button"
+              class="link_btn danger"
+              *ngIf="job.canCancel"
+              [disabled]="cancellingJobId === job.jobId"
+              (click)="cancelJob(job)">
+              {{ cancellingJobId === job.jobId ? 'Cancelling…' : 'Cancel' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-footer" *ngIf="!isLoader">
+    Showing {{ jobs.length }} of {{ totalCount }} filtered · {{ inflightCount }} in flight overall
+  </div>
+</div>
+
+<div class="job-detail-panel" *ngIf="selectedJob">
+  <div class="job-detail-backdrop" (click)="closeDetail()"></div>
+  <div class="job-detail-card">
+    <div class="job-detail-header">
+      <h4>{{ selectedJob.jobName }}</h4>
+      <button type="button" class="link_btn" (click)="closeDetail()">Close</button>
+    </div>
+    <div class="job-detail-body">
+      <p><strong>Job Id:</strong> {{ selectedJob.jobId }}</p>
+      <p><strong>Status:</strong> {{ selectedJob.status }}</p>
+      <p><strong>Resource:</strong> {{ selectedJob.resourceType }}</p>
+      <p><strong>Coalescing key:</strong> {{ selectedJob.coalescingKey }}</p>
+      <p><strong>Created by:</strong> {{ selectedJob.createdByName }} ({{ selectedJob.createdByRole }})</p>
+      <p><strong>Country / Pillar / Question:</strong>
+        {{ selectedJob.countryId ?? '—' }} / {{ selectedJob.pillarId ?? '—' }} / {{ selectedJob.questionId ?? '—' }}
+      </p>
+      <p><strong>Users:</strong> {{ usersLabel(selectedJob) }}</p>
+      <p *ngIf="selectedJob.error"><strong>Error:</strong> {{ selectedJob.error }}</p>
+    </div>
+  </div>
+</div>

@@ -98,6 +98,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "ai/jobs",
+        loadComponent: () =>
+          import("./container/ai-jobs/ai-jobs.component").then(
+            (m) => m.AiJobsComponent
+          ),
+      },
+      {
         path: "aevum",
         loadComponent: () =>
           import("../../shared/chatbox/chat-container/chat-container.component").then(
