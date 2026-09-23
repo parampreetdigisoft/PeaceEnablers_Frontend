@@ -103,13 +103,45 @@ export class AddUpdateCountryUserComponent implements OnInit, OnDestroy {
   private buildForm(): void {
     this.countryUserForm = this.fb.group({
       fullName: [null, [Validators.required]],
-      email: [null, [Validators.required, Validators.email], [this.emailExistsValidator()]],
+      email: [null, [Validators.required, Validators.email]],
       phone: [null, [Validators.required]],
       tier: [null, [Validators.required]],
       pillars: [[], [Validators.required]],
       country: [[], [Validators.required]],
     });
     this.patchFormFromInputs();
+  }
+
+  emailExistsValidator(): void {
+    const emailControl = this.countryUserForm.get('email');
+    if (!emailControl?.value) {
+      return;
+    }
+
+    const email = emailControl.value;
+    if(!emailControl?.dirty || email == this.countryUser?.email)
+      return;
+
+    this.adminService.checkEmailExist({
+      email: email,
+      userId: this.countryUser?.userID ?? 0
+    }).pipe(catchError(() => of(false)))
+    .subscribe((exists: boolean) => {
+      if (exists) {
+        emailControl.setErrors({
+          ...emailControl.errors,
+          emailExists: true
+        });
+      } else {
+        // Remove only emailExists error
+        const errors = { ...emailControl.errors };
+        delete errors['emailExists'];
+
+        emailControl.setErrors(
+          Object.keys(errors).length ? errors : null
+        );
+      }
+    });
   }
 
   private bindTierChanges(): void {
@@ -214,25 +246,6 @@ export class AddUpdateCountryUserComponent implements OnInit, OnDestroy {
 
   private applyPremiumPillars(): void {
     this.countryUserForm.patchValue({ pillars: this.getAllPillarIds() }, { emitEvent: false });
-  }
-
-  emailExistsValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      if (!control.value) {
-        return of(null);
-      }
-      return of(control.value).pipe(
-        debounceTime(500),
-        switchMap((email) =>
-          this.adminService.checkEmailExist({
-            email: email,
-            userId: this.countryUser?.userID ?? 0,
-          })
-        ),
-        map((exists: boolean) => (exists ? { emailExists: true } : null)),
-        catchError(() => of(null))
-      );
-    };
   }
 
   onSubmit() {
