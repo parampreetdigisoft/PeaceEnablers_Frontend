@@ -30,7 +30,7 @@
           </div>
           <div class="input_field">
             <label>Email.*</label>
-            <input type="email"  formControlName="email" class="form-control" />
+            <input type="email"  formControlName="email" class="form-control" (blur)="emailExistsValidator()"/>
             <div class="error-msg" *ngIf="userForm.get('email')?.touched || isSubmitted">
                 <span *ngIf="userForm.get('email')?.errors?.['required']">Email is
                                         required.</span>

@@ -51,7 +51,7 @@ export class AddUpdateAnalystComponent implements OnInit {
   initializeForm() {
     this.analystForm = this.fb.group({
       fullName: [this.analyst?.fullName, [Validators.required]],
-      email: [this.analyst?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
+      email: [this.analyst?.email, [Validators.required, Validators.email]],
       phone: [this.analyst?.phone, [Validators.required]],
       country: [
         this.analyst?.countries?.map((x) => x?.countryID) ?? [],
@@ -59,28 +59,37 @@ export class AddUpdateAnalystComponent implements OnInit {
       ],
     });
   }
-emailExistsValidator(): AsyncValidatorFn {
-  return (control: AbstractControl): Observable<ValidationErrors | null> => {
-
-    if (!control.value) {
-      return of(null);
+  emailExistsValidator(): void {
+    const emailControl = this.analystForm.get('email');
+    if (!emailControl?.value) {
+      return;
     }
 
-    return of(control.value).pipe(
-      debounceTime(500),
-      switchMap(email =>
-        this.adminService.checkEmailExist({
-          email: email,
-          userId: this.analyst?.userID ?? 0
-        })
-      ),
-      map((exists: boolean) => {      
-        return exists ? { emailExists: true } : null;
-      }),
-      catchError(() => of(null))
-    );
-  };
-}
+    const email = emailControl.value;
+    if(!emailControl?.dirty || email == this.analyst?.email)
+      return;
+
+    this.adminService.checkEmailExist({
+      email: email,
+      userId: this.analyst?.userID ?? 0
+    }).pipe(catchError(() => of(false)))
+    .subscribe((exists: boolean) => {
+      if (exists) {
+        emailControl.setErrors({
+          ...emailControl.errors,
+          emailExists: true
+        });
+      } else {
+        // Remove only emailExists error
+        const errors = { ...emailControl.errors };
+        delete errors['emailExists'];
+
+        emailControl.setErrors(
+          Object.keys(errors).length ? errors : null
+        );
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.alertMsg = "";

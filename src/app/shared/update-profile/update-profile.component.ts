@@ -44,34 +44,45 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.userForm = this.fb.group({
         fullName: [this.userinfo.fullName, [Validators.required]],
         phone: [this.userinfo.phone, [Validators.required]],
-        email: [this.userinfo.email, [Validators.required,Validators.email], this.emailExistsValidator()],
+        email: [this.userinfo.email, [Validators.required,Validators.email]],
         profileImage: [],
         is2FAEnabled:[this.userinfo.is2FAEnabled]
       });
     }
   }
-  emailExistsValidator(): AsyncValidatorFn {
-      return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    
-        if (!control.value) {
-          return of(null);
-        }
-    
-        return of(control.value).pipe(
-          debounceTime(500),
-          switchMap(email =>
-            this.adminService.checkEmailExist({
-              email: email,
-              userId: this.userinfo?.userID ?? 0
-            })
-          ),
-          map((exists: boolean) => {      
-            return exists ? { emailExists: true } : null;
-          }),
-          catchError(() => of(null))
-        );
-      };
+
+  emailExistsValidator(): void {
+    const emailControl = this.userForm.get('email');
+    if (!emailControl?.value) {
+      return;
     }
+
+    const email = emailControl.value;
+    if(!emailControl?.dirty || email == this.userinfo?.email)
+      return;
+
+    this.adminService.checkEmailExist({
+      email: email,
+      userId: this.userinfo?.userID ?? 0
+    }).pipe(catchError(() => of(false)))
+    .subscribe((exists: boolean) => {
+      if (exists) {
+        emailControl.setErrors({
+          ...emailControl.errors,
+          emailExists: true
+        });
+      } else {
+        // Remove only emailExists error
+        const errors = { ...emailControl.errors };
+        delete errors['emailExists'];
+
+        emailControl.setErrors(
+          Object.keys(errors).length ? errors : null
+        );
+      }
+    });
+  }
+
   updateUser(fullName: string, email: string, phone:string,is2FAEnabled:boolean, profileImage?: File) {  
     const formData = new FormData();
     formData.append("FullName", fullName);

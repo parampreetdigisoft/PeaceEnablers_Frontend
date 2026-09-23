@@ -52,34 +52,43 @@ export class AddUpdateEvaluatorComponent {
   initializeForm(evaluator: GetUserByRoleResponse | null) {
     this.evaluatorForm = this.fb.group({
       fullName: [evaluator?.fullName, [Validators.required]],
-      email: [evaluator?.email, [Validators.required, Validators.email], this.emailExistsValidator()],
+      email: [evaluator?.email, [Validators.required, Validators.email]],
       phone: [evaluator?.phone, [Validators.required]],
       country: [evaluator?.countries?.map(x => x?.countryID) ?? [], [Validators.required]]
     });
     this.evaluatorForm.updateValueAndValidity();
   }
 
-  emailExistsValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-  
-      if (!control.value) {
-        return of(null);
+  emailExistsValidator(): void {
+    const emailControl = this.evaluatorForm.get('email');
+    if (!emailControl?.value) {
+      return;
+    }
+
+    const email = emailControl.value;
+    if(!emailControl?.dirty || email == this.evaluator?.email)
+      return;
+
+    this.adminService.checkEmailExist({
+      email: email,
+      userId: this.evaluator?.userID ?? 0
+    }).pipe(catchError(() => of(false)))
+    .subscribe((exists: boolean) => {
+      if (exists) {
+        emailControl.setErrors({
+          ...emailControl.errors,
+          emailExists: true
+        });
+      } else {
+        // Remove only emailExists error
+        const errors = { ...emailControl.errors };
+        delete errors['emailExists'];
+
+        emailControl.setErrors(
+          Object.keys(errors).length ? errors : null
+        );
       }
-  
-      return of(control.value).pipe(
-        debounceTime(500),
-        switchMap(email =>
-          this.adminService.checkEmailExist({
-            email: email,
-            userId: this.evaluator?.userID ?? 0
-          })
-        ),
-        map((exists: boolean) => {      
-          return exists ? { emailExists: true } : null;
-        }),
-        catchError(() => of(null))
-      );
-    };
+    });
   }
 
   onSubmit() {
