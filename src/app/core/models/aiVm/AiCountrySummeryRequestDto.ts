@@ -11,10 +11,12 @@ export interface AiPillarQuetionsRequestDto extends AiCountrySummeryRequestDto {
 
 export interface AiCountryDocumentRequestDto extends PaginationRequest {
   countryID?:number;
+  hasDocuments?: boolean;
 }
 
 export interface AiCountryPillarDocumentRequestDto {
   countryID: number;
+  platformOnly?: boolean;
 }
 
 export interface DeleteCountryDocumentRequestDto {

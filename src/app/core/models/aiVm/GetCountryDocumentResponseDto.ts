@@ -24,4 +24,10 @@ export interface GetCountryPillarDocumentResponseDto {
 
   uploadedByUserID: number;
   uploadedBy: string;
+  documentLevel?: string;
+  classification?: string;
+  retentionDays?: number | null;
+  ingestedAt?: string;
+  legalHold?: boolean;
+  lifecycleStage?: string;
 }

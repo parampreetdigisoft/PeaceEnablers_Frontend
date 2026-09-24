@@ -2,143 +2,310 @@
 	<div class="row justify-content-between align-items-center">
 		<div class="col-md-auto">
 			<h3 class="page_head">AI Documents</h3>
-		</div>
-
-		<div class="col-md-3 ">
-			<div class="compare_select input_field input_flex">
-				<ng-select [items]="countryList"
-					[searchable]="true"
-					[placeholder]="!selectedCountryID? 'Select Countries' :''"
-					[(ngModel)]="selectedCountryID"
-					(change)="getAICountryDocuments()"
-					bindValue="countryID"
-					bindLabel="countryName"
-					class="form-control analyst_multi_select">
-					<ng-template ng-label-tmp
-						let-item="item"
-						class="select_item">
-						{{ item.countryName }}
-					</ng-template>
-
-					<ng-template ng-option-tmp
-						let-item="item">
-						{{ item.countryName }}, {{ item.continent }} ({{ item.score?.toFixed(1) || 'NA'}})
-					</ng-template>
-				</ng-select>
-			</div>
+			<p class="doc_intro">Upload a file in the place it belongs. A question is answered only from that place.</p>
 		</div>
 	</div>
 </div>
 
-<div class="table_outer compare_city_table">
-	<div class="table_custom_inner">
-		<table class="table table-striped">
+<div class="scope_switch">
+	<button type="button" [class.active]="scope === 'platform'" (click)="showScope('platform')">
+		Platform documents
+		<span>{{ platformDocuments.length }}</span>
+	</button>
+	<button type="button" [class.active]="scope === 'country'" (click)="showScope('country')">
+		Country documents
+	</button>
+</div>
+
+<section *ngIf="scope === 'platform'" class="doc_panel">
+	<div class="doc_explain">
+		<h4>For the whole platform</h4>
+		<p>
+			Use this when the file explains the product: what Peace Enablers is for, where to find a feature,
+			or how a screen works. These files are not tied to a country.
+			If someone asks “where do I find this?” the answer is read from these files.
+		</p>
+	</div>
+
+	<div class="upload_card">
+		<div class="upload_grid">
+			<label class="field">
+				Who can see it
+				<ng-select class="doc_select"
+					[items]="classifications"
+					[searchable]="false"
+					[clearable]="false"
+					[(ngModel)]="classification">
+				</ng-select>
+			</label>
+			<label class="field">
+				How long to keep the file
+				<ng-select class="doc_select"
+					[items]="retentionOptions"
+					bindLabel="label"
+					bindValue="value"
+					[searchable]="false"
+					[clearable]="false"
+					[(ngModel)]="retentionChoice">
+				</ng-select>
+			</label>
+			<label class="hold_check">
+				<input type="checkbox" [(ngModel)]="legalHold" />
+				Legal hold — do not delete automatically
+			</label>
+		</div>
+		<p class="doc_hint">
+			New files are kept for 90 days unless you choose another period. After that they are removed.
+			“Keep until I delete it” has no expiry. A legal hold stops automatic removal.
+			Country scores are not deleted when a file expires.
+		</p>
+		<div class="upload_actions">
+			<input type="file" accept=".pdf,.doc,.docx" multiple (change)="onFileSelected('platform', $event)" />
+			<button type="button" class="save-btn" [disabled]="saveDocumentLoader || !platformFiles.length" (click)="upload('platform')">
+				Upload platform file
+				<span *ngIf="saveDocumentLoader" class="spinner-border spinner-border-sm ms-2"></span>
+			</button>
+		</div>
+		<ul class="pending_files" *ngIf="platformFiles.length">
+			<li *ngFor="let file of platformFiles; let i = index">
+				{{ file.name }} · {{ formatBytes(file.size) }}
+				<button type="button" (click)="removePending('platform', i)">Remove</button>
+			</li>
+		</ul>
+	</div>
+
+	<div class="table_outer">
+		<div class="table_custom_inner">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>File</th>
+						<th>Classification</th>
+						<th>Keep for</th>
+						<th>Stage</th>
+						<th>Uploaded by</th>
+						<th class="action_th">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngIf="!platformDocuments.length">
+						<td colspan="6" class="empty_row">No platform documents yet. Questions about the product will not have a file to read.</td>
+					</tr>
+					<tr *ngFor="let doc of platformDocuments">
+						<td>
+							<div class="file_name">{{ doc.fileName }}</div>
+							<div class="file_meta">{{ doc.fileType }} · {{ formatStoredSize(doc.fileSize) }} · #{{ doc.countryDocumentID }}</div>
+						</td>
+						<td>{{ doc.classification || 'Internal' }}</td>
+						<td>{{ retentionLabel(doc.retentionDays) }}</td>
+						<td><span class="stage" [attr.data-stage]="doc.lifecycleStage">{{ doc.lifecycleStage || 'Hot' }}</span></td>
+						<td>{{ doc.uploadedBy || '—' }}</td>
+						<td class="action_td">
+							<div class="row_actions">
+								<button type="button" (click)="downloadDocument(doc)">Download</button>
+								<button type="button" class="danger" (click)="onDeleteClick(doc)">Delete</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>
+
+<section *ngIf="scope === 'country'" class="doc_panel">
+	<div class="doc_explain">
+		<h4>For one country only</h4>
+		<p>
+			A country does not need a file. Upload one only when that country has local evidence.
+			The file is searched only when the question is about that country.
+			A question such as “what is happening with this in which countries?” searches every country that has a file,
+			and each file stays attached to its own country.
+		</p>
+	</div>
+
+	<div class="country_toolbar">
+		<label class="field">
+			Country
+			<ng-select class="doc_select"
+				[items]="countryList"
+				[searchable]="true"
+				[clearable]="true"
+				placeholder="Choose a country"
+				[(ngModel)]="selectedCountryID"
+				(ngModelChange)="onCountryPicked()"
+				bindValue="countryID"
+				bindLabel="countryName">
+			</ng-select>
+		</label>
+		<label class="field field_filter">
+			Show
+			<ng-select class="doc_select"
+				[items]="countryFilters"
+				bindLabel="label"
+				bindValue="value"
+				[searchable]="false"
+				[clearable]="false"
+				[(ngModel)]="documentFilter"
+				(ngModelChange)="onCountryFilterChange()">
+			</ng-select>
+		</label>
+	</div>
+
+	<div class="table_outer compare_city_table">
+		<div class="table_custom_inner">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>S.No.</th>
+						<th>Country</th>
+						<th>Local files</th>
+						<th>Types</th>
+						<th>Size</th>
+						<th class="action_th">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngIf="!isLoader && !documentLayersResponse?.data?.length">
+						<td colspan="6" class="empty_row">
+							<span *ngIf="documentFilter === 'with'">No country has a local file yet. That is expected. Choose a country above when you have one to upload.</span>
+							<span *ngIf="documentFilter !== 'with'">No countries match this filter.</span>
+						</td>
+					</tr>
+					<tr *ngFor="let document of documentLayersResponse?.data; let i = index"
+						[class.selected_country]="selectedCountry?.countryID === document.countryID">
+						<td>{{ (currentPage - 1) * pageSize + (i + 1) }}</td>
+						<td>{{ document.countryName }}</td>
+						<td>{{ document.noOfFiles || 0 }}</td>
+						<td>{{ document.fileTypes || '—' }}</td>
+						<td>{{ formatStoredSize(document.filesSize) }}</td>
+						<td class="action_td">
+							<div class="row_actions">
+								<button type="button" (click)="openCountry(document)">
+									{{ document.noOfFiles ? 'Manage files' : 'Add a file' }}
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<app-pagination [totalPage]="totalRecords" [selectedYear]="selectedYear"
+			[currentPage]="currentPage"
+			[pageSize]="pageSize"
+			[isLoader]="isLoader"
+			(pageChange)="getAICountryDocuments($event)"></app-pagination>
+	</div>
+
+	<div class="upload_card" *ngIf="selectedCountry">
+		<h4>{{ selectedCountry.countryName }}</h4>
+		<p class="doc_hint" *ngIf="!countryDocuments.length">
+			This country has no local file. Questions about {{ selectedCountry.countryName }} will not use another country’s documents.
+		</p>
+		<div class="upload_grid">
+			<label class="field field_pillar">
+				Pillar, if the file is only about one
+				<ng-select class="doc_select"
+					[items]="pillars"
+					bindLabel="pillarName"
+					bindValue="pillarID"
+					[searchable]="true"
+					[clearable]="true"
+					placeholder="Whole country"
+					[(ngModel)]="selectedPillarID">
+					<ng-template ng-label-tmp let-item="item">
+						<span class="option_text">{{ item.pillarName }}</span>
+					</ng-template>
+					<ng-template ng-option-tmp let-item="item">
+						<span class="option_text">{{ item.pillarName }}</span>
+					</ng-template>
+				</ng-select>
+			</label>
+			<label class="field">
+				Who can see it
+				<ng-select class="doc_select"
+					[items]="classifications"
+					[searchable]="false"
+					[clearable]="false"
+					[(ngModel)]="classification">
+				</ng-select>
+			</label>
+			<label class="field">
+				How long to keep the file
+				<ng-select class="doc_select"
+					[items]="retentionOptions"
+					bindLabel="label"
+					bindValue="value"
+					[searchable]="false"
+					[clearable]="false"
+					[(ngModel)]="retentionChoice">
+				</ng-select>
+			</label>
+			<label class="hold_check">
+				<input type="checkbox" [(ngModel)]="legalHold" />
+				Legal hold — do not delete automatically
+			</label>
+		</div>
+		<div class="upload_actions">
+			<input type="file" accept=".pdf,.doc,.docx" multiple (change)="onFileSelected('country', $event)" />
+			<button type="button" class="save-btn" [disabled]="saveDocumentLoader || !countryFiles.length" (click)="upload('country')">
+				Upload for {{ selectedCountry.countryName }}
+				<span *ngIf="saveDocumentLoader" class="spinner-border spinner-border-sm ms-2"></span>
+			</button>
+		</div>
+		<ul class="pending_files" *ngIf="countryFiles.length">
+			<li *ngFor="let file of countryFiles; let i = index">
+				{{ file.name }} · {{ formatBytes(file.size) }}
+				<button type="button" (click)="removePending('country', i)">Remove</button>
+			</li>
+		</ul>
+
+		<div class="table_outer file_table_wrap" *ngIf="countryDocuments.length">
+		<div class="table_custom_inner">
+		<table class="table table-striped file_table">
 			<thead>
 				<tr>
-					<th>S.No.</th>
-					<th>Country</th>
-					<th>Files</th>
-					<th>Types</th>
-					<th>Size</th>
-					<th>Users</th>
-					<th class="action_th">Actions</th>
+					<th>File</th>
+					<th>Applies to</th>
+					<th>Classification</th>
+					<th>Keep for</th>
+					<th>Stage</th>
+					<th>Uploaded by</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let document of documentLayersResponse?.data; let i = index">
+				<tr *ngFor="let doc of countryDocuments">
 					<td>
-						{{ (currentPage - 1) * pageSize + (i + 1) }}
+						<div class="file_name">{{ doc.fileName }}</div>
+						<div class="file_meta">{{ doc.fileType }} · {{ formatStoredSize(doc.fileSize) }} · #{{ doc.countryDocumentID }}</div>
 					</td>
-					<td>
-						<div class="document_city document_td_data">
-							<p>
-								{{ document.countryName }}
-							</p>
-						</div>
-					</td>
-					<td>
-						<div class="document_layaer document_td_data">
-							<p>
-								{{document.noOfFiles}}
-							</p>
-						</div>
-					</td>
-					<td>
-						<div class="document_layaer document_td_data">
-							<p>
-								{{ document.fileTypes || 'NA' }}
-							</p>
-						</div>
-					</td>
-					<td>
-						<div class="document_layaer document_td_data">
-							<p>
-								{{formatFileSize(document.filesSize || 0)}}								
-							</p>
-						</div>
-					</td>
-					<td>
-						<div class="document_layaer document_td_data">
-							<p>
-								{{document.noOfUsers}}
-							</p>
-						</div>
-					</td>
+					<td class="applies_cell">{{ doc.pillarName || 'Whole country' }}</td>
+					<td>{{ doc.classification || 'Internal' }}</td>
+					<td>{{ retentionLabel(doc.retentionDays) }}</td>
+					<td><span class="stage" [attr.data-stage]="doc.lifecycleStage">{{ doc.lifecycleStage || 'Hot' }}</span></td>
+					<td>{{ doc.uploadedBy || '—' }}</td>
 					<td class="action_td">
-						<table>
-							<tbody>
-								<tr>
-									<td>
-										<div class="action_icons">
-											<a (click)="viewDetails(document,i); $event.preventDefault()"
-												style="cursor:viewDetails pointer"
-												matTooltip="View">
-												<span *ngIf="sidebarLoader.index!=i"
-													style="display: inline-block">
-													View Details
-												</span>
-												<p *ngIf="sidebarLoader.index==i && sidebarLoader.loader"
-													class="btn_spinner">
-													<span class="spinner-border spinner-border-sm ms-2"></span>
-												</p>
-											</a>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="row_actions">
+							<button type="button" (click)="downloadDocument(doc)">Download</button>
+							<button type="button" class="danger" (click)="onDeleteClick(doc)">Delete</button>
+						</div>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+		</div>
+		</div>
 	</div>
-	<app-pagination [totalPage]="totalRecords" [selectedYear]="selectedYear"
-		[currentPage]="currentPage"
-		[pageSize]="pageSize"
-		[isLoader]="isLoader"
-		(pageChange)="getAICountryDocuments($event)"></app-pagination>
-</div>
-
-
-<div class="offcanvas offcanvas-end custom-sidebar document_sidebar"
-	tabindex="-1"
-	id="documentLayerSidebar">
-	<div class="offcanvas-body">
-		<app-ai-document-view-details [selectedCountry]="selectedCountry"
-			[documents]="countryPillarDocuments"
-            (uploadedDocuments)="uploadAiDocuments($event)"
-            (deleteDocument)="onDeleteClick($event)"
-			[pillars]="pillars" [saveDocumentLoader]="saveDocumentLoader" (downloadDocument)="downloadDocument($event)"></app-ai-document-view-details>
-	</div>
-</div>
+</section>
 
 <app-prompt
-  *ngIf="isDeletePromptOpen"
-  [uniqueId]="'exampleModal'"
-  [title]="'Delete Document'"
-  [message]="'Are you sure you want to delete this document?'"
-  [confirmText]="'Delete'"
-  [cancelText]="'Cancel'"
-  (confirm)="onConfirmDelete()"
-  (cancel)="closeModal()">
+	*ngIf="isDeletePromptOpen"
+	[uniqueId]="'exampleModal'"
+	[title]="'Delete Document'"
+	[message]="'Are you sure you want to delete this document?'"
+	[confirmText]="'Delete'"
+	[cancelText]="'Cancel'"
+	(confirm)="onConfirmDelete()"
+	(cancel)="closeModal()">
 </app-prompt>
