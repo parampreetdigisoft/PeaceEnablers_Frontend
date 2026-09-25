@@ -81,8 +81,8 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 }
 
 .compare_table.table tr th:first-child {
-  width: 500px;
-  min-width: 500px;
+  width: 350px;
+  min-width: 250px;
   max-width: 100%;
 }
 
@@ -96,6 +96,89 @@ app-kpianalysis app-ag-bar:nth-child(3) {
   line-height: normal;
   font-weight: 600;
   color: #212529;
+}
+
+
+.action-header-content,
+.action-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-header-content {
+  justify-content: space-around;
+}
+
+.action-header {
+  position: relative;
+  z-index: 6;
+  overflow: visible;
+}
+
+.action-report {
+  position: relative;
+}
+
+.action_report_trigger {
+  display: inline-flex;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action_report_trigger.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.action-report-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  display: block;
+  z-index: 20;
+  margin: 0;
+  min-width: 157px;
+  list-style: none;
+  background: #0C2238;
+  border: 1px solid #1E3D5C;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  padding: 8px;
+}
+
+.action-report-menu a {
+  display: block;
+  color: #E8EEF4;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.action-report-menu a:hover {
+  background: rgba(197, 160, 90, 0.16);
+  color: #D4B86A;
+  border-color: rgba(197, 160, 90, 0.4);
+}
+
+.action_report_icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #C5A05A;
+  padding: 8px 10px;
+  border-radius: 5px;
+  line-height: 0;
+}
+
+.action_report_icon svg path {
+  fill: #0C2238;
 }
 
 .table_outer .compare_table.table tr th:last-child {
@@ -169,7 +252,7 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 }
 .faq_inner_svg img
 {
-    width: 44px;
+    width: 27px;
 }
 .faq_sidebar_item:nth-child(1) .faq_inner_svg { background-color: #5DADE2; } /* Soft Blue */
 .faq_sidebar_item:nth-child(2) .faq_inner_svg { background-color: #45B39D; } /* Sage Teal */
@@ -194,7 +277,6 @@ app-kpianalysis app-ag-bar:nth-child(3) {
 .faq_sidebar_item:nth-child(21) .faq_inner_svg { background-color: #F8C471; } /* Soft Mustard */
 .faq_sidebar_item:nth-child(22) .faq_inner_svg { background-color: #C0392B; } /* Brick Red */
 .faq_sidebar_item:nth-child(23) .faq_inner_svg { background-color: #2E86C1; } /* Steel Blue */
-
 
 .faq_sidebar_item.active .current-active span.faq_inner_svg {
     background-color: var(--Secondary-Color) !important;
@@ -229,6 +311,50 @@ app-kpianalysis app-ag-bar:nth-child(3) {
     color: #ffffff;
     border-radius: 5px;
 }
+
+.export-icon-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.export-count {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ffffff;
+    color: #463a0c;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 50%;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    box-shadow: 0 0 0 2px #5c530e;
+}
+
+.global_Checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #C5A05A;
+    flex: 0 0 auto;
+}
+
+.global_Checkbox:disabled {
+    cursor: not-allowed;
+}
+
+.action_report_icon .spinner-border {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+    color: #080705 !important;
+}
+
 .faq_sidebar_item_inner {
     display: flex;
     align-items: center;
@@ -238,6 +364,23 @@ app-kpianalysis app-ag-bar:nth-child(3) {
     font-size: 10px;
     min-width: 40px;
     line-height: normal;
+}
+.low {
+    background-color: #ffcccc;
+    color: #b30000;
+    border: 1px solid #ff4d4d !important;
+}
+
+.medium {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c !important;
+}
+
+.high {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #75d69c !important;
 }
 .pillar_confidence {
     margin-top: 5px;
@@ -267,6 +410,46 @@ p.btn_spinner {
     border-radius: 5px;
 }
 
+/* Ai date css start */
+.research_date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center; /* 👈 center text */
+  min-width: 120px;  
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.research_date.fresh {
+  background: linear-gradient(135deg, #e6fdf4, #d2f7eb);
+  color: #116c4a;
+}
+.research_date.recent {
+  background: linear-gradient(135deg, #fff7df, #ffebba);
+  color: #8a6400;
+}
+.research_date.old {
+  background: linear-gradient(135deg, #ffe9e6, #ffd1cb);
+  color: #912018;
+}
+.research_date.just-now {
+  background: linear-gradient(135deg, #e8f0ff, #d9e6ff);
+  color: #204ecf;
+  animation: glow 1.8s ease-in-out infinite;
+}
 .compare_select .analyst_multi_select {
     flex: 1;
     height: auto;
@@ -284,6 +467,26 @@ p.btn_spinner {
     border: 1px solid #d7d7d7 !important;
 }
 
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0 rgba(32, 78, 207, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(32, 78, 207, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(32, 78, 207, 0.4);
+  }
+}
+.research_date:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+/* Ai date css end */
+
+
 
 @media only screen and (max-width:1750px) {
     .compare_city_table .city-col{
@@ -300,8 +503,9 @@ p.btn_spinner {
     .compare_city_table tbody td.action_td table .action_icons span {
         padding: 6px 8px;
     }
-    .table_outer .table td.action_td ,.table_outer .compare_table.table tr th:last-child{
-        width: 185px;
+    .table_outer .table td.action_td,
+    .table_outer .compare_table.table tr th.action-header {
+        width: 210px;
     }
     .table_outer .table td.action_td td{
       padding: 0;
