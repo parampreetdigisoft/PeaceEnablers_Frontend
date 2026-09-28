@@ -43,7 +43,7 @@ export interface CountryRankingResponseDto {
   continent: string;
   totalCountry: number;
   countryRank: number;
-  totalCountryInRegion: number;
+  totalPillarInRegion: number;
   regionRank: number;
   countryAIScore: number;
   dataYear?: number;
